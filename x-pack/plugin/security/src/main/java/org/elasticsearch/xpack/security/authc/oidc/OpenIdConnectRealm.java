@@ -383,7 +383,7 @@ public class OpenIdConnectRealm extends Realm implements Releasable {
             rpConfiguration.getRequestedScope(),
             rpConfiguration.getClientId(),
             rpConfiguration.getRedirectUri()
-        ).endpointURI(opConfiguration.getAuthorizationEndpoint()).state(state).nonce(nonce);
+        ).endpointURI(opConfiguration.authorizationEndpoint()).state(state).nonce(nonce);
         if (Strings.hasText(loginHint)) {
             builder.loginHint(loginHint);
         }
@@ -396,14 +396,14 @@ public class OpenIdConnectRealm extends Realm implements Releasable {
     }
 
     public boolean isIssuerValid(String issuer) {
-        return this.opConfiguration.getIssuer().getValue().equals(issuer);
+        return this.opConfiguration.issuer().getValue().equals(issuer);
     }
 
     public OpenIdConnectLogoutResponse buildLogoutResponse(JWT idTokenHint) {
-        if (opConfiguration.getEndsessionEndpoint() != null) {
+        if (opConfiguration.endsessionEndpoint() != null) {
             final State state = new State();
             final LogoutRequest logoutRequest = new LogoutRequest(
-                opConfiguration.getEndsessionEndpoint(),
+                opConfiguration.endsessionEndpoint(),
                 idTokenHint,
                 rpConfiguration.getPostLogoutRedirectUri(),
                 state

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.contains;
@@ -317,38 +316,13 @@ public abstract class BucketedSortTestCase<T extends BucketedSort> extends ESTes
     }
 
     private static class Extra implements BucketedSort.ExtraData, Releasable {
-        private static class Value implements Comparable<Value> {
-            private final int extra;
-            private final SortValue sortValue;
-
-            Value(int extra, SortValue sortValue) {
-                this.extra = extra;
-                this.sortValue = sortValue;
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (obj == null || obj.getClass() != getClass()) {
-                    return false;
-                }
-                Value other = (Value) obj;
-                return extra == other.extra && sortValue.equals(other.sortValue);
-            }
-
-            @Override
-            public int hashCode() {
-                return Objects.hash(extra, sortValue);
-            }
+        private record Value(int extra, SortValue sortValue) implements Comparable<Value> {
 
             @Override
             public int compareTo(Value o) {
                 return sortValue.compareTo(o.sortValue);
             }
 
-            @Override
-            public String toString() {
-                return "[" + extra + "," + sortValue + "]";
-            }
         }
 
         private final BigArrays bigArrays;

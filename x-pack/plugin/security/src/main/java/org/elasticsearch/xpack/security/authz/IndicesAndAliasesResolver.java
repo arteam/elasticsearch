@@ -67,8 +67,8 @@ class IndicesAndAliasesResolver {
      * <p>
      * If the provided <code>request</code> is of a type that
      * {@link IndicesRequest.Replaceable#allowsRemoteIndices() allows remote indices},
-     * then the index names will be categorized into those that refer to {@link ResolvedIndices#getLocal() local indices}, and those that
-     * refer to {@link ResolvedIndices#getRemote() remote indices}. This categorization follows the standard
+     * then the index names will be categorized into those that refer to {@link ResolvedIndices#local() local indices}, and those that
+     * refer to {@link ResolvedIndices#remote() remote indices}. This categorization follows the standard
      * {@link RemoteClusterAware#buildRemoteIndexName(String, String) remote index-name format} and also respects the currently defined
      * remote clusters}.
      * </p><br>
@@ -92,8 +92,8 @@ class IndicesAndAliasesResolver {
             ResolvedIndices.Builder resolvedIndicesBuilder = new ResolvedIndices.Builder();
             for (IndicesRequest indicesRequest : indicesAliasesRequest.getAliasActions()) {
                 final ResolvedIndices resolved = resolveIndicesAndAliases(action, indicesRequest, metadata, authorizedIndices);
-                resolvedIndicesBuilder.addLocal(resolved.getLocal());
-                resolvedIndicesBuilder.addRemote(resolved.getRemote());
+                resolvedIndicesBuilder.addLocal(resolved.local());
+                resolvedIndicesBuilder.addRemote(resolved.remote());
             }
             return resolvedIndicesBuilder.build();
         }
@@ -223,14 +223,14 @@ class IndicesAndAliasesResolver {
                     split = new ResolvedIndices(Arrays.asList(indicesRequest.indices()), Collections.emptyList());
                 }
                 List<String> replaced = indexAbstractionResolver.resolveIndexAbstractions(
-                    split.getLocal(),
+                    split.local(),
                     indicesOptions,
                     metadata,
                     authorizedIndices,
                     indicesRequest.includeDataStreams()
                 );
                 resolvedIndicesBuilder.addLocal(replaced);
-                resolvedIndicesBuilder.addRemote(split.getRemote());
+                resolvedIndicesBuilder.addRemote(split.remote());
             }
 
             if (resolvedIndicesBuilder.isEmpty()) {

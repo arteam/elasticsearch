@@ -13,20 +13,10 @@ import org.elasticsearch.xcontent.XContentParser;
 import java.io.IOException;
 import java.util.Map;
 
-public final class GetSourceResponse {
-
-    private final Map<String, Object> source;
-
-    public GetSourceResponse(Map<String, Object> source) {
-        this.source = source;
-    }
+public record GetSourceResponse(Map<String, Object> source) {
 
     public static GetSourceResponse fromXContent(XContentParser parser) throws IOException {
         return new GetSourceResponse(parser.map());
-    }
-
-    public Map<String, Object> getSource() {
-        return this.source;
     }
 
     @Override

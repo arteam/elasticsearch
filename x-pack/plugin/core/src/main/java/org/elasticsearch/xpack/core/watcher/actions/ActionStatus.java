@@ -204,7 +204,7 @@ public class ActionStatus implements ToXContentObject {
         return new ActionStatus(ackStatus, lastExecution, lastSuccessfulExecution, lastThrottle);
     }
 
-    public static class AckStatus implements ToXContentObject {
+    public record AckStatus(ZonedDateTime timestamp, ActionStatus.AckStatus.State state) implements ToXContentObject {
 
         public enum State {
             AWAITS_SUCCESSFUL_EXECUTION((byte) 1),
@@ -225,37 +225,6 @@ public class ActionStatus implements ToXContentObject {
                     default -> throw illegalArgument("unknown action ack status state value [{}]", value);
                 };
             }
-        }
-
-        private final ZonedDateTime timestamp;
-        private final State state;
-
-        public AckStatus(ZonedDateTime timestamp, State state) {
-            this.timestamp = timestamp;
-            this.state = state;
-        }
-
-        public ZonedDateTime timestamp() {
-            return timestamp;
-        }
-
-        public State state() {
-            return state;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            AckStatus ackStatus = (AckStatus) o;
-
-            return Objects.equals(timestamp, ackStatus.timestamp) && Objects.equals(state, ackStatus.state);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(timestamp, state);
         }
 
         @Override

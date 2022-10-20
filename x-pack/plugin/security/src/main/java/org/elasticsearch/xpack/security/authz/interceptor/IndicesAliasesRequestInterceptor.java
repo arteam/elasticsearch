@@ -65,8 +65,8 @@ public final class IndicesAliasesRequestInterceptor implements RequestIntercepto
                     for (String index : aliasAction.indices()) {
                         IndicesAccessControl.IndexAccessControl indexAccessControl = indicesAccessControl.getIndexPermissions(index);
                         if (indexAccessControl != null
-                            && (indexAccessControl.getFieldPermissions().hasFieldLevelSecurity()
-                                || indexAccessControl.getDocumentPermissions().hasDocumentLevelPermissions())
+                            && (indexAccessControl.fieldPermissions().hasFieldLevelSecurity()
+                                || indexAccessControl.documentPermissions().hasDocumentLevelPermissions())
                             && isDlsLicensed) {
                             listener.onFailure(
                                 new ElasticsearchSecurityException(

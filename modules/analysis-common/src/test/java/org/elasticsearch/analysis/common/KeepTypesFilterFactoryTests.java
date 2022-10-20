@@ -40,7 +40,7 @@ public class KeepTypesFilterFactoryTests extends ESTokenStreamTestCase {
         }
         Settings settings = settingsBuilder.build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("keep_numbers");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("keep_numbers");
         assertThat(tokenFilter, instanceOf(KeepTypesFilterFactory.class));
         String source = "Hello 123 world";
         String[] expected = new String[] { "123" };
@@ -57,7 +57,7 @@ public class KeepTypesFilterFactoryTests extends ESTokenStreamTestCase {
             .put(BASE_SETTING + "." + KeepTypesFilterFactory.KEEP_TYPES_MODE_KEY, KeepTypesFilterFactory.KeepTypesMode.EXCLUDE)
             .build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("keep_numbers");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("keep_numbers");
         assertThat(tokenFilter, instanceOf(KeepTypesFilterFactory.class));
         String source = "Hello 123 world";
         String[] expected = new String[] { "Hello", "world" };

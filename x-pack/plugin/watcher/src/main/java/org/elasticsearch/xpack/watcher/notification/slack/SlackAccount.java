@@ -57,7 +57,7 @@ public class SlackAccount {
 
     public SentMessages send(final SlackMessage message, HttpProxy proxy) {
 
-        String[] to = message.getTo();
+        String[] to = message.to();
         if (to == null || to.length == 0) {
             SentMessages.SentMessage sentMessage = send(null, message, proxy);
             return new SentMessages(name, Collections.singletonList(sentMessage));
@@ -82,10 +82,10 @@ public class SlackAccount {
                     if (to != null) {
                         builder.field("channel", to);
                     }
-                    if (message.getFrom() != null) {
-                        builder.field("username", message.getFrom());
+                    if (message.from() != null) {
+                        builder.field("username", message.from());
                     }
-                    String icon = message.getIcon();
+                    String icon = message.icon();
                     if (icon != null) {
                         if (icon.startsWith("http")) {
                             builder.field("icon_url", icon);
@@ -93,10 +93,10 @@ public class SlackAccount {
                             builder.field("icon_emoji", icon);
                         }
                     }
-                    if (message.getText() != null) {
-                        builder.field("text", message.getText());
+                    if (message.text() != null) {
+                        builder.field("text", message.text());
                     }
-                    Attachment[] attachments = message.getAttachments();
+                    Attachment[] attachments = message.attachments();
                     if (attachments != null && attachments.length > 0) {
                         builder.startArray("attachments");
                         for (Attachment attachment : attachments) {

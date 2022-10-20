@@ -227,16 +227,7 @@ public final class Intervals {
         }
     }
 
-    private static class Token {
-        private final char ch;
-        private final int maxValue;
-        private final boolean optional;
-
-        Token(char ch, int maxValue, boolean optional) {
-            this.ch = ch;
-            this.maxValue = maxValue;
-            this.optional = optional;
-        }
+    private record Token(char ch, int maxValue, boolean optional) {
 
         @Override
         public String toString() {

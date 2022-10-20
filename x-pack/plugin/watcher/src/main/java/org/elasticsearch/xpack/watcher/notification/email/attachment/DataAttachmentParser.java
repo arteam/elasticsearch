@@ -62,6 +62,6 @@ public class DataAttachmentParser implements EmailAttachmentParser<DataAttachmen
     @Override
     public Attachment toAttachment(WatchExecutionContext ctx, Payload payload, DataAttachment attachment) throws IOException {
         Map<String, Object> model = Variables.createCtxParamsMap(ctx, payload);
-        return attachment.getDataAttachment().create(attachment.id(), model);
+        return attachment.dataAttachment().create(attachment.id(), model);
     }
 }

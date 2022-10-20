@@ -100,8 +100,8 @@ public class TransportOpenIdConnectAuthenticateAction extends HandledTransportAc
                         listener.onResponse(
                             new OpenIdConnectAuthenticateResponse(
                                 authentication,
-                                tokenResult.getAccessToken(),
-                                tokenResult.getRefreshToken(),
+                                tokenResult.accessToken(),
+                                tokenResult.refreshToken(),
                                 expiresIn
                             )
                         );

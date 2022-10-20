@@ -89,7 +89,7 @@ public class WaitForSnapshotStepTests extends AbstractStepTestCase<WaitForSnapsh
         Metadata.Builder meta = Metadata.builder().indices(indices).putCustom(SnapshotLifecycleMetadata.TYPE, smlMetadata);
         ClusterState clusterState = ClusterState.builder(ClusterName.DEFAULT).metadata(meta).build();
         ClusterStateWaitStep.Result result = instance.isConditionMet(indexMetadata.getIndex(), clusterState);
-        assertFalse(result.isComplete());
+        assertFalse(result.complete());
         assertTrue(getMessage(result).contains("to be executed"));
     }
 
@@ -141,10 +141,10 @@ public class WaitForSnapshotStepTests extends AbstractStepTestCase<WaitForSnapsh
         ClusterState clusterState = ClusterState.builder(ClusterName.DEFAULT).metadata(meta).build();
         ClusterStateWaitStep.Result result = instance.isConditionMet(indexMetadata.getIndex(), clusterState);
         if (startTimeAfterPhaseTime) {
-            assertTrue(result.isComplete());
-            assertNull(result.getInfomationContext());
+            assertTrue(result.complete());
+            assertNull(result.infomationContext());
         } else {
-            assertFalse(result.isComplete());
+            assertFalse(result.complete());
             assertTrue(getMessage(result).contains("to be executed"));
         }
     }
@@ -181,6 +181,6 @@ public class WaitForSnapshotStepTests extends AbstractStepTestCase<WaitForSnapsh
     }
 
     private String getMessage(ClusterStateWaitStep.Result result) throws IOException {
-        return Strings.toString(result.getInfomationContext());
+        return Strings.toString(result.infomationContext());
     }
 }

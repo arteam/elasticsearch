@@ -428,47 +428,12 @@ public class DataFrameDataExtractor {
         return value instanceof Number || value instanceof String || value instanceof Boolean;
     }
 
-    public static class DataSummary {
+    public record DataSummary(long rows, int cols) {}
 
-        public final long rows;
-        public final int cols;
-
-        public DataSummary(long rows, int cols) {
-            this.rows = rows;
-            this.cols = cols;
-        }
-    }
-
-    public static class Row {
-
-        private final SearchHit hit;
-
-        @Nullable
-        private final String[] values;
-
-        private final boolean isTraining;
-
-        private Row(String[] values, SearchHit hit, boolean isTraining) {
-            this.values = values;
-            this.hit = hit;
-            this.isTraining = isTraining;
-        }
-
-        @Nullable
-        public String[] getValues() {
-            return values;
-        }
-
-        public SearchHit getHit() {
-            return hit;
-        }
+    public record Row(@Nullable String[] values, SearchHit hit, boolean isTraining) {
 
         public boolean shouldSkip() {
             return values == null;
-        }
-
-        public boolean isTraining() {
-            return isTraining;
         }
 
         public int getChecksum() {

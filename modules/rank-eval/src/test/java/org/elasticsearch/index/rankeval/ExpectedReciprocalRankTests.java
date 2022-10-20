@@ -91,7 +91,7 @@ public class ExpectedReciprocalRankTests extends ESTestCase {
         ExpectedReciprocalRank err = new ExpectedReciprocalRank(3, null, 4);
         EvalQueryQuality evaluation = err.evaluate("id", hits, rated);
         assertEquals(0.875 + 0.00390625, evaluation.metricScore(), DELTA);
-        assertEquals(1, ((ExpectedReciprocalRank.Detail) evaluation.getMetricDetails()).getUnratedDocs());
+        assertEquals(1, ((ExpectedReciprocalRank.Detail) evaluation.getMetricDetails()).unratedDocs());
         // if we supply e.g. 2 as unknown docs rating, it should be the same as in the other test above
         err = new ExpectedReciprocalRank(3, 2, 4);
         assertEquals(0.8984375 + 0.00244140625, err.evaluate("id", hits, rated).metricScore(), DELTA);
@@ -172,7 +172,7 @@ public class ExpectedReciprocalRankTests extends ESTestCase {
     public void testMetricDetails() {
         int unratedDocs = randomIntBetween(0, 100);
         ExpectedReciprocalRank.Detail detail = new ExpectedReciprocalRank.Detail(unratedDocs);
-        assertEquals(unratedDocs, detail.getUnratedDocs());
+        assertEquals(unratedDocs, detail.unratedDocs());
     }
 
     public void testSerialization() throws IOException {

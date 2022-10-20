@@ -217,18 +217,18 @@ public final class GetUserPrivilegesResponse extends ActionResponse {
             builder.startObject();
             builder.field(RoleDescriptor.Fields.NAMES.getPreferredName(), indices);
             builder.field(RoleDescriptor.Fields.PRIVILEGES.getPreferredName(), privileges);
-            if (fieldSecurity.stream().anyMatch(g -> nonEmpty(g.getGrantedFields()) || nonEmpty(g.getExcludedFields()))) {
+            if (fieldSecurity.stream().anyMatch(g -> nonEmpty(g.grantedFields()) || nonEmpty(g.excludedFields()))) {
                 builder.startArray(RoleDescriptor.Fields.FIELD_PERMISSIONS.getPreferredName());
                 final List<FieldPermissionsDefinition.FieldGrantExcludeGroup> sortedFieldSecurity = this.fieldSecurity.stream()
                     .sorted()
                     .toList();
                 for (FieldPermissionsDefinition.FieldGrantExcludeGroup group : sortedFieldSecurity) {
                     builder.startObject();
-                    if (nonEmpty(group.getGrantedFields())) {
-                        builder.array(RoleDescriptor.Fields.GRANT_FIELDS.getPreferredName(), group.getGrantedFields());
+                    if (nonEmpty(group.grantedFields())) {
+                        builder.array(RoleDescriptor.Fields.GRANT_FIELDS.getPreferredName(), group.grantedFields());
                     }
-                    if (nonEmpty(group.getExcludedFields())) {
-                        builder.array(RoleDescriptor.Fields.EXCEPT_FIELDS.getPreferredName(), group.getExcludedFields());
+                    if (nonEmpty(group.excludedFields())) {
+                        builder.array(RoleDescriptor.Fields.EXCEPT_FIELDS.getPreferredName(), group.excludedFields());
                     }
                     builder.endObject();
                 }
@@ -254,8 +254,8 @@ public final class GetUserPrivilegesResponse extends ActionResponse {
             out.writeCollection(indices, StreamOutput::writeString);
             out.writeCollection(privileges, StreamOutput::writeString);
             out.writeCollection(fieldSecurity, (output, fields) -> {
-                output.writeOptionalStringArray(fields.getGrantedFields());
-                output.writeOptionalStringArray(fields.getExcludedFields());
+                output.writeOptionalStringArray(fields.grantedFields());
+                output.writeOptionalStringArray(fields.excludedFields());
             });
             out.writeCollection(queries, StreamOutput::writeBytesReference);
             out.writeBoolean(allowRestrictedIndices);

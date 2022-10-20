@@ -629,9 +629,9 @@ public class SearchActionTests extends ESTestCase {
     public void testEmptyMetadata() {
         String[] indices = new String[] { "foo", "bar" };
         TransportRollupSearchAction.RollupSearchContext result = TransportRollupSearchAction.separateIndices(indices, Map.of());
-        assertThat(result.getLiveIndices().length, equalTo(2));
-        assertThat(result.getRollupIndices().length, equalTo(0));
-        assertThat(result.getJobCaps().size(), equalTo(0));
+        assertThat(result.liveIndices().length, equalTo(2));
+        assertThat(result.rollupIndices().length, equalTo(0));
+        assertThat(result.jobCaps().size(), equalTo(0));
     }
 
     public void testNoMatchingIndexInMetadata() {
@@ -639,9 +639,9 @@ public class SearchActionTests extends ESTestCase {
         IndexMetadata indexMetadata = mock(IndexMetadata.class);
         Map<String, IndexMetadata> meta = Map.of("bar", indexMetadata);
         TransportRollupSearchAction.RollupSearchContext result = TransportRollupSearchAction.separateIndices(indices, meta);
-        assertThat(result.getLiveIndices().length, equalTo(1));
-        assertThat(result.getRollupIndices().length, equalTo(0));
-        assertThat(result.getJobCaps().size(), equalTo(0));
+        assertThat(result.liveIndices().length, equalTo(1));
+        assertThat(result.rollupIndices().length, equalTo(0));
+        assertThat(result.jobCaps().size(), equalTo(0));
     }
 
     public void testMatchingIndexInMetadata() throws IOException {
@@ -663,10 +663,10 @@ public class SearchActionTests extends ESTestCase {
 
         Map<String, IndexMetadata> metaMap = Map.of("foo", meta);
         TransportRollupSearchAction.RollupSearchContext result = TransportRollupSearchAction.separateIndices(indices, metaMap);
-        assertThat(result.getLiveIndices().length, equalTo(0));
-        assertThat(result.getRollupIndices().length, equalTo(1));
-        assertThat(result.getRollupIndices()[0], equalTo("foo"));
-        assertThat(result.getJobCaps().size(), equalTo(1));
+        assertThat(result.liveIndices().length, equalTo(0));
+        assertThat(result.rollupIndices().length, equalTo(1));
+        assertThat(result.rollupIndices()[0], equalTo("foo"));
+        assertThat(result.jobCaps().size(), equalTo(1));
     }
 
     public void testLiveOnlyProcess() throws Exception {

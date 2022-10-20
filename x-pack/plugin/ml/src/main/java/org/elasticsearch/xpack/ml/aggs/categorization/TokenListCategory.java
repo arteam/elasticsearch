@@ -141,7 +141,7 @@ public class TokenListCategory implements Accountable {
     ) {
         this.id = id;
         this.baseWeightedTokenIds = List.copyOf(baseWeightedTokenIds);
-        this.baseWeight = baseWeightedTokenIds.stream().mapToInt(TokenAndWeight::getWeight).sum();
+        this.baseWeight = baseWeightedTokenIds.stream().mapToInt(TokenAndWeight::weight).sum();
         assert unfilteredLength > 0 : "unfiltered length must be positive, got " + unfilteredLength;
         this.baseUnfilteredLength = unfilteredLength;
         assert maxUnfilteredStringLength >= baseUnfilteredLength
@@ -150,16 +150,16 @@ public class TokenListCategory implements Accountable {
         this.orderedCommonTokenBeginIndex = 0;
         this.orderedCommonTokenEndIndex = baseWeightedTokenIds.size();
         // As well as being unique, the unique token IDs must be in the base token IDs.
-        assert uniqueTokenIds.stream().map(TokenAndWeight::getTokenId).distinct().count() == uniqueTokenIds.size()
+        assert uniqueTokenIds.stream().map(TokenAndWeight::tokenId).distinct().count() == uniqueTokenIds.size()
             : "Unique token IDs contains duplicates " + uniqueTokenIds;
         assert isSorted(uniqueTokenIds) : "Unique token IDs is not sorted " + uniqueTokenIds;
         assert Sets.intersection(
-            uniqueTokenIds.stream().map(TokenAndWeight::getTokenId).collect(Collectors.toSet()),
-            baseWeightedTokenIds.stream().map(TokenAndWeight::getTokenId).collect(Collectors.toSet())
+            uniqueTokenIds.stream().map(TokenAndWeight::tokenId).collect(Collectors.toSet()),
+            baseWeightedTokenIds.stream().map(TokenAndWeight::tokenId).collect(Collectors.toSet())
         ).size() == uniqueTokenIds.size() : "Some unique token IDs " + uniqueTokenIds + " are not base token IDs " + baseWeightedTokenIds;
         // Force a copy into an ArrayList because we need mutability and efficient indexed access.
         this.commonUniqueTokenIds = new ArrayList<>(uniqueTokenIds);
-        this.commonUniqueTokenWeight = commonUniqueTokenIds.stream().mapToInt(TokenAndWeight::getWeight).sum();
+        this.commonUniqueTokenWeight = commonUniqueTokenIds.stream().mapToInt(TokenAndWeight::weight).sum();
         this.origUniqueTokenWeight = commonUniqueTokenWeight;
         assert numMatches > 0 : "number of matches must be positive, got " + numMatches;
         assert numMatches > 1 || maxUnfilteredStringLength == baseUnfilteredLength
@@ -177,7 +177,7 @@ public class TokenListCategory implements Accountable {
         this.baseWeightedTokenIds = IntStream.range(0, serializable.baseTokens.length)
             .mapToObj(index -> new TokenAndWeight(bytesRefHash.put(serializable.baseTokens[index]), serializable.baseTokenWeights[index]))
             .collect(Collectors.toList());
-        this.baseWeight = baseWeightedTokenIds.stream().mapToInt(TokenAndWeight::getWeight).sum();
+        this.baseWeight = baseWeightedTokenIds.stream().mapToInt(TokenAndWeight::weight).sum();
         this.baseUnfilteredLength = serializable.baseUnfilteredLength;
         this.maxUnfilteredStringLength = serializable.maxUnfilteredStringLength;
         this.orderedCommonTokenBeginIndex = serializable.orderedCommonTokenBeginIndex;
@@ -189,13 +189,13 @@ public class TokenListCategory implements Accountable {
         this.commonUniqueTokenIds = IntStream.range(0, serializable.commonUniqueTokenIndexes.length)
             .mapToObj(
                 index -> new TokenAndWeight(
-                    baseWeightedTokenIds.get(serializable.commonUniqueTokenIndexes[index]).getTokenId(),
+                    baseWeightedTokenIds.get(serializable.commonUniqueTokenIndexes[index]).tokenId(),
                     serializable.commonUniqueTokenWeights[index]
                 )
             )
             .sorted()
             .collect(Collectors.toCollection(ArrayList::new));
-        this.commonUniqueTokenWeight = commonUniqueTokenIds.stream().mapToInt(TokenAndWeight::getWeight).sum();
+        this.commonUniqueTokenWeight = commonUniqueTokenIds.stream().mapToInt(TokenAndWeight::weight).sum();
         this.origUniqueTokenWeight = serializable.origUniqueTokenWeight;
         this.numMatches = serializable.numMatches;
         cacheRamUsage();
@@ -259,7 +259,7 @@ public class TokenListCategory implements Accountable {
      * both lists in parallel looking for differences.
      */
     private void updateCommonUniqueTokenIds(List<TokenAndWeight> newUniqueTokenIds) {
-        assert commonUniqueTokenWeight == commonUniqueTokenIds.stream().mapToInt(TokenAndWeight::getWeight).sum()
+        assert commonUniqueTokenWeight == commonUniqueTokenIds.stream().mapToInt(TokenAndWeight::weight).sum()
             : "commonUniqueTokenWeight not up to date";
 
         commonUniqueTokenWeight = 0;
@@ -282,7 +282,7 @@ public class TokenListCategory implements Accountable {
             }
             if (cmp == 0) {
                 commonUniqueTokenIds.set(outputIndex++, commonTokenAndWeight);
-                commonUniqueTokenWeight += commonTokenAndWeight.getWeight();
+                commonUniqueTokenWeight += commonTokenAndWeight.weight();
                 ++commonIndex;
             }
             ++newIndex;
@@ -294,7 +294,7 @@ public class TokenListCategory implements Accountable {
             assert outputIndex == initialSize
                 : "should be impossible for output index to exceed initial size, but got " + outputIndex + " > " + initialSize;
         }
-        assert commonUniqueTokenWeight == commonUniqueTokenIds.stream().mapToInt(TokenAndWeight::getWeight).sum()
+        assert commonUniqueTokenWeight == commonUniqueTokenIds.stream().mapToInt(TokenAndWeight::weight).sum()
             : "commonUniqueTokenWeight not up to date";
     }
 
@@ -367,10 +367,10 @@ public class TokenListCategory implements Accountable {
                 while (newIndex < newEndIndex) {
                     TokenAndWeight baseToken = baseWeightedTokenIds.get(commonIndex);
                     TokenAndWeight newToken = newTokenIds.get(newIndex);
-                    if (newToken.getTokenId() != baseToken.getTokenId()) {
+                    if (newToken.tokenId() != baseToken.tokenId()) {
                         ++newIndex;
                     } else {
-                        tryWeight += baseToken.getWeight();
+                        tryWeight += baseToken.weight();
                         break;
                     }
                 }
@@ -509,7 +509,7 @@ public class TokenListCategory implements Accountable {
             }
             if (cmp == 0) {
                 // If the token ID matches then consider the token present even if the weight in the test list is different.
-                presentWeight += commonTokenAndWeight.getWeight();
+                presentWeight += commonTokenAndWeight.weight();
                 ++commonIndex;
             }
             ++testIndex;
@@ -556,12 +556,12 @@ public class TokenListCategory implements Accountable {
                 return false;
             }
             TokenAndWeight testTokenAndWeight;
-            while ((testTokenAndWeight = uniqueTokenIds.get(testIndex)).getTokenId() < commonTokenAndWeight.getTokenId()) {
+            while ((testTokenAndWeight = uniqueTokenIds.get(testIndex)).tokenId() < commonTokenAndWeight.tokenId()) {
                 if (++testIndex >= uniqueTokenIdsSize) {
                     return false;
                 }
             }
-            if (testTokenAndWeight.getTokenId() != commonTokenAndWeight.getTokenId()) {
+            if (testTokenAndWeight.tokenId() != commonTokenAndWeight.tokenId()) {
                 return false;
             }
             ++testIndex;
@@ -667,45 +667,18 @@ public class TokenListCategory implements Accountable {
         return "Category with base tokens " + baseWeightedTokenIds + " with [" + numMatches + "] matches";
     }
 
-    public static class TokenAndWeight implements Comparable<TokenAndWeight>, Accountable {
+    public record TokenAndWeight(int tokenId, int weight) implements Comparable<TokenAndWeight>, Accountable {
 
         private static final long SHALLOW_SIZE = shallowSizeOfInstance(TokenAndWeight.class);
 
-        private final int tokenId;
-        private final int weight;
-
-        public TokenAndWeight(int tokenId, int weight) {
+        public TokenAndWeight {
             assert tokenId >= 0 : "token ID cannot be negative, got " + tokenId;
-            this.tokenId = tokenId;
             assert weight >= 0 : "weight cannot be negative, got " + weight;
-            this.weight = weight;
-        }
-
-        public int getTokenId() {
-            return tokenId;
-        }
-
-        public int getWeight() {
-            return weight;
         }
 
         @Override
         public long ramBytesUsed() {
             return SHALLOW_SIZE;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(tokenId, weight);
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (other == null || getClass() != other.getClass()) {
-                return false;
-            }
-            TokenAndWeight that = (TokenAndWeight) other;
-            return this.tokenId == that.tokenId && this.weight == that.weight;
         }
 
         /**

@@ -78,12 +78,12 @@ public class DatafeedJobBuilder {
         final ParentTaskAssigningClient parentTaskAssigningClient = new ParentTaskAssigningClient(client, clusterService.localNode(), task);
         final DatafeedConfig datafeedConfig = context.getDatafeedConfig();
         final Job job = context.getJob();
-        final long latestFinalBucketEndMs = context.getRestartTimeInfo().getLatestFinalBucketTimeMs() == null
+        final long latestFinalBucketEndMs = context.getRestartTimeInfo().latestFinalBucketTimeMs() == null
             ? -1
-            : context.getRestartTimeInfo().getLatestFinalBucketTimeMs() + job.getAnalysisConfig().getBucketSpan().millis() - 1;
-        final long latestRecordTimeMs = context.getRestartTimeInfo().getLatestRecordTimeMs() == null
+            : context.getRestartTimeInfo().latestFinalBucketTimeMs() + job.getAnalysisConfig().getBucketSpan().millis() - 1;
+        final long latestRecordTimeMs = context.getRestartTimeInfo().latestRecordTimeMs() == null
             ? -1
-            : context.getRestartTimeInfo().getLatestRecordTimeMs();
+            : context.getRestartTimeInfo().latestRecordTimeMs();
         final DatafeedTimingStatsReporter timingStatsReporter = new DatafeedTimingStatsReporter(
             context.getTimingStats(),
             jobResultsPersister::persistDatafeedTimingStats

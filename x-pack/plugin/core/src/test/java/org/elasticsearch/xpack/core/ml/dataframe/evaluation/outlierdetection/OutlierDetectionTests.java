@@ -112,12 +112,12 @@ public class OutlierDetectionTests extends AbstractXContentSerializingTestCase<O
     public void testGetFields() {
         OutlierDetection evaluation = new OutlierDetection("foo", "bar", null);
         EvaluationFields fields = evaluation.getFields();
-        assertThat(fields.getActualField(), is(equalTo("foo")));
-        assertThat(fields.getPredictedField(), is(nullValue()));
-        assertThat(fields.getTopClassesField(), is(nullValue()));
-        assertThat(fields.getPredictedClassField(), is(nullValue()));
-        assertThat(fields.getPredictedProbabilityField(), is(equalTo("bar")));
-        assertThat(fields.isPredictedProbabilityFieldNested(), is(false));
+        assertThat(fields.actualField(), is(equalTo("foo")));
+        assertThat(fields.predictedField(), is(nullValue()));
+        assertThat(fields.topClassesField(), is(nullValue()));
+        assertThat(fields.predictedClassField(), is(nullValue()));
+        assertThat(fields.predictedProbabilityField(), is(equalTo("bar")));
+        assertThat(fields.predictedProbabilityFieldNested(), is(false));
     }
 
     public void testBuildSearch() {

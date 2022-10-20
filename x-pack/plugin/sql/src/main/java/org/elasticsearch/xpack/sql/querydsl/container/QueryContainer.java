@@ -65,29 +65,7 @@ public class QueryContainer {
     private final Aggs aggs;
     private final Query query;
 
-    public static class FieldInfo {
-        private final FieldExtraction extraction;
-        private final String id;
-        private final Attribute attribute;
-
-        public FieldInfo(FieldExtraction extraction, String id, Attribute attribute) {
-            this.extraction = extraction;
-            this.id = id;
-            this.attribute = attribute;
-        }
-
-        public FieldExtraction extraction() {
-            return extraction;
-        }
-
-        public String id() {
-            return id;
-        }
-
-        public Attribute attribute() {
-            return attribute;
-        }
-    }
+    public record FieldInfo(FieldExtraction extraction, String id, Attribute attribute) {}
 
     // fields extracted from the response - not necessarily what the client sees
     // for example in case of grouping or custom sorting, the response has extra columns

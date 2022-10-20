@@ -11,19 +11,9 @@ import org.elasticsearch.xcontent.XContentBuilder;
 import java.io.IOException;
 import java.util.Objects;
 
-public class DataAttachment implements EmailAttachmentParser.EmailAttachment {
-
-    private final String id;
-    private final org.elasticsearch.xpack.watcher.notification.email.DataAttachment dataAttachment;
-
-    public DataAttachment(String id, org.elasticsearch.xpack.watcher.notification.email.DataAttachment dataAttachment) {
-        this.id = id;
-        this.dataAttachment = dataAttachment;
-    }
-
-    public org.elasticsearch.xpack.watcher.notification.email.DataAttachment getDataAttachment() {
-        return dataAttachment;
-    }
+public record DataAttachment(String id, org.elasticsearch.xpack.watcher.notification.email.DataAttachment dataAttachment)
+    implements
+        EmailAttachmentParser.EmailAttachment {
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
@@ -48,16 +38,6 @@ public class DataAttachment implements EmailAttachmentParser.EmailAttachment {
 
         DataAttachment otherDataAttachment = (DataAttachment) o;
         return Objects.equals(id, otherDataAttachment.id) && Objects.equals(dataAttachment, otherDataAttachment.dataAttachment);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, dataAttachment);
-    }
-
-    @Override
-    public String id() {
-        return id;
     }
 
     @Override

@@ -106,7 +106,7 @@ public class ChunkedTrainedModelRestorer {
      * returning false in which case the {@code successConsumer} is called
      * with the parameter Boolean.FALSE.
      *
-     * The docs are returned in order based on {@link TrainedModelDefinitionDoc#getDocNum()}
+     * The docs are returned in order based on {@link TrainedModelDefinitionDoc#docNum()}
      * there is no error checking for duplicate or missing docs the consumer should handle
      * those errors.
      *
@@ -161,7 +161,7 @@ public class ChunkedTrainedModelRestorer {
                         modelId,
                         xContentRegistry
                     );
-                    lastNum = doc.getDocNum();
+                    lastNum = doc.docNum();
 
                     boolean continueSearching = modelConsumer.apply(doc);
                     if (continueSearching == false) {

@@ -42,11 +42,11 @@ public class KeywordMarkerFilterFactoryTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
             .build();
         TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_keyword");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_keyword");
         assertThat(tokenFilter, instanceOf(KeywordMarkerTokenFilterFactory.class));
         TokenStream filter = tokenFilter.create(new WhitespaceTokenizer());
         assertThat(filter, instanceOf(SetKeywordMarkerFilter.class));
-        NamedAnalyzer analyzer = analysis.indexAnalyzers.get("my_keyword");
+        NamedAnalyzer analyzer = analysis.indexAnalyzers().get("my_keyword");
         // jogging is not part of the keywords set, so verify that its the only stemmed word
         assertAnalyzesTo(analyzer, "running jogging sleeping", new String[] { "running", "jog", "sleeping" });
     }
@@ -64,11 +64,11 @@ public class KeywordMarkerFilterFactoryTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
             .build();
         TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_keyword");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_keyword");
         assertThat(tokenFilter, instanceOf(KeywordMarkerTokenFilterFactory.class));
         TokenStream filter = tokenFilter.create(new WhitespaceTokenizer());
         assertThat(filter, instanceOf(PatternKeywordMarkerFilter.class));
-        NamedAnalyzer analyzer = analysis.indexAnalyzers.get("my_keyword");
+        NamedAnalyzer analyzer = analysis.indexAnalyzers().get("my_keyword");
         // running should match the pattern, so it should not be stemmed but sleeping should
         assertAnalyzesTo(analyzer, "running sleeping", new String[] { "running", "sleep" });
     }

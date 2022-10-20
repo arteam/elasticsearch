@@ -595,7 +595,7 @@ public class UserTreeToXContent extends UserTreeBaseVisitor<ScriptScope> {
     private void start(ANode node) {
         builder.startObject();
         builder.field(Fields.NODE, node.getClass().getSimpleName());
-        builder.field(Fields.LOCATION, node.getLocation().getOffset());
+        builder.field(Fields.LOCATION, node.getLocation().offset());
     }
 
     private void end(ANode node, ScriptScope scope) {

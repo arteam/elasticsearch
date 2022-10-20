@@ -276,7 +276,7 @@ public class SnapshotUpgradeTaskExecutor extends AbstractJobPersistentTasksExecu
                 );
                 return;
             }
-            ModelSnapshot snapshot = result.result;
+            ModelSnapshot snapshot = result.result();
             JobDataDeleter jobDataDeleter = new JobDataDeleter(client, jobId);
             jobDataDeleter.deleteModelSnapshots(Collections.singletonList(snapshot), ActionListener.wrap(deleteResponse -> {
                 auditor.warning(jobId, "Task to upgrade snapshot exited in unknown state. Deleted snapshot [" + snapshotId + "]");

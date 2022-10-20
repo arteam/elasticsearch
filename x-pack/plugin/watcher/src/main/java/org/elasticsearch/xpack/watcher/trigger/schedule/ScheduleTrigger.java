@@ -11,40 +11,13 @@ import org.elasticsearch.xpack.core.watcher.trigger.Trigger;
 
 import java.io.IOException;
 
-public class ScheduleTrigger implements Trigger {
+public record ScheduleTrigger(Schedule schedule) implements Trigger {
 
     public static final String TYPE = "schedule";
-
-    private final Schedule schedule;
-
-    public ScheduleTrigger(Schedule schedule) {
-        this.schedule = schedule;
-    }
 
     @Override
     public String type() {
         return TYPE;
-    }
-
-    public Schedule getSchedule() {
-        return schedule;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ScheduleTrigger trigger = (ScheduleTrigger) o;
-
-        if (schedule.equals(trigger.schedule) == false) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return schedule.hashCode();
     }
 
     @Override

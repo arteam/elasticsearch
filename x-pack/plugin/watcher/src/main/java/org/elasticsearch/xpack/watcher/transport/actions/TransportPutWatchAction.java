@@ -82,7 +82,7 @@ public class TransportPutWatchAction extends WatcherTransportAction<PutWatchRequ
     ) {
         super(PutWatchAction.NAME, transportService, actionFilters, licenseState, PutWatchRequest::new);
         this.threadPool = threadPool;
-        this.clock = clockHolder.clock;
+        this.clock = clockHolder.clock();
         this.parser = parser;
         this.client = client;
         this.clusterService = clusterService;

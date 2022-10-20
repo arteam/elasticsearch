@@ -16,36 +16,8 @@ import org.elasticsearch.xpack.watcher.common.text.TextTemplateEngine;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
 
-class Field implements MessageElement {
-
-    final String title;
-    final String value;
-    final boolean isShort;
-
-    Field(String title, String value, boolean isShort) {
-        this.title = title;
-        this.value = value;
-        this.isShort = isShort;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Field field = (Field) o;
-
-        if (isShort != field.isShort) return false;
-        if (title.equals(field.title) == false) return false;
-        return value.equals(field.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(title, value, isShort);
-    }
+record Field(String title, String value, boolean isShort) implements MessageElement {
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
@@ -56,47 +28,17 @@ class Field implements MessageElement {
             .endObject();
     }
 
-    static class Template implements ToXContentObject {
-
-        final TextTemplate title;
-        final TextTemplate value;
-        final Boolean isShort;
-
-        Template(TextTemplate title, TextTemplate value, Boolean isShort) {
-            this.title = title;
-            this.value = value;
-            this.isShort = isShort;
-        }
+    record Template(TextTemplate title, TextTemplate value, Boolean isShort) implements ToXContentObject {
 
         public Field render(
             TextTemplateEngine engine,
             Map<String, Object> model,
             SlackMessageDefaults.AttachmentDefaults.FieldDefaults defaults
         ) {
-            String title = this.title != null ? engine.render(this.title, model) : defaults.title;
-            String value = this.value != null ? engine.render(this.value, model) : defaults.value;
-            Boolean isShort = this.isShort != null ? this.isShort : defaults.isShort;
+            String title = this.title() != null ? engine.render(this.title(), model) : defaults.title;
+            String value = this.value() != null ? engine.render(this.value(), model) : defaults.value;
+            Boolean isShort = this.isShort() != null ? this.isShort() : defaults.isShort;
             return new Field(title, value, isShort);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Template template = (Template) o;
-
-            if (isShort != template.isShort) return false;
-            if (title.equals(template.title) == false) return false;
-            return value.equals(template.value);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = title.hashCode();
-            result = 31 * result + value.hashCode();
-            result = 31 * result + (isShort ? 1 : 0);
-            return result;
         }
 
         @Override

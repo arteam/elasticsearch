@@ -85,9 +85,9 @@ public class UserPrivilegeResolverTests extends ESTestCase {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            assertThat(privileges.principal, equalTo(username));
-            assertThat(privileges.hasAccess, equalTo(false));
-            assertThat(privileges.roles, emptyIterable());
+            assertThat(privileges.principal(), equalTo(username));
+            assertThat(privileges.hasAccess(), equalTo(false));
+            assertThat(privileges.roles(), emptyIterable());
         });
     }
 
@@ -110,9 +110,9 @@ public class UserPrivilegeResolverTests extends ESTestCase {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            assertThat(privileges.principal, equalTo(username));
-            assertThat(privileges.hasAccess, equalTo(false));
-            assertThat(privileges.roles, emptyIterable());
+            assertThat(privileges.principal(), equalTo(username));
+            assertThat(privileges.hasAccess(), equalTo(false));
+            assertThat(privileges.roles(), emptyIterable());
         });
     }
 
@@ -135,9 +135,9 @@ public class UserPrivilegeResolverTests extends ESTestCase {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            assertThat(privileges.principal, equalTo(username));
-            assertThat(privileges.hasAccess, equalTo(true));
-            assertThat(privileges.roles, containsInAnyOrder("viewer"));
+            assertThat(privileges.principal(), equalTo(username));
+            assertThat(privileges.hasAccess(), equalTo(true));
+            assertThat(privileges.roles(), containsInAnyOrder("viewer"));
         });
     }
 
@@ -177,9 +177,9 @@ public class UserPrivilegeResolverTests extends ESTestCase {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            assertThat(privileges.principal, equalTo(username));
-            assertThat(privileges.hasAccess, equalTo(true));
-            assertThat(privileges.roles, containsInAnyOrder("operator", "monitor"));
+            assertThat(privileges.principal(), equalTo(username));
+            assertThat(privileges.hasAccess(), equalTo(true));
+            assertThat(privileges.roles(), containsInAnyOrder("operator", "monitor"));
         });
     }
 

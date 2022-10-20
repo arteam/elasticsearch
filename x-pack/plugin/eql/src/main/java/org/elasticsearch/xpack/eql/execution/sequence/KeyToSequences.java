@@ -99,7 +99,7 @@ class KeyToSequences implements Accountable {
             SequenceKey key = keyAndOrdinal.key();
             SequenceEntry sequenceEntry = keyToSequences.get(key);
             if (sequenceEntry != null) {
-                sequenceEntry.until(keyAndOrdinal.ordinal);
+                sequenceEntry.until(keyAndOrdinal.ordinal());
             }
         }
     }

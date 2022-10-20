@@ -78,11 +78,11 @@ public class SecurityUsageTransportAction extends XPackUsageFeatureTransportActi
         );
         this.settings = settings;
         this.licenseState = licenseState;
-        this.realms = securityServices.realms;
-        this.rolesStore = securityServices.rolesStore;
-        this.roleMappingStore = securityServices.roleMappingStore;
-        this.ipFilter = securityServices.ipFilter;
-        this.profileService = securityServices.profileService;
+        this.realms = securityServices.realms();
+        this.rolesStore = securityServices.rolesStore();
+        this.roleMappingStore = securityServices.roleMappingStore();
+        this.ipFilter = securityServices.ipFilter();
+        this.profileService = securityServices.profileService();
     }
 
     @Override

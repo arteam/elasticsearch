@@ -94,12 +94,12 @@ public final class TransportSamlInvalidateSessionAction extends HandledTransport
     }
 
     private String buildLogoutResponseUrl(SamlRealm realm, SamlLogoutRequestHandler.Result result) {
-        final LogoutResponse response = realm.buildLogoutResponse(result.getRequestId());
-        return new SamlRedirect(response, realm.getSigningConfiguration()).getRedirectUrl(result.getRelayState());
+        final LogoutResponse response = realm.buildLogoutResponse(result.requestId());
+        return new SamlRedirect(response, realm.getSigningConfiguration()).getRedirectUrl(result.relayState());
     }
 
     private void findAndInvalidateTokens(SamlRealm realm, SamlLogoutRequestHandler.Result result, ActionListener<Integer> listener) {
-        final Map<String, Object> tokenMetadata = realm.createTokenMetadata(result.getNameId(), result.getSession());
+        final Map<String, Object> tokenMetadata = realm.createTokenMetadata(result.nameId(), result.session());
         if (Strings.isNullOrEmpty((String) tokenMetadata.get(SamlRealm.TOKEN_METADATA_NAMEID_VALUE))) {
             // If we don't have a valid name-id to match against, don't do anything
             logger.debug("Logout request [{}] has no NameID value, so cannot invalidate any sessions", result);

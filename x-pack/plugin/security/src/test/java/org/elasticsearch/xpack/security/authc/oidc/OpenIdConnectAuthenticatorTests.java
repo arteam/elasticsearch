@@ -162,14 +162,14 @@ public class OpenIdConnectAuthenticatorTests extends OpenIdConnectTestCase {
     ) {
         final RealmConfig config = buildConfig(getBasicRealmSettings().build(), threadContext);
         final JWSVerificationKeySelector<?> keySelector = new JWSVerificationKeySelector<>(rpConfig.getSignatureAlgorithm(), jwkSource);
-        final IDTokenValidator validator = new IDTokenValidator(opConfig.getIssuer(), rpConfig.getClientId(), keySelector, null);
+        final IDTokenValidator validator = new IDTokenValidator(opConfig.issuer(), rpConfig.getClientId(), keySelector, null);
         return new OpenIdConnectAuthenticator(config, opConfig, rpConfig, new SSLService(env), validator, null);
     }
 
     private OpenIdConnectAuthenticator buildAuthenticator(OpenIdConnectProviderConfiguration opConfig, RelyingPartyConfiguration rpConfig) {
         final RealmConfig config = buildConfig(getBasicRealmSettings().build(), threadContext);
         final IDTokenValidator validator = new IDTokenValidator(
-            opConfig.getIssuer(),
+            opConfig.issuer(),
             rpConfig.getClientId(),
             rpConfig.getSignatureAlgorithm(),
             new Secret(rpConfig.getClientSecret().toString())
@@ -317,7 +317,7 @@ public class OpenIdConnectAuthenticatorTests extends OpenIdConnectTestCase {
             .audience(rpConfig.getClientId().getValue())
             // Expired 55 seconds ago with an allowed clock skew of 60 seconds
             .expirationTime(Date.from(now().minusSeconds(55)))
-            .issuer(opConfig.getIssuer().getValue())
+            .issuer(opConfig.issuer().getValue())
             .issueTime(Date.from(now().minusSeconds(200)))
             .notBeforeTime(Date.from(now().minusSeconds(200)))
             .claim("nonce", nonce)
@@ -361,7 +361,7 @@ public class OpenIdConnectAuthenticatorTests extends OpenIdConnectTestCase {
             .audience(rpConfig.getClientId().getValue())
             // Expired 65 seconds ago with an allowed clock skew of 60 seconds
             .expirationTime(Date.from(now().minusSeconds(65)))
-            .issuer(opConfig.getIssuer().getValue())
+            .issuer(opConfig.issuer().getValue())
             .issueTime(Date.from(now().minusSeconds(200)))
             .notBeforeTime(Date.from(now().minusSeconds(200)))
             .claim("nonce", nonce)
@@ -410,7 +410,7 @@ public class OpenIdConnectAuthenticatorTests extends OpenIdConnectTestCase {
         JWTClaimsSet.Builder idTokenBuilder = new JWTClaimsSet.Builder().jwtID(randomAlphaOfLength(8))
             .audience(rpConfig.getClientId().getValue())
             .expirationTime(Date.from(now().plusSeconds(3600)))
-            .issuer(opConfig.getIssuer().getValue())
+            .issuer(opConfig.issuer().getValue())
             // Issued 80 seconds in the future with max allowed clock skew of 60
             .issueTime(Date.from(now().plusSeconds(80)))
             .notBeforeTime(Date.from(now().minusSeconds(80)))
@@ -509,7 +509,7 @@ public class OpenIdConnectAuthenticatorTests extends OpenIdConnectTestCase {
         JWTClaimsSet.Builder idTokenBuilder = new JWTClaimsSet.Builder().jwtID(randomAlphaOfLength(8))
             .audience("some-other-RP")
             .expirationTime(Date.from(now().plusSeconds(3600)))
-            .issuer(opConfig.getIssuer().getValue())
+            .issuer(opConfig.issuer().getValue())
             .issueTime(Date.from(now().minusSeconds(200)))
             .notBeforeTime(Date.from(now().minusSeconds(80)))
             .claim("nonce", nonce)
@@ -733,7 +733,7 @@ public class OpenIdConnectAuthenticatorTests extends OpenIdConnectTestCase {
         JWTClaimsSet.Builder idTokenBuilder = new JWTClaimsSet.Builder().jwtID(randomAlphaOfLength(8))
             .audience(rpConfig.getClientId().getValue())
             .expirationTime(Date.from(now().plusSeconds(3600)))
-            .issuer(opConfig.getIssuer().getValue())
+            .issuer(opConfig.issuer().getValue())
             .issueTime(Date.from(now().minusSeconds(200)))
             .notBeforeTime(Date.from(now().minusSeconds(200)))
             .claim("nonce", nonce)
@@ -771,7 +771,7 @@ public class OpenIdConnectAuthenticatorTests extends OpenIdConnectTestCase {
         Map<String, Object> idTokenObject = new JWTClaimsSet.Builder().jwtID(randomAlphaOfLength(8))
             .audience(rpConfig.getClientId().getValue())
             .expirationTime(Date.from(now().plusSeconds(3600)))
-            .issuer(opConfig.getIssuer().getValue())
+            .issuer(opConfig.issuer().getValue())
             .issueTime(Date.from(now().minusSeconds(200)))
             .notBeforeTime(Date.from(now().minusSeconds(200)))
             .claim("nonce", nonce)
@@ -1370,7 +1370,7 @@ public class OpenIdConnectAuthenticatorTests extends OpenIdConnectTestCase {
         JWTClaimsSet.Builder idTokenBuilder = new JWTClaimsSet.Builder().jwtID(randomAlphaOfLength(8))
             .audience(rpConfig.getClientId().getValue())
             .expirationTime(Date.from(now().plusSeconds(3600)))
-            .issuer(opConfig.getIssuer().getValue())
+            .issuer(opConfig.issuer().getValue())
             .issueTime(Date.from(now().minusSeconds(4)))
             .notBeforeTime(Date.from(now().minusSeconds(4)))
             .claim("nonce", nonce)

@@ -59,16 +59,16 @@ public class ExecutableSearchInput extends ExecutableInput<SearchInput, SearchIn
         super(input);
         this.client = client;
         this.searchTemplateService = searchTemplateService;
-        this.timeout = input.getTimeout() != null ? input.getTimeout() : defaultTimeout;
+        this.timeout = input.timeout() != null ? input.timeout() : defaultTimeout;
     }
 
     @Override
     public SearchInput.Result execute(WatchExecutionContext ctx, Payload payload) {
         WatcherSearchTemplateRequest request = null;
         try {
-            Script template = input.getRequest().getOrCreateTemplate();
+            Script template = input.request().getOrCreateTemplate();
             String renderedTemplate = searchTemplateService.renderTemplate(template, ctx, payload);
-            request = new WatcherSearchTemplateRequest(input.getRequest(), new BytesArray(renderedTemplate));
+            request = new WatcherSearchTemplateRequest(input.request(), new BytesArray(renderedTemplate));
             return doExecute(ctx, request);
         } catch (Exception e) {
             logger.error(() -> format("failed to execute [%s] input for watch [%s]", TYPE, ctx.watch().id()), e);
@@ -104,7 +104,7 @@ public class ExecutableSearchInput extends ExecutableInput<SearchInput, SearchIn
         } else {
             params = EMPTY_PARAMS;
         }
-        if (input.getExtractKeys() != null) {
+        if (input.extractKeys() != null) {
             BytesReference bytes = XContentHelper.toXContent(response, XContentType.SMILE, params, false);
             // EMPTY is safe here because we never use namedObject
             try (
@@ -115,7 +115,7 @@ public class ExecutableSearchInput extends ExecutableInput<SearchInput, SearchIn
                     XContentType.SMILE
                 )
             ) {
-                Map<String, Object> filteredKeys = XContentFilterKeysUtils.filterMapOrdered(input.getExtractKeys(), parser);
+                Map<String, Object> filteredKeys = XContentFilterKeysUtils.filterMapOrdered(input.extractKeys(), parser);
                 payload = new Payload.Simple(filteredKeys);
             }
         } else {

@@ -15,7 +15,6 @@ import org.elasticsearch.core.Nullable;
 import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.rest.RestUtils;
 import org.elasticsearch.script.ScriptType;
-import org.elasticsearch.xcontent.ToXContent;
 import org.elasticsearch.xcontent.ToXContentObject;
 import org.elasticsearch.xcontent.XContentBuilder;
 import org.elasticsearch.xcontent.XContentParser;
@@ -33,23 +32,20 @@ import java.util.Objects;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 
-public class HttpRequestTemplate implements ToXContentObject {
-
-    private final Scheme scheme;
-    private final String host;
-    private final int port;
-    private final HttpMethod method;
-    private final TextTemplate path;
-    private final Map<String, TextTemplate> params;
-    private final Map<String, TextTemplate> headers;
-    private final BasicAuth auth;
-    private final TextTemplate body;
-    @Nullable
-    private final TimeValue connectionTimeout;
-    @Nullable
-    private final TimeValue readTimeout;
-    @Nullable
-    private final HttpProxy proxy;
+public record HttpRequestTemplate(
+    String host,
+    int port,
+    Scheme scheme,
+    HttpMethod method,
+    TextTemplate path,
+    Map<String, TextTemplate> params,
+    Map<String, TextTemplate> headers,
+    BasicAuth auth,
+    TextTemplate body,
+    @Nullable TimeValue connectionTimeout,
+    @Nullable TimeValue readTimeout,
+    @Nullable HttpProxy proxy
+) implements ToXContentObject {
 
     public HttpRequestTemplate(
         String host,
@@ -77,54 +73,6 @@ public class HttpRequestTemplate implements ToXContentObject {
         this.connectionTimeout = connectionTimeout;
         this.readTimeout = readTimeout;
         this.proxy = proxy;
-    }
-
-    public Scheme scheme() {
-        return scheme;
-    }
-
-    public String host() {
-        return host;
-    }
-
-    public int port() {
-        return port;
-    }
-
-    public HttpMethod method() {
-        return method;
-    }
-
-    public TextTemplate path() {
-        return path;
-    }
-
-    public Map<String, TextTemplate> params() {
-        return params;
-    }
-
-    public Map<String, TextTemplate> headers() {
-        return headers;
-    }
-
-    public BasicAuth auth() {
-        return auth;
-    }
-
-    public TextTemplate body() {
-        return body;
-    }
-
-    public TimeValue connectionTimeout() {
-        return connectionTimeout;
-    }
-
-    public TimeValue readTimeout() {
-        return readTimeout;
-    }
-
-    public HttpProxy proxy() {
-        return proxy;
     }
 
     public HttpRequest render(TextTemplateEngine engine, Map<String, Object> model) {
@@ -173,7 +121,7 @@ public class HttpRequestTemplate implements ToXContentObject {
     }
 
     @Override
-    public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
+    public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
         builder.field(HttpRequest.Field.SCHEME.getPreferredName(), scheme.value());
         builder.field(HttpRequest.Field.HOST.getPreferredName(), host);
@@ -222,33 +170,6 @@ public class HttpRequestTemplate implements ToXContentObject {
         return builder.endObject();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        HttpRequestTemplate that = (HttpRequestTemplate) o;
-        return port == that.port
-            && scheme == that.scheme
-            && Objects.equals(host, that.host)
-            && method == that.method
-            && Objects.equals(path, that.path)
-            && Objects.equals(params, that.params)
-            && Objects.equals(headers, that.headers)
-            && Objects.equals(auth, that.auth)
-            && Objects.equals(connectionTimeout, that.connectionTimeout)
-            && Objects.equals(readTimeout, that.readTimeout)
-            && Objects.equals(proxy, that.proxy)
-            && Objects.equals(body, that.body);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(scheme, host, port, method, path, params, headers, auth, body, connectionTimeout, readTimeout, proxy);
-    }
 
     @Override
     public String toString() {

@@ -137,7 +137,7 @@ final class WatcherIndexingListener implements IndexingOperationListener, Cluste
                 boolean shouldBeTriggered = shardAllocationConfiguration.shouldBeTriggered(watch.id());
                 WatcherState currentState = watcherState.get();
                 if (shouldBeTriggered && EnumSet.of(WatcherState.STOPPING, WatcherState.STOPPED).contains(currentState) == false) {
-                    if (watch.status().state().isActive()) {
+                    if (watch.status().state().active()) {
                         logger.debug("adding watch [{}] to trigger service", watch.id());
                         triggerService.add(watch);
                     } else {
@@ -308,7 +308,7 @@ final class WatcherIndexingListener implements IndexingOperationListener, Cluste
             }
 
             Collection<String> allocationIds = shards.get(entry.getKey());
-            if (allocationIds.equals(entry.getValue().allocationIds) == false) {
+            if (allocationIds.equals(entry.getValue().allocationIds()) == false) {
                 return true;
             }
         }
@@ -381,21 +381,12 @@ final class WatcherIndexingListener implements IndexingOperationListener, Cluste
         }
     }
 
-    static final class ShardAllocationConfiguration {
-        final int index;
-        final int shardCount;
-        final List<String> allocationIds;
-
-        ShardAllocationConfiguration(int index, int shardCount, List<String> allocationIds) {
-            this.index = index;
-            this.shardCount = shardCount;
-            this.allocationIds = allocationIds;
-        }
+    record ShardAllocationConfiguration(int index, int shardCount, List<String> allocationIds) {
 
         public boolean shouldBeTriggered(String id) {
             int hash = Murmur3HashFunction.hash(id);
-            int shardIndex = Math.floorMod(hash, shardCount);
-            return shardIndex == index;
+            int shardIndex = Math.floorMod(hash, shardCount());
+            return shardIndex == index();
         }
     }
 }

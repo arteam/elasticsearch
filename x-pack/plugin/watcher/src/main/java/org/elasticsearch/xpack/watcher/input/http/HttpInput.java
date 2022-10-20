@@ -25,40 +25,26 @@ import java.util.Set;
 
 import static java.util.Collections.unmodifiableSet;
 
-public class HttpInput implements Input {
+public record HttpInput(
+    HttpRequestTemplate request,
+    @Nullable HttpContentType expectedResponseXContentType,
+    @Nullable Set<String> extractKeys
+) implements Input {
 
     public static final String TYPE = "http";
-
-    private final HttpRequestTemplate request;
-    @Nullable
-    private final HttpContentType expectedResponseXContentType;
-    @Nullable
-    private final Set<String> extractKeys;
-
-    public HttpInput(
-        HttpRequestTemplate request,
-        @Nullable HttpContentType expectedResponseXContentType,
-        @Nullable Set<String> extractKeys
-    ) {
-        this.request = request;
-        this.expectedResponseXContentType = expectedResponseXContentType;
-        this.extractKeys = extractKeys;
-    }
 
     @Override
     public String type() {
         return TYPE;
     }
 
-    public HttpRequestTemplate getRequest() {
-        return request;
-    }
-
-    public Set<String> getExtractKeys() {
+    @Override
+    public Set<String> extractKeys() {
         return extractKeys;
     }
 
-    public HttpContentType getExpectedResponseXContentType() {
+    @Override
+    public HttpContentType expectedResponseXContentType() {
         return expectedResponseXContentType;
     }
 

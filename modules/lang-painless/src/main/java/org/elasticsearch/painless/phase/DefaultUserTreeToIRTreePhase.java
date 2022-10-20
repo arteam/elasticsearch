@@ -745,9 +745,9 @@ public class DefaultUserTreeToIRTreePhase implements UserTreeVisitor<ScriptScope
             irForEachSubArrayNode.attachDecoration(new IRDVariableType(variable.type()));
             irForEachSubArrayNode.attachDecoration(new IRDVariableName(variable.name()));
             irForEachSubArrayNode.attachDecoration(new IRDArrayType(iterableValueType));
-            irForEachSubArrayNode.attachDecoration(new IRDArrayName("#array" + userEachNode.getLocation().getOffset()));
+            irForEachSubArrayNode.attachDecoration(new IRDArrayName("#array" + userEachNode.getLocation().offset()));
             irForEachSubArrayNode.attachDecoration(new IRDIndexType(int.class));
-            irForEachSubArrayNode.attachDecoration(new IRDIndexName("#index" + userEachNode.getLocation().getOffset()));
+            irForEachSubArrayNode.attachDecoration(new IRDIndexName("#index" + userEachNode.getLocation().offset()));
             irForEachSubArrayNode.attachDecoration(new IRDIndexedType(iterableValueType.getComponentType()));
 
             if (painlessCast != null) {
@@ -762,7 +762,7 @@ public class DefaultUserTreeToIRTreePhase implements UserTreeVisitor<ScriptScope
             irForEachSubIterableNode.attachDecoration(new IRDVariableType(variable.type()));
             irForEachSubIterableNode.attachDecoration(new IRDVariableName(variable.name()));
             irForEachSubIterableNode.attachDecoration(new IRDIterableType(Iterator.class));
-            irForEachSubIterableNode.attachDecoration(new IRDIterableName("#itr" + userEachNode.getLocation().getOffset()));
+            irForEachSubIterableNode.attachDecoration(new IRDIterableName("#itr" + userEachNode.getLocation().offset()));
 
             if (iterableValueType != def.class) {
                 irForEachSubIterableNode.attachDecoration(

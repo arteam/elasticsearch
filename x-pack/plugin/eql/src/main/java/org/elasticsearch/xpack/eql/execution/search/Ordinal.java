@@ -10,63 +10,19 @@ package org.elasticsearch.xpack.eql.execution.search;
 import org.apache.lucene.util.Accountable;
 import org.apache.lucene.util.RamUsageEstimator;
 
-import java.util.Objects;
-
-public class Ordinal implements Comparable<Ordinal>, Accountable {
+/**
+ * @param implicitTiebreaker _shard_doc tiebreaker automatically added by ES PIT
+ */
+public record Ordinal(Timestamp timestamp, Comparable<Object> tiebreaker, long implicitTiebreaker)
+    implements
+        Comparable<Ordinal>,
+        Accountable {
 
     private static final long SHALLOW_SIZE = RamUsageEstimator.shallowSizeOfInstance(Ordinal.class);
-
-    private final Timestamp timestamp;
-    private final Comparable<Object> tiebreaker;
-    private final long implicitTiebreaker; // _shard_doc tiebreaker automatically added by ES PIT
-
-    public Ordinal(Timestamp timestamp, Comparable<Object> tiebreaker, long implicitTiebreaker) {
-        this.timestamp = timestamp;
-        this.tiebreaker = tiebreaker;
-        this.implicitTiebreaker = implicitTiebreaker;
-    }
-
-    public Timestamp timestamp() {
-        return timestamp;
-    }
-
-    public Comparable<Object> tiebreaker() {
-        return tiebreaker;
-    }
-
-    public long implicitTiebreaker() {
-        return implicitTiebreaker;
-    }
 
     @Override
     public long ramBytesUsed() {
         return SHALLOW_SIZE;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(timestamp, tiebreaker, implicitTiebreaker);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-
-        Ordinal other = (Ordinal) obj;
-        return Objects.equals(timestamp, other.timestamp)
-            && Objects.equals(tiebreaker, other.tiebreaker)
-            && Objects.equals(implicitTiebreaker, other.implicitTiebreaker);
-    }
-
-    @Override
-    public String toString() {
-        return "[" + timestamp + "][" + (tiebreaker != null ? tiebreaker.toString() : "") + "][" + implicitTiebreaker + "]";
     }
 
     @Override

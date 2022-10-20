@@ -148,17 +148,9 @@ public final class MapHelper {
         return sb.toString();
     }
 
-    private static class PotentialPath {
-
-        // Pointer to where to start exploring
-        private final Map<String, Object> map;
-        // Where in the requested path are we
-        private final int pathPosition;
-
-        private PotentialPath(Map<String, Object> map, int pathPosition) {
-            this.map = map;
-            this.pathPosition = pathPosition;
-        }
-
-    }
+    /**
+     * @param map          Pointer to where to start exploring
+     * @param pathPosition Where in the requested path are we
+     */
+    private record PotentialPath(Map<String, Object> map, int pathPosition) {}
 }

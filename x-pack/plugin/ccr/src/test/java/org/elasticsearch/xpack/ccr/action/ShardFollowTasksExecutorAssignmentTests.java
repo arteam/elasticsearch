@@ -44,7 +44,7 @@ public class ShardFollowTasksExecutorAssignmentTests extends ESTestCase {
             () -> new HashSet<>(randomSubsetOf(Set.of(DiscoveryNodeRole.DATA_ROLE, DiscoveryNodeRole.INGEST_ROLE))),
             (theSpecial, assignment) -> {
                 assertTrue(assignment.isAssigned());
-                assertThat(assignment.getExecutorNode(), equalTo(theSpecial.getId()));
+                assertThat(assignment.executorNode(), equalTo(theSpecial.getId()));
             }
         );
     }
@@ -60,7 +60,7 @@ public class ShardFollowTasksExecutorAssignmentTests extends ESTestCase {
     private void runNoAssignmentTest(final Set<DiscoveryNodeRole> roles) {
         runAssignmentTest(roles, 0, Set::of, (theSpecial, assignment) -> {
             assertFalse(assignment.isAssigned());
-            assertThat(assignment.getExplanation(), equalTo("no nodes found with data and remote cluster client roles"));
+            assertThat(assignment.explanation(), equalTo("no nodes found with data and remote cluster client roles"));
         });
     }
 

@@ -29,7 +29,6 @@ import org.elasticsearch.test.ESTestCase;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.LongSupplier;
@@ -297,47 +296,14 @@ public class InboundPipelineTests extends ESTestCase {
         }
     }
 
-    private static class MessageData {
+    private record MessageData(
+        Version version,
+        long requestId,
+        boolean isRequest,
+        Compression.Scheme compressionScheme,
+        String actionName,
+        String value
+    ) {
 
-        private final Version version;
-        private final long requestId;
-        private final boolean isRequest;
-        private final Compression.Scheme compressionScheme;
-        private final String value;
-        private final String actionName;
-
-        private MessageData(
-            Version version,
-            long requestId,
-            boolean isRequest,
-            Compression.Scheme compressionScheme,
-            String actionName,
-            String value
-        ) {
-            this.version = version;
-            this.requestId = requestId;
-            this.isRequest = isRequest;
-            this.compressionScheme = compressionScheme;
-            this.actionName = actionName;
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            MessageData that = (MessageData) o;
-            return requestId == that.requestId
-                && isRequest == that.isRequest
-                && Objects.equals(compressionScheme, that.compressionScheme)
-                && Objects.equals(version, that.version)
-                && Objects.equals(value, that.value)
-                && Objects.equals(actionName, that.actionName);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(version, requestId, isRequest, compressionScheme, value, actionName);
-        }
     }
 }

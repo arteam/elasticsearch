@@ -100,8 +100,8 @@ class ResetPasswordTool extends BaseRunAsSuperuserCommand {
                 () -> requestBodySupplier(builtinUserPassword),
                 CommandLineHttpClient::responseBuilder
             );
-            final int responseStatus = httpResponse.getHttpStatus();
-            if (httpResponse.getHttpStatus() != HttpURLConnection.HTTP_OK) {
+            final int responseStatus = httpResponse.httpStatus();
+            if (httpResponse.httpStatus() != HttpURLConnection.HTTP_OK) {
                 final String cause = CommandLineHttpClient.getErrorCause(httpResponse);
                 String message = "Failed to reset password for the ["
                     + providedUsername

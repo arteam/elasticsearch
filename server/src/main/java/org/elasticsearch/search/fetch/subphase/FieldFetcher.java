@@ -291,13 +291,6 @@ public class FieldFetcher {
         }
     }
 
-    private static class FieldContext {
-        final String fieldName;
-        final ValueFetcher valueFetcher;
-
-        FieldContext(String fieldName, ValueFetcher valueFetcher) {
-            this.fieldName = fieldName;
-            this.valueFetcher = valueFetcher;
-        }
+    private record FieldContext(String fieldName, ValueFetcher valueFetcher) {
     }
 }

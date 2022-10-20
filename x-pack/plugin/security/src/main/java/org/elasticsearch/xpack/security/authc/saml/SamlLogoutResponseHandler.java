@@ -29,10 +29,10 @@ public class SamlLogoutResponseHandler extends SamlResponseHandler {
         if (httpRedirect) {
             logger.debug("Process SAML LogoutResponse with HTTP-Redirect binding");
             final ParsedQueryString parsed = parseQueryStringAndValidateSignature(payload, "SAMLResponse");
-            if (parsed.hasSignature == false) {
+            if (parsed.hasSignature() == false) {
                 throw samlException("Query string is not signed, but is required for HTTP-Redirect binding");
             }
-            root = parseSamlMessage(inflate(decodeBase64(parsed.samlMessage)));
+            root = parseSamlMessage(inflate(decodeBase64(parsed.samlMessage())));
         } else {
             logger.debug("Process SAML LogoutResponse with HTTP-POST binding");
             root = parseSamlMessage(decodeBase64(payload));

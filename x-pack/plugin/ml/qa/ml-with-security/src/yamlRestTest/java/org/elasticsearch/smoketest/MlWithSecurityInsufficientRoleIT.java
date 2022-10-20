@@ -38,7 +38,7 @@ public class MlWithSecurityInsufficientRoleIT extends MlWithSecurityIT {
             super.test();
 
             // We should have got here if and only if no ML endpoints were called
-            for (ExecutableSection section : testCandidate.getTestSection().getExecutableSections()) {
+            for (ExecutableSection section : testCandidate.getTestSection().executableSections()) {
                 if (section instanceof DoSection doSection) {
                     String apiName = doSection.getApiCallSection().getApi();
 

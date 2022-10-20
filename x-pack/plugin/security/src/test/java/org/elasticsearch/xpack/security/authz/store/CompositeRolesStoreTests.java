@@ -864,9 +864,9 @@ public class CompositeRolesStoreTests extends ESTestCase {
             .build();
         IndicesAccessControl iac = role.indices()
             .authorize("indices:data/read/search", Collections.singleton("test"), metadata.getIndicesLookup(), cache);
-        assertTrue(iac.getIndexPermissions("test").getFieldPermissions().grantsAccessTo("L1.foo"));
-        assertFalse(iac.getIndexPermissions("test").getFieldPermissions().grantsAccessTo("L2.foo"));
-        assertTrue(iac.getIndexPermissions("test").getFieldPermissions().grantsAccessTo("L3.foo"));
+        assertTrue(iac.getIndexPermissions("test").fieldPermissions().grantsAccessTo("L1.foo"));
+        assertFalse(iac.getIndexPermissions("test").fieldPermissions().grantsAccessTo("L2.foo"));
+        assertTrue(iac.getIndexPermissions("test").fieldPermissions().grantsAccessTo("L3.foo"));
     }
 
     public void testMergingBasicRoles() {

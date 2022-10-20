@@ -447,23 +447,7 @@ public final class SourceDestValidator {
         }
     }
 
-    public static class RemoteClusterMinimumVersionValidation implements SourceDestValidation {
-
-        private final Version minExpectedVersion;
-        private final String reason;
-
-        public RemoteClusterMinimumVersionValidation(Version minExpectedVersion, String reason) {
-            this.minExpectedVersion = minExpectedVersion;
-            this.reason = reason;
-        }
-
-        public Version getMinExpectedVersion() {
-            return minExpectedVersion;
-        }
-
-        public String getReason() {
-            return reason;
-        }
+    public record RemoteClusterMinimumVersionValidation(Version minExpectedVersion, String reason) implements SourceDestValidation {
 
         @Override
         public void validate(Context context, ActionListener<Context> listener) {

@@ -399,7 +399,7 @@ public class FinalPipelineIT extends ESIntegTestCase {
                 public void execute(IngestDocument ingestDocument, BiConsumer<IngestDocument, Exception> handler) {
                     if (async) {
                         // randomize over sync and async execution
-                        randomFrom(parameters.genericExecutor, Runnable::run).accept(() -> {
+                        randomFrom(parameters.genericExecutor(), Runnable::run).accept(() -> {
                             ingestDocument.setFieldValue("default", true);
                             handler.accept(ingestDocument, null);
                         });
@@ -439,7 +439,7 @@ public class FinalPipelineIT extends ESIntegTestCase {
                     public void execute(IngestDocument ingestDocument, BiConsumer<IngestDocument, Exception> handler) {
                         if (async) {
                             // randomize over sync and async execution
-                            randomFrom(parameters.genericExecutor, Runnable::run).accept(() -> {
+                            randomFrom(parameters.genericExecutor(), Runnable::run).accept(() -> {
                                 if (exists != null) {
                                     if (ingestDocument.getSourceAndMetadata().containsKey(exists) == false) {
                                         handler.accept(

@@ -78,30 +78,22 @@ public class Exporters extends AbstractLifecycleComponent {
         }
     }
 
-    static class InitializedExporters {
-        final Map<String, Exporter> enabledExporters;
-        final Map<String, Exporter.Config> disabledExporters;
-
-        InitializedExporters(Map<String, Exporter> enabledExporters, Map<String, Exporter.Config> disabledExporters) {
-            this.enabledExporters = enabledExporters;
-            this.disabledExporters = disabledExporters;
-        }
-    }
+    record InitializedExporters(Map<String, Exporter> enabledExporters, Map<String, Exporter.Config> disabledExporters) {}
 
     public void setExportersSetting(Settings exportersSetting) {
         if (this.lifecycle.started()) {
             InitializedExporters initializedExporters = initExporters(exportersSetting);
-            Map<String, Exporter> updated = initializedExporters.enabledExporters;
+            Map<String, Exporter> updated = initializedExporters.enabledExporters();
             closeExporters(LOGGER, this.exporters.getAndSet(updated));
-            this.disabledExporterConfigs.getAndSet(initializedExporters.disabledExporters);
+            this.disabledExporterConfigs.getAndSet(initializedExporters.disabledExporters());
         }
     }
 
     @Override
     protected void doStart() {
         InitializedExporters initializedExporters = initExporters(settings);
-        this.exporters.set(initializedExporters.enabledExporters);
-        this.disabledExporterConfigs.set(initializedExporters.disabledExporters);
+        this.exporters.set(initializedExporters.enabledExporters());
+        this.disabledExporterConfigs.set(initializedExporters.disabledExporters());
     }
 
     @Override

@@ -437,7 +437,7 @@ public class IngestClientIT extends ESIntegTestCase {
         @Override
         public Map<String, Processor.Factory> getProcessors(Processor.Parameters parameters) {
             Map<String, Processor.Factory> factories = new HashMap<>(super.getProcessors(parameters));
-            factories.put(PipelineProcessor.TYPE, new PipelineProcessor.Factory(parameters.ingestService));
+            factories.put(PipelineProcessor.TYPE, new PipelineProcessor.Factory(parameters.ingestService()));
             factories.put(
                 "fail",
                 (processorFactories, tag, description, config) -> new TestProcessor(tag, "fail", description, new RuntimeException())

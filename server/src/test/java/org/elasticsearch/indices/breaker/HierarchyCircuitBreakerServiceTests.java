@@ -433,10 +433,10 @@ public class HierarchyCircuitBreakerServiceTests extends ESTestCase {
                 assertTrue(overLimitTriggered.compareAndSet(false, true));
                 if (saveTheDay) {
                     return new HierarchyCircuitBreakerService.MemoryUsage(
-                        memoryUsed.baseUsage / 2,
-                        memoryUsed.totalUsage - (memoryUsed.baseUsage / 2),
-                        memoryUsed.transientChildUsage,
-                        memoryUsed.permanentChildUsage
+                        memoryUsed.baseUsage() / 2,
+                        memoryUsed.totalUsage() - (memoryUsed.baseUsage() / 2),
+                            memoryUsed.transientChildUsage(),
+                            memoryUsed.permanentChildUsage()
                     );
                 } else {
                     return memoryUsed;
@@ -508,19 +508,19 @@ public class HierarchyCircuitBreakerServiceTests extends ESTestCase {
         memoryUsage.set(99);
         HierarchyCircuitBreakerService.MemoryUsage output = strategy.overLimit(input);
         assertThat(output, not(sameInstance(input)));
-        assertThat(output.baseUsage, equalTo(memoryUsage.get()));
-        assertThat(output.totalUsage, equalTo(99 + input.totalUsage - 100));
-        assertThat(output.transientChildUsage, equalTo(input.transientChildUsage));
-        assertThat(output.permanentChildUsage, equalTo(input.permanentChildUsage));
+        assertThat(output.baseUsage(), equalTo(memoryUsage.get()));
+        assertThat(output.totalUsage(), equalTo(99 + input.totalUsage() - 100));
+        assertThat(output.transientChildUsage(), equalTo(input.transientChildUsage()));
+        assertThat(output.permanentChildUsage(), equalTo(input.permanentChildUsage()));
         assertThat(nonLeaderTriggerCount.get(), equalTo(1));
 
         time.addAndGet(randomLongBetween(interval, interval * 2));
         output = strategy.overLimit(input);
         assertThat(output, not(sameInstance(input)));
-        assertThat(output.baseUsage, equalTo(memoryUsage.get()));
-        assertThat(output.totalUsage, equalTo(99 + input.totalUsage - 100));
-        assertThat(output.transientChildUsage, equalTo(input.transientChildUsage));
-        assertThat(output.permanentChildUsage, equalTo(input.permanentChildUsage));
+        assertThat(output.baseUsage(), equalTo(memoryUsage.get()));
+        assertThat(output.totalUsage(), equalTo(99 + input.totalUsage() - 100));
+        assertThat(output.transientChildUsage(), equalTo(input.transientChildUsage()));
+        assertThat(output.permanentChildUsage(), equalTo(input.permanentChildUsage()));
         assertThat(leaderTriggerCount.get(), equalTo(2));
     }
 
@@ -605,9 +605,9 @@ public class HierarchyCircuitBreakerServiceTests extends ESTestCase {
                     randomLongBetween(0, 100)
                 );
                 HierarchyCircuitBreakerService.MemoryUsage output = strategy.overLimit(input);
-                assertThat(output.totalUsage, equalTo(output.baseUsage + input.totalUsage - input.baseUsage));
-                assertThat(output.transientChildUsage, equalTo(input.transientChildUsage));
-                assertThat(output.permanentChildUsage, equalTo(input.permanentChildUsage));
+                assertThat(output.totalUsage(), equalTo(output.baseUsage() + input.totalUsage() - input.baseUsage()));
+                assertThat(output.transientChildUsage(), equalTo(input.transientChildUsage()));
+                assertThat(output.permanentChildUsage(), equalTo(input.permanentChildUsage()));
                 countDown.get().countDown();
             } while (Thread.interrupted() == false);
         })).toList();

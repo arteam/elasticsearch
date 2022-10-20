@@ -76,18 +76,7 @@ public final class TermSuggester extends Suggester<TermSuggestionContext> {
         return result;
     }
 
-    private static class Token {
-
-        public final Term term;
-        public final int startOffset;
-        public final int endOffset;
-
-        private Token(Term term, int startOffset, int endOffset) {
-            this.term = term;
-            this.startOffset = startOffset;
-            this.endOffset = endOffset;
-        }
-
+    private record Token(Term term, int startOffset, int endOffset) {
     }
 
     @Override

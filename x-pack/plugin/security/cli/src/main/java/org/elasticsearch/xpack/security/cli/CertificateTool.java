@@ -79,7 +79,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import javax.security.auth.x500.X500Principal;
 
 /**
@@ -517,7 +516,7 @@ class CertificateTool extends MultiCommand {
         static void writeCAInfo(ZipOutputStream outputStream, JcaPEMWriter pemWriter, CAInfo info, boolean includeKey) throws Exception {
             final String caDirName = createCaDirectory(outputStream);
             outputStream.putNextEntry(new ZipEntry(caDirName + "ca.crt"));
-            pemWriter.writeObject(info.certAndKey.cert);
+            pemWriter.writeObject(info.certAndKey.cert());
             pemWriter.flush();
             outputStream.closeEntry();
             if (includeKey) {
@@ -525,13 +524,13 @@ class CertificateTool extends MultiCommand {
                 if (info.password != null && info.password.length > 0) {
                     try {
                         PEMEncryptor encryptor = getEncrypter(info.password);
-                        pemWriter.writeObject(info.certAndKey.key, encryptor);
+                        pemWriter.writeObject(info.certAndKey.key(), encryptor);
                     } finally {
                         // we can safely nuke the password chars now
                         Arrays.fill(info.password, (char) 0);
                     }
                 } else {
-                    pemWriter.writeObject(info.certAndKey.key);
+                    pemWriter.writeObject(info.certAndKey.key());
                 }
                 pemWriter.flush();
                 outputStream.closeEntry();
@@ -559,7 +558,7 @@ class CertificateTool extends MultiCommand {
             pkcs12.load(null);
             withPassword(fileName, password, terminal, true, p12Password -> {
                 if (isAscii(p12Password)) {
-                    pkcs12.setKeyEntry(alias, pair.key, p12Password, new Certificate[] { pair.cert });
+                    pkcs12.setKeyEntry(alias, pair.key(), p12Password, new Certificate[] { pair.cert() });
                     if (caCert != null) {
                         pkcs12.setCertificateEntry("ca", caCert);
                     }
@@ -800,7 +799,7 @@ class CertificateTool extends MultiCommand {
                         if (usePem) {
                             // write cert
                             outputStream.putNextEntry(new ZipEntry(entryBase + ".crt"));
-                            pemWriter.writeObject(pair.cert);
+                            pemWriter.writeObject(pair.cert());
                             pemWriter.flush();
                             outputStream.closeEntry();
 
@@ -809,11 +808,11 @@ class CertificateTool extends MultiCommand {
                             outputStream.putNextEntry(new ZipEntry(keyFileName));
                             if (usePassword) {
                                 withPassword(keyFileName, outputPassword, terminal, true, password -> {
-                                    pemWriter.writeObject(pair.key, getEncrypter(password));
+                                    pemWriter.writeObject(pair.key(), getEncrypter(password));
                                     return null;
                                 });
                             } else {
-                                pemWriter.writeObject(pair.key);
+                                pemWriter.writeObject(pair.key());
                             }
                             pemWriter.flush();
                             outputStream.closeEntry();
@@ -825,7 +824,7 @@ class CertificateTool extends MultiCommand {
                                 outputStream,
                                 certificateInformation.name.originalName,
                                 pair,
-                                caInfo == null ? null : caInfo.certAndKey.cert,
+                                caInfo == null ? null : caInfo.certAndKey.cert(),
                                 outputPassword,
                                 terminal
                             );
@@ -844,7 +843,7 @@ class CertificateTool extends MultiCommand {
                         stream,
                         certificateInformation.name.originalName,
                         pair,
-                        caInfo == null ? null : caInfo.certAndKey.cert,
+                        caInfo == null ? null : caInfo.certAndKey.cert(),
                         outputPassword,
                         terminal
                     )
@@ -869,8 +868,8 @@ class CertificateTool extends MultiCommand {
                         certificateInformation.commonNames
                     ),
                     keyPair,
-                    caInfo.certAndKey.cert,
-                    caInfo.certAndKey.key,
+                    caInfo.certAndKey.cert(),
+                    caInfo.certAndKey.key(),
                     days
                 );
             } else {
@@ -1263,15 +1262,7 @@ class CertificateTool extends MultiCommand {
         }
     }
 
-    static class CertificateAndKey {
-        final X509Certificate cert;
-        final PrivateKey key;
-
-        CertificateAndKey(X509Certificate cert, PrivateKey key) {
-            this.cert = cert;
-            this.key = key;
-        }
-    }
+    record CertificateAndKey(X509Certificate cert, PrivateKey key) {}
 
     static class CAInfo {
         final CertificateAndKey certAndKey;

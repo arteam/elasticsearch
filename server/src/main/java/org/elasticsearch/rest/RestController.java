@@ -552,11 +552,11 @@ public class RestController implements HttpServerTransport.Dispatcher {
 
     private void copyRestHeaders(RestRequest request, ThreadContext threadContext) {
         for (final RestHeaderDefinition restHeader : headersToCopy) {
-            final String name = restHeader.getName();
+            final String name = restHeader.name();
             final List<String> headerValues = request.getAllHeaderValues(name);
             if (headerValues != null && headerValues.isEmpty() == false) {
                 final List<String> distinctHeaderValues = headerValues.stream().distinct().toList();
-                if (restHeader.isMultiValueAllowed() == false && distinctHeaderValues.size() > 1) {
+                if (restHeader.multiValueAllowed() == false && distinctHeaderValues.size() > 1) {
                     throw new IllegalArgumentException("multiple values for single-valued header [" + name + "].");
                 } else if (name.equals(Task.TRACE_PARENT_HTTP_HEADER)) {
                     String traceparent = distinctHeaderValues.get(0);

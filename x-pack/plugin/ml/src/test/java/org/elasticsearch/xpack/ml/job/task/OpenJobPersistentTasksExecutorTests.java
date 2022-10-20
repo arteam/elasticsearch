@@ -167,7 +167,7 @@ public class OpenJobPersistentTasksExecutorTests extends ESTestCase {
         assertEquals(
             "Not opening [unavailable_index_with_lazy_node], "
                 + "because not all primary shards are active for the following indices [.ml-state]",
-            executor.getAssignment(params, csBuilder.nodes(), csBuilder.build()).getExplanation()
+            executor.getAssignment(params, csBuilder.nodes(), csBuilder.build()).explanation()
         );
     }
 
@@ -188,8 +188,8 @@ public class OpenJobPersistentTasksExecutorTests extends ESTestCase {
         params.setJob(job);
         PersistentTasksCustomMetadata.Assignment assignment = executor.getAssignment(params, csBuilder.nodes(), csBuilder.build());
         assertNotNull(assignment);
-        assertNull(assignment.getExecutorNode());
-        assertEquals(JobNodeSelector.AWAITING_LAZY_ASSIGNMENT.getExplanation(), assignment.getExplanation());
+        assertNull(assignment.executorNode());
+        assertEquals(JobNodeSelector.AWAITING_LAZY_ASSIGNMENT.explanation(), assignment.explanation());
     }
 
     public void testGetAssignment_GivenResetInProgress() {
@@ -205,8 +205,8 @@ public class OpenJobPersistentTasksExecutorTests extends ESTestCase {
         params.setJob(job);
         PersistentTasksCustomMetadata.Assignment assignment = executor.getAssignment(params, csBuilder.nodes(), csBuilder.build());
         assertNotNull(assignment);
-        assertNull(assignment.getExecutorNode());
-        assertEquals(MlTasks.RESET_IN_PROGRESS.getExplanation(), assignment.getExplanation());
+        assertNull(assignment.executorNode());
+        assertEquals(MlTasks.RESET_IN_PROGRESS.explanation(), assignment.explanation());
     }
 
     public static void addJobTask(String jobId, String nodeId, JobState jobState, PersistentTasksCustomMetadata.Builder builder) {

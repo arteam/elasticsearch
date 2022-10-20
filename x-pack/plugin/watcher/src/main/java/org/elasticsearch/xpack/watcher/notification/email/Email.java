@@ -16,6 +16,10 @@ import org.elasticsearch.xcontent.ToXContentObject;
 import org.elasticsearch.xcontent.XContentBuilder;
 import org.elasticsearch.xcontent.XContentParser;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -29,27 +33,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
 import static java.util.Collections.unmodifiableMap;
 
-public class Email implements ToXContentObject {
+public record Email(
+    String id,
+    Address from,
+    AddressList replyTo,
+    Priority priority,
+    ZonedDateTime sentDate,
+    AddressList to,
+    AddressList cc,
+    AddressList bcc,
+    String subject,
+    String textBody,
+    String htmlBody,
+    Map<String, Attachment> attachments
+) implements ToXContentObject {
+
     private static final DateFormatter DATE_TIME_FORMATTER = DateFormatter.forPattern("strict_date_time").withZone(ZoneOffset.UTC);
-    final String id;
-    final Address from;
-    final AddressList replyTo;
-    final Priority priority;
-    final ZonedDateTime sentDate;
-    final AddressList to;
-    final AddressList cc;
-    final AddressList bcc;
-    final String subject;
-    final String textBody;
-    final String htmlBody;
-    final Map<String, Attachment> attachments;
 
     public Email(
         String id,
@@ -80,85 +81,37 @@ public class Email implements ToXContentObject {
         this.attachments = attachments;
     }
 
-    public String id() {
-        return id;
-    }
-
-    public Address from() {
-        return from;
-    }
-
-    public AddressList replyTo() {
-        return replyTo;
-    }
-
-    public Priority priority() {
-        return priority;
-    }
-
-    public ZonedDateTime sentDate() {
-        return sentDate;
-    }
-
-    public AddressList to() {
-        return to;
-    }
-
-    public AddressList cc() {
-        return cc;
-    }
-
-    public AddressList bcc() {
-        return bcc;
-    }
-
-    public String subject() {
-        return subject;
-    }
-
-    public String textBody() {
-        return textBody;
-    }
-
-    public String htmlBody() {
-        return htmlBody;
-    }
-
-    public Map<String, Attachment> attachments() {
-        return attachments;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
-        builder.field(Field.ID.getPreferredName(), id);
-        if (from != null) {
-            builder.field(Field.FROM.getPreferredName(), from.toUnicodeString());
+        builder.field(Field.ID.getPreferredName(), id());
+        if (from() != null) {
+            builder.field(Field.FROM.getPreferredName(), from().toUnicodeString());
         }
-        if (replyTo != null) {
-            builder.field(Field.REPLY_TO.getPreferredName(), replyTo, params);
+        if (replyTo() != null) {
+            builder.field(Field.REPLY_TO.getPreferredName(), replyTo(), params);
         }
-        if (priority != null) {
-            builder.field(Field.PRIORITY.getPreferredName(), priority.value());
+        if (priority() != null) {
+            builder.field(Field.PRIORITY.getPreferredName(), priority().value());
         }
-        builder.timeField(Field.SENT_DATE.getPreferredName(), sentDate);
-        if (to != null) {
-            builder.field(Field.TO.getPreferredName(), to, params);
+        builder.timeField(Field.SENT_DATE.getPreferredName(), sentDate());
+        if (to() != null) {
+            builder.field(Field.TO.getPreferredName(), to(), params);
         }
-        if (cc != null) {
-            builder.field(Field.CC.getPreferredName(), cc, params);
+        if (cc() != null) {
+            builder.field(Field.CC.getPreferredName(), cc(), params);
         }
-        if (bcc != null) {
-            builder.field(Field.BCC.getPreferredName(), bcc, params);
+        if (bcc() != null) {
+            builder.field(Field.BCC.getPreferredName(), bcc(), params);
         }
-        builder.field(Field.SUBJECT.getPreferredName(), subject);
-        if (textBody != null || htmlBody != null) {
+        builder.field(Field.SUBJECT.getPreferredName(), subject());
+        if (textBody() != null || htmlBody() != null) {
             builder.startObject(Field.BODY.getPreferredName());
-            if (textBody != null) {
-                builder.field(Field.BODY_TEXT.getPreferredName(), textBody);
+            if (textBody() != null) {
+                builder.field(Field.BODY_TEXT.getPreferredName(), textBody());
             }
-            if (htmlBody != null) {
-                builder.field(Field.BODY_HTML.getPreferredName(), htmlBody);
+            if (htmlBody() != null) {
+                builder.field(Field.BODY_HTML.getPreferredName(), htmlBody());
             }
             builder.endObject();
         }
@@ -172,14 +125,14 @@ public class Email implements ToXContentObject {
 
         Email email = (Email) o;
 
-        if (id.equals(email.id) == false) return false;
+        if (id().equals(email.id()) == false) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return id().hashCode();
     }
 
     public static Builder builder() {
@@ -262,18 +215,18 @@ public class Email implements ToXContentObject {
         private Builder() {}
 
         public Builder copyFrom(Email email) {
-            id = email.id;
-            from = email.from;
-            replyTo = email.replyTo;
-            priority = email.priority;
-            sentDate = email.sentDate;
-            to = email.to;
-            cc = email.cc;
-            bcc = email.bcc;
-            subject = email.subject;
-            textBody = email.textBody;
-            htmlBody = email.htmlBody;
-            attachments.putAll(email.attachments);
+            id = email.id();
+            from = email.from();
+            replyTo = email.replyTo();
+            priority = email.priority();
+            sentDate = email.sentDate();
+            to = email.to();
+            cc = email.cc();
+            bcc = email.bcc();
+            subject = email.subject();
+            textBody = email.textBody();
+            htmlBody = email.htmlBody();
+            attachments.putAll(email.attachments());
             return this;
         }
 
@@ -445,7 +398,7 @@ public class Email implements ToXContentObject {
         }
     }
 
-    public static class Address extends javax.mail.internet.InternetAddress implements ToXContentFragment {
+    public static class Address extends InternetAddress implements ToXContentFragment {
 
         public static final ParseField ADDRESS_NAME_FIELD = new ParseField("name");
         public static final ParseField ADDRESS_EMAIL_FIELD = new ParseField("email");
@@ -600,7 +553,7 @@ public class Email implements ToXContentObject {
                 }
             }
             if (token == XContentParser.Token.START_ARRAY) {
-                List<Email.Address> addresses = new ArrayList<>();
+                List<Address> addresses = new ArrayList<>();
                 while ((token = parser.nextToken()) != XContentParser.Token.END_ARRAY) {
                     addresses.add(Address.parse(field, token, parser));
                 }

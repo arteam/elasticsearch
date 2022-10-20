@@ -131,8 +131,8 @@ public class TokenListCategorizer implements Accountable {
         int maxReweightedTotalWeight = 0;
         SortedMap<Integer, TokenAndWeight> groupingMap = new TreeMap<>();
         for (TokenAndWeight weightedTokenId : weightedTokenIds) {
-            int tokenId = weightedTokenId.getTokenId();
-            int weight = weightedTokenId.getWeight();
+            int tokenId = weightedTokenId.tokenId();
+            int weight = weightedTokenId.weight();
             workWeight += weight;
             minReweightedTotalWeight += WeightCalculator.getMinMatchingWeight(weight);
             maxReweightedTotalWeight += WeightCalculator.getMaxMatchingWeight(weight);
@@ -143,7 +143,7 @@ public class TokenListCategorizer implements Accountable {
             // create new objects here. But experience suggests that tokens that
             // only occur once generally outnumber repeated tokens, so it's faster
             // on balance.
-            groupingMap.compute(tokenId, (k, v) -> ((v == null) ? weightedTokenId : new TokenAndWeight(tokenId, v.getWeight() + weight)));
+            groupingMap.compute(tokenId, (k, v) -> ((v == null) ? weightedTokenId : new TokenAndWeight(tokenId, v.weight() + weight)));
         }
         List<TokenAndWeight> workTokenUniqueIds = new ArrayList<>(groupingMap.values());
 

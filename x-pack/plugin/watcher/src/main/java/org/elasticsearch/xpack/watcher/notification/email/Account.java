@@ -95,7 +95,7 @@ public class Account {
         // applying the defaults on missing emails fields
         email = config.defaults.apply(email);
 
-        if (email.to == null) {
+        if (email.to() == null) {
             throw new SettingsException("missing required email [to] field");
         }
 
@@ -340,25 +340,25 @@ public class Account {
 
             Email apply(Email email) {
                 Email.Builder builder = Email.builder().copyFrom(email);
-                if (email.from == null) {
+                if (email.from() == null) {
                     builder.from(from);
                 }
-                if (email.replyTo == null) {
+                if (email.replyTo() == null) {
                     builder.replyTo(replyTo);
                 }
-                if (email.priority == null) {
+                if (email.priority() == null) {
                     builder.priority(priority);
                 }
-                if (email.to == null) {
+                if (email.to() == null) {
                     builder.to(to);
                 }
-                if (email.cc == null) {
+                if (email.cc() == null) {
                     builder.cc(cc);
                 }
-                if (email.bcc == null) {
+                if (email.bcc() == null) {
                     builder.bcc(bcc);
                 }
-                if (email.subject == null) {
+                if (email.subject() == null) {
                     builder.subject(subject);
                 }
                 return builder.build();

@@ -75,7 +75,7 @@ public class DatafeedNodeSelector {
 
     public void checkDatafeedTaskCanBeCreated() {
         if (MlMetadata.getMlMetadata(clusterState).isUpgradeMode()) {
-            String msg = "Unable to start datafeed [" + datafeedId + "] explanation [" + AWAITING_UPGRADE.getExplanation() + "]";
+            String msg = "Unable to start datafeed [" + datafeedId + "] explanation [" + AWAITING_UPGRADE.explanation() + "]";
             LOGGER.debug(msg);
             Exception detail = new IllegalStateException(msg);
             throw new ElasticsearchStatusException(
@@ -220,15 +220,7 @@ public class DatafeedNodeSelector {
         return null;
     }
 
-    private static class AssignmentFailure {
-        private final String reason;
-        private final boolean isCriticalForTaskCreation;
-
-        private AssignmentFailure(String reason, boolean isCriticalForTaskCreation) {
-            this.reason = reason;
-            this.isCriticalForTaskCreation = isCriticalForTaskCreation;
-        }
-    }
+    private record AssignmentFailure(String reason, boolean isCriticalForTaskCreation) {}
 
     /**
      * Collects the first critical failure if any critical failure is added

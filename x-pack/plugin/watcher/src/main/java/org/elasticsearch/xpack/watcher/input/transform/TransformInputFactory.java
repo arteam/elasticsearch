@@ -48,7 +48,7 @@ public final class TransformInputFactory extends InputFactory<TransformInput, Tr
 
     @Override
     public ExecutableTransformInput createExecutable(TransformInput input) {
-        Transform transform = input.getTransform();
+        Transform transform = input.transform();
         @SuppressWarnings("unchecked")
         TransformFactory<Transform, ?, ?> factory = (TransformFactory<Transform, ?, ?>) transformRegistry.factory(transform.type());
         ExecutableTransform<?, ?> executableTransform = factory.createExecutable(transform);

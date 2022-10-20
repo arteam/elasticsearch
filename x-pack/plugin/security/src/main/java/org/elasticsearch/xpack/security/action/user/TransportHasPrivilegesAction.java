@@ -71,7 +71,7 @@ public class TransportHasPrivilegesAction extends HandledTransportAction<HasPriv
                     request.getPrivilegesToCheck(),
                     applicationPrivilegeDescriptors,
                     listener.map(privilegesCheckResult -> {
-                        AuthorizationEngine.PrivilegesCheckResult.Details checkResultDetails = privilegesCheckResult.getDetails();
+                        AuthorizationEngine.PrivilegesCheckResult.Details checkResultDetails = privilegesCheckResult.details();
                         assert checkResultDetails != null : "runDetailedCheck is 'true' but the result has no details";
                         return new HasPrivilegesResponse(
                             request.username(),

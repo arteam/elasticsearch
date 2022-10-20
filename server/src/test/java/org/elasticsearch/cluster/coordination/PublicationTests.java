@@ -243,8 +243,8 @@ public class PublicationTests extends ESTestCase {
             assertThat(publication.pendingCommits.keySet(), equalTo(discoNodes));
         }
         assertNotNull(publication.applyCommit);
-        assertEquals(publication.applyCommit.getTerm(), publication.publishRequest.getAcceptedState().term());
-        assertEquals(publication.applyCommit.getVersion(), publication.publishRequest.getAcceptedState().version());
+        assertEquals(publication.applyCommit.getTerm(), publication.publishRequest.acceptedState().term());
+        assertEquals(publication.applyCommit.getVersion(), publication.publishRequest.acceptedState().version());
         publication.pendingCommits.entrySet().stream().collect(shuffle()).forEach(e -> {
             assertFalse(publication.completed);
             assertFalse(publication.committed);

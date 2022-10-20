@@ -33,7 +33,7 @@ public class ParsedTDigestPercentileRanks extends ParsedPercentileRanks {
             @Override
             public Percentile next() {
                 Percentile percentile = iterator.next();
-                return new Percentile(percentile.getValue(), percentile.getPercent());
+                return new Percentile(percentile.value(), percentile.percent());
             }
         };
     }

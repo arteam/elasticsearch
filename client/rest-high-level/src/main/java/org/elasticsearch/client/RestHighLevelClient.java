@@ -1475,7 +1475,7 @@ public class RestHighLevelClient implements Closeable {
             throw parseResponseException(e);
         }
 
-        String version = mainResponse.getVersion().getNumber();
+        String version = mainResponse.version().number();
         if (Strings.hasLength(version) == false) {
             return Optional.of("Missing version.number in info response");
         }
@@ -1493,8 +1493,8 @@ public class RestHighLevelClient implements Closeable {
         }
 
         if (major == 6 || (major == 7 && minor < 14)) {
-            if ("You Know, for Search".equalsIgnoreCase(mainResponse.getTagline()) == false) {
-                return Optional.of("Invalid or missing tagline [" + mainResponse.getTagline() + "]");
+            if ("You Know, for Search".equalsIgnoreCase(mainResponse.tagline()) == false) {
+                return Optional.of("Invalid or missing tagline [" + mainResponse.tagline() + "]");
             }
 
             return Optional.empty();

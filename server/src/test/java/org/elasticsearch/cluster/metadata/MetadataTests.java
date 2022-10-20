@@ -2350,16 +2350,7 @@ public class MetadataTests extends ESTestCase {
         return new CreateIndexResult(indices, backingIndices, b.build());
     }
 
-    private static class CreateIndexResult {
-        final List<Index> indices;
-        final List<Index> backingIndices;
-        final Metadata metadata;
-
-        CreateIndexResult(List<Index> indices, List<Index> backingIndices, Metadata metadata) {
-            this.indices = indices;
-            this.backingIndices = backingIndices;
-            this.metadata = metadata;
-        }
+    private record CreateIndexResult(List<Index> indices, List<Index> backingIndices, Metadata metadata) {
     }
 
     private static class TestCustomMetadata implements Metadata.Custom {

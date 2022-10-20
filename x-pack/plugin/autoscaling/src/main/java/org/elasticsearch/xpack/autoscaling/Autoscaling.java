@@ -179,7 +179,7 @@ public class Autoscaling extends Plugin implements ActionPlugin, ExtensiblePlugi
             new NamedWriteableRegistry.Entry(
                 AutoscalingDeciderResult.Reason.class,
                 ProactiveStorageDeciderService.NAME,
-                ProactiveStorageDeciderService.ProactiveReason::new
+                ProactiveStorageDeciderService.ProactiveReason::from
             ),
             new NamedWriteableRegistry.Entry(
                 AutoscalingDeciderResult.Reason.class,

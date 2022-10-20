@@ -96,7 +96,7 @@ public class EnrollmentSingleNodeTests extends SecuritySingleNodeTestCase {
         final Client apiKeyClient = client().filterWithHeader(
             Map.of(
                 "Authorization",
-                "ApiKey " + Base64.getEncoder().encodeToString(enrollmentTokenSetOnce.get().getApiKey().getBytes(StandardCharsets.UTF_8))
+                "ApiKey " + Base64.getEncoder().encodeToString(enrollmentTokenSetOnce.get().apiKey().getBytes(StandardCharsets.UTF_8))
             )
         );
         final AuthenticateResponse authenticateResponse1 = apiKeyClient.execute(AuthenticateAction.INSTANCE, AuthenticateRequest.INSTANCE)

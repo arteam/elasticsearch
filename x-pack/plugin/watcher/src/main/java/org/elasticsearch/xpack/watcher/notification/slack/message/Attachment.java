@@ -179,55 +179,22 @@ public class Attachment implements MessageElement {
         return builder.endObject();
     }
 
-    static class Template implements ToXContentObject {
-
-        final TextTemplate fallback;
-        final TextTemplate color;
-        final TextTemplate pretext;
-        final TextTemplate authorName;
-        final TextTemplate authorLink;
-        final TextTemplate authorIcon;
-        final TextTemplate title;
-        final TextTemplate titleLink;
-        final TextTemplate text;
-        final Field.Template[] fields;
-        final TextTemplate imageUrl;
-        final TextTemplate thumbUrl;
-        final TextTemplate[] markdownSupportedFields;
-        final List<Action.Template> actions;
-
-        Template(
-            TextTemplate fallback,
-            TextTemplate color,
-            TextTemplate pretext,
-            TextTemplate authorName,
-            TextTemplate authorLink,
-            TextTemplate authorIcon,
-            TextTemplate title,
-            TextTemplate titleLink,
-            TextTemplate text,
-            Field.Template[] fields,
-            TextTemplate imageUrl,
-            TextTemplate thumbUrl,
-            TextTemplate[] markdownSupportedFields,
-            List<Action.Template> actions
-        ) {
-
-            this.fallback = fallback;
-            this.color = color;
-            this.pretext = pretext;
-            this.authorName = authorName;
-            this.authorLink = authorLink;
-            this.authorIcon = authorIcon;
-            this.title = title;
-            this.titleLink = titleLink;
-            this.text = text;
-            this.fields = fields;
-            this.imageUrl = imageUrl;
-            this.thumbUrl = thumbUrl;
-            this.markdownSupportedFields = markdownSupportedFields;
-            this.actions = actions;
-        }
+    record Template(
+        TextTemplate fallback,
+        TextTemplate color,
+        TextTemplate pretext,
+        TextTemplate authorName,
+        TextTemplate authorLink,
+        TextTemplate authorIcon,
+        TextTemplate title,
+        TextTemplate titleLink,
+        TextTemplate text,
+        Field.Template[] fields,
+        TextTemplate imageUrl,
+        TextTemplate thumbUrl,
+        TextTemplate[] markdownSupportedFields,
+        List<Action.Template> actions
+    ) implements ToXContentObject {
 
         public Attachment render(TextTemplateEngine engine, Map<String, Object> model, SlackMessageDefaults.AttachmentDefaults defaults) {
             String fallback = this.fallback != null ? engine.render(this.fallback, model) : defaults.fallback;
@@ -257,7 +224,7 @@ public class Attachment implements MessageElement {
             }
             List<Action> actions = new ArrayList<>();
             if (this.actions != null && this.actions.isEmpty() == false) {
-                for (Action.Template action : this.actions) {
+                for (Action.Template action : this.actions()) {
                     actions.add(action.render(engine, model));
                 }
             }
@@ -276,49 +243,6 @@ public class Attachment implements MessageElement {
                 imageUrl,
                 thumbUrl,
                 markdownFields,
-                actions
-            );
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Template template = (Template) o;
-
-            return Objects.equals(fallback, template.fallback)
-                && Objects.equals(color, template.color)
-                && Objects.equals(pretext, template.pretext)
-                && Objects.equals(authorName, template.authorName)
-                && Objects.equals(authorLink, template.authorLink)
-                && Objects.equals(authorIcon, template.authorIcon)
-                && Objects.equals(title, template.title)
-                && Objects.equals(titleLink, template.titleLink)
-                && Objects.equals(text, template.text)
-                && Objects.equals(imageUrl, template.imageUrl)
-                && Objects.equals(thumbUrl, template.thumbUrl)
-                && Objects.equals(actions, template.actions)
-                && Arrays.equals(fields, template.fields)
-                && Arrays.equals(markdownSupportedFields, template.markdownSupportedFields);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(
-                fallback,
-                color,
-                pretext,
-                authorName,
-                authorLink,
-                authorIcon,
-                title,
-                titleLink,
-                text,
-                fields,
-                imageUrl,
-                thumbUrl,
-                markdownSupportedFields,
                 actions
             );
         }

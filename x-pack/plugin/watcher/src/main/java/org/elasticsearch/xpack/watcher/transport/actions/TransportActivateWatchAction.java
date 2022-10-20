@@ -59,7 +59,7 @@ public class TransportActivateWatchAction extends WatcherTransportAction<Activat
         Client client
     ) {
         super(ActivateWatchAction.NAME, transportService, actionFilters, licenseState, ActivateWatchRequest::new);
-        this.clock = clockHolder.clock;
+        this.clock = clockHolder.clock();
         this.parser = parser;
         this.client = client;
     }

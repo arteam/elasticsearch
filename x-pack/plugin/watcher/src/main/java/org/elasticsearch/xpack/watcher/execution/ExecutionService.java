@@ -394,8 +394,8 @@ public class ExecutionService {
 
         UpdateRequest updateRequest = new UpdateRequest(Watch.INDEX, watch.id());
         updateRequest.doc(source);
-        updateRequest.setIfSeqNo(watch.getSourceSeqNo());
-        updateRequest.setIfPrimaryTerm(watch.getSourcePrimaryTerm());
+        updateRequest.setIfSeqNo(watch.sourceSeqNo());
+        updateRequest.setIfPrimaryTerm(watch.sourcePrimaryTerm());
         try (ThreadContext.StoredContext ignore = client.threadPool().getThreadContext().stashWithOrigin(WATCHER_ORIGIN)) {
             client.update(updateRequest).actionGet(indexDefaultTimeout);
         } catch (DocumentMissingException e) {

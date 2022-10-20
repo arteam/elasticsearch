@@ -204,7 +204,7 @@ public class TransportExplainDataFrameAnalyticsAction extends HandledTransportAc
             extractorFactory,
             ActionListener.wrap(
                 result -> listener.onResponse(
-                    new MemoryEstimation(result.getExpectedMemoryWithoutDisk(), result.getExpectedMemoryWithDisk())
+                    new MemoryEstimation(result.expectedMemoryWithoutDisk(), result.expectedMemoryWithDisk())
                 ),
                 listener::onFailure
             )

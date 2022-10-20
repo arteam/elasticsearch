@@ -31,7 +31,7 @@ public class IcuTokenizerFactoryTests extends ESTestCase {
     public void testSimpleIcuTokenizer() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
 
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("icu_tokenizer");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("icu_tokenizer");
         ICUTokenizer tokenizer = (ICUTokenizer) tokenizerFactory.create();
 
         Reader reader = new StringReader("向日葵, one-two");
@@ -43,7 +43,7 @@ public class IcuTokenizerFactoryTests extends ESTestCase {
         TestAnalysis analysis = createTestAnalysis();
 
         // test the tokenizer with single rule file
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("user_rule_tokenizer");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("user_rule_tokenizer");
         ICUTokenizer tokenizer = (ICUTokenizer) tokenizerFactory.create();
         Reader reader = new StringReader("One-two punch.  Brang-, not brung-it.  This one--not that one--is the right one, -ish.");
 
@@ -73,7 +73,7 @@ public class IcuTokenizerFactoryTests extends ESTestCase {
         TestAnalysis analysis = createTestAnalysis();
 
         // test the tokenizer with two rule files
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("multi_rule_tokenizer");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("multi_rule_tokenizer");
         ICUTokenizer tokenizer = (ICUTokenizer) tokenizerFactory.create();
         StringReader reader = new StringReader("Some English.  Немного русский.  ข้อความภาษาไทยเล็ก ๆ น้อย ๆ  More English.");
 

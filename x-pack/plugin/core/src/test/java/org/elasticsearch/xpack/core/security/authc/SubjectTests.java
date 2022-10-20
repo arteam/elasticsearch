@@ -62,7 +62,7 @@ public class SubjectTests extends ESTestCase {
         assertThat(roleReferences.get(0), instanceOf(NamedRoleReference.class));
         final NamedRoleReference namedRoleReference = (NamedRoleReference) roleReferences.get(0);
         assertThat(
-            namedRoleReference.getRoleNames(),
+            namedRoleReference.roleNames(),
             arrayContaining(ArrayUtils.concat(user.roles(), anonymousUser == null ? Strings.EMPTY_ARRAY : anonymousUser.roles()))
         );
     }
@@ -83,7 +83,7 @@ public class SubjectTests extends ESTestCase {
         assertThat(roleReferences.get(0), instanceOf(NamedRoleReference.class));
         final NamedRoleReference namedRoleReference = (NamedRoleReference) roleReferences.get(0);
         // Anonymous roles do not get applied again
-        assertThat(namedRoleReference.getRoleNames(), equalTo(anonymousUser.roles()));
+        assertThat(namedRoleReference.roleNames(), equalTo(anonymousUser.roles()));
     }
 
     public void testGetRoleReferencesForServiceAccount() {
@@ -100,7 +100,7 @@ public class SubjectTests extends ESTestCase {
         assertThat(roleReferences, hasSize(1));
         assertThat(roleReferences.get(0), instanceOf(ServiceAccountRoleReference.class));
         final ServiceAccountRoleReference serviceAccountRoleReference = (ServiceAccountRoleReference) roleReferences.get(0);
-        assertThat(serviceAccountRoleReference.getPrincipal(), equalTo(serviceUser.principal()));
+        assertThat(serviceAccountRoleReference.principal(), equalTo(serviceUser.principal()));
     }
 
     public void testGetRoleReferencesForApiKey() {
@@ -175,17 +175,17 @@ public class SubjectTests extends ESTestCase {
         if (emptyApiKeyRoleDescriptor) {
             assertThat(roleReferences, contains(isA(BwcApiKeyRoleReference.class)));
             final BwcApiKeyRoleReference limitedByRoleReference = (BwcApiKeyRoleReference) roleReferences.get(0);
-            assertThat(limitedByRoleReference.getApiKeyId(), equalTo(apiKeyId));
-            assertThat(limitedByRoleReference.getRoleDescriptorsMap(), equalTo(authMetadata.get(API_KEY_LIMITED_ROLE_DESCRIPTORS_KEY)));
+            assertThat(limitedByRoleReference.apiKeyId(), equalTo(apiKeyId));
+            assertThat(limitedByRoleReference.roleDescriptorsMap(), equalTo(authMetadata.get(API_KEY_LIMITED_ROLE_DESCRIPTORS_KEY)));
         } else {
             assertThat(roleReferences, contains(isA(BwcApiKeyRoleReference.class), isA(BwcApiKeyRoleReference.class)));
             final BwcApiKeyRoleReference roleReference = (BwcApiKeyRoleReference) roleReferences.get(0);
-            assertThat(roleReference.getApiKeyId(), equalTo(apiKeyId));
-            assertThat(roleReference.getRoleDescriptorsMap(), equalTo(authMetadata.get(API_KEY_ROLE_DESCRIPTORS_KEY)));
+            assertThat(roleReference.apiKeyId(), equalTo(apiKeyId));
+            assertThat(roleReference.roleDescriptorsMap(), equalTo(authMetadata.get(API_KEY_ROLE_DESCRIPTORS_KEY)));
 
             final BwcApiKeyRoleReference limitedByRoleReference = (BwcApiKeyRoleReference) roleReferences.get(1);
-            assertThat(limitedByRoleReference.getApiKeyId(), equalTo(apiKeyId));
-            assertThat(limitedByRoleReference.getRoleDescriptorsMap(), equalTo(authMetadata.get(API_KEY_LIMITED_ROLE_DESCRIPTORS_KEY)));
+            assertThat(limitedByRoleReference.apiKeyId(), equalTo(apiKeyId));
+            assertThat(limitedByRoleReference.roleDescriptorsMap(), equalTo(authMetadata.get(API_KEY_LIMITED_ROLE_DESCRIPTORS_KEY)));
         }
     }
 

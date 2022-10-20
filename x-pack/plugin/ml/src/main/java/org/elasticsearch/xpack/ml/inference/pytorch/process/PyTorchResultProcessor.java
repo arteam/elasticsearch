@@ -296,11 +296,9 @@ public class PyTorchResultProcessor {
         isStopping = true;
     }
 
-    public static class PendingResult {
-        public final ActionListener<PyTorchResult> listener;
-
-        public PendingResult(ActionListener<PyTorchResult> listener) {
-            this.listener = Objects.requireNonNull(listener);
+    public record PendingResult(ActionListener<PyTorchResult> listener) {
+        public PendingResult {
+            Objects.requireNonNull(listener);
         }
     }
 }

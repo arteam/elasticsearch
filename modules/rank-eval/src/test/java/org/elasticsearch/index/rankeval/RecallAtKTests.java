@@ -42,8 +42,8 @@ public class RecallAtKTests extends ESTestCase {
 
         EvalQueryQuality evaluated = (new RecallAtK()).evaluate("id", toSearchHits(rated, "test"), rated);
         assertEquals(1, evaluated.metricScore(), 0.00001);
-        assertEquals(1, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(1, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevant());
+        assertEquals(1, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(1, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevant());
     }
 
     public void testIgnoreOneResult() {
@@ -56,8 +56,8 @@ public class RecallAtKTests extends ESTestCase {
 
         EvalQueryQuality evaluated = (new RecallAtK()).evaluate("id", toSearchHits(rated, "test"), rated);
         assertEquals((double) 4 / 4, evaluated.metricScore(), 0.00001);
-        assertEquals(4, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(4, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevant());
+        assertEquals(4, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(4, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevant());
     }
 
     /**
@@ -77,8 +77,8 @@ public class RecallAtKTests extends ESTestCase {
 
         EvalQueryQuality evaluated = recallAtN.evaluate("id", toSearchHits(rated.subList(0, 3), "test"), rated);
         assertEquals((double) 1 / 3, evaluated.metricScore(), 0.00001);
-        assertEquals(1, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(3, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevant());
+        assertEquals(1, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(3, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevant());
     }
 
     public void testCorrectIndex() {
@@ -94,8 +94,8 @@ public class RecallAtKTests extends ESTestCase {
 
         EvalQueryQuality evaluated = (new RecallAtK(1, 5)).evaluate("id", toSearchHits(ratedSubList, "test"), rated);
         assertEquals((double) 2 / 4, evaluated.metricScore(), 0.00001);
-        assertEquals(2, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(4, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevant());
+        assertEquals(2, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(4, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevant());
     }
 
     public void testNoRatedDocs() throws Exception {
@@ -108,15 +108,15 @@ public class RecallAtKTests extends ESTestCase {
 
         EvalQueryQuality evaluated = (new RecallAtK()).evaluate("id", hits, Collections.emptyList());
         assertEquals(0.0d, evaluated.metricScore(), 0.00001);
-        assertEquals(0, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(0, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevant());
+        assertEquals(0, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(0, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevant());
     }
 
     public void testNoResults() throws Exception {
         EvalQueryQuality evaluated = (new RecallAtK()).evaluate("id", new SearchHit[0], Collections.emptyList());
         assertEquals(0.0d, evaluated.metricScore(), 0.00001);
-        assertEquals(0, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(0, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevant());
+        assertEquals(0, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(0, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevant());
     }
 
     public void testNoResultsWithRatedDocs() throws Exception {
@@ -125,8 +125,8 @@ public class RecallAtKTests extends ESTestCase {
 
         EvalQueryQuality evaluated = (new RecallAtK()).evaluate("id", new SearchHit[0], rated);
         assertEquals(0.0d, evaluated.metricScore(), 0.00001);
-        assertEquals(0, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(1, ((RecallAtK.Detail) evaluated.getMetricDetails()).getRelevant());
+        assertEquals(0, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(1, ((RecallAtK.Detail) evaluated.getMetricDetails()).relevant());
     }
 
     public void testParseFromXContent() throws IOException {

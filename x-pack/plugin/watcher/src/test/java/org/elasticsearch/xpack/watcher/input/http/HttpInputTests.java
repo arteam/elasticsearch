@@ -199,28 +199,28 @@ public class HttpInputTests extends ESTestCase {
         HttpInput result = httpParser.parseInput("_id", parser);
 
         assertThat(result.type(), equalTo(HttpInput.TYPE));
-        assertThat(result.getRequest().scheme(), equalTo(scheme != null ? scheme : Scheme.HTTP)); // http is the default
-        assertThat(result.getRequest().method(), equalTo(httpMethod != null ? httpMethod : HttpMethod.GET)); // get is the default
-        assertThat(result.getRequest().host(), equalTo(host));
-        assertThat(result.getRequest().port(), equalTo(port));
-        assertThat(result.getRequest().path(), is(new TextTemplate(path)));
-        assertThat(result.getExpectedResponseXContentType(), equalTo(expectedResponseXContentType));
+        assertThat(result.request().scheme(), equalTo(scheme != null ? scheme : Scheme.HTTP)); // http is the default
+        assertThat(result.request().method(), equalTo(httpMethod != null ? httpMethod : HttpMethod.GET)); // get is the default
+        assertThat(result.request().host(), equalTo(host));
+        assertThat(result.request().port(), equalTo(port));
+        assertThat(result.request().path(), is(new TextTemplate(path)));
+        assertThat(result.expectedResponseXContentType(), equalTo(expectedResponseXContentType));
         if (expectedResponseXContentType != HttpContentType.TEXT && extractKeys != null) {
             for (String key : extractKeys) {
-                assertThat(result.getExtractKeys().contains(key), is(true));
+                assertThat(result.extractKeys().contains(key), is(true));
             }
         }
         if (params != null) {
-            assertThat(result.getRequest().params(), hasEntry(is("a"), is(new TextTemplate("b"))));
+            assertThat(result.request().params(), hasEntry(is("a"), is(new TextTemplate("b"))));
         }
         if (headers != null) {
-            assertThat(result.getRequest().headers(), hasEntry(is("c"), is(new TextTemplate("d"))));
+            assertThat(result.request().headers(), hasEntry(is("c"), is(new TextTemplate("d"))));
         }
-        assertThat(result.getRequest().auth(), equalTo(auth));
+        assertThat(result.request().auth(), equalTo(auth));
         if (body != null) {
-            assertThat(result.getRequest().body(), is(new TextTemplate(body)));
+            assertThat(result.request().body(), is(new TextTemplate(body)));
         } else {
-            assertThat(result.getRequest().body(), nullValue());
+            assertThat(result.request().body(), nullValue());
         }
     }
 

@@ -247,7 +247,7 @@ public class TransportStartTrainedModelDeploymentAction extends TransportMasterN
             // to the size of the model on disk in experiments for BERT models. However,
             // this might not always be the case.
             // TODO Improve heuristic for in-memory model size.
-            listener.onResponse(doc.getTotalDefinitionLength());
+            listener.onResponse(doc.totalDefinitionLength());
 
             // Return false to stop the restorer as we only need the first doc
             return false;

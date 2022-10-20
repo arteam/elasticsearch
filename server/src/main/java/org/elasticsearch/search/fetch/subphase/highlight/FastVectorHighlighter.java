@@ -65,26 +65,26 @@ public class FastVectorHighlighter implements Highlighter {
 
     @Override
     public HighlightField highlight(FieldHighlightContext fieldContext) throws IOException {
-        SearchHighlightContext.Field field = fieldContext.field;
-        FetchSubPhase.HitContext hitContext = fieldContext.hitContext;
-        MappedFieldType fieldType = fieldContext.fieldType;
-        boolean forceSource = fieldContext.forceSource;
-        boolean fixBrokenAnalysis = fieldContext.context.containsBrokenAnalysis(fieldContext.fieldName);
+        SearchHighlightContext.Field field = fieldContext.field();
+        FetchSubPhase.HitContext hitContext = fieldContext.hitContext();
+        MappedFieldType fieldType = fieldContext.fieldType();
+        boolean forceSource = fieldContext.forceSource();
+        boolean fixBrokenAnalysis = fieldContext.context().containsBrokenAnalysis(fieldContext.fieldName());
 
         if (canHighlight(fieldType) == false) {
             throw new IllegalArgumentException(
                 "the field ["
-                    + fieldContext.fieldName
+                    + fieldContext.fieldName()
                     + "] should be indexed with term vector with position offsets to be used with fast vector highlighter"
             );
         }
 
         Encoder encoder = field.fieldOptions().encoder().equals("html") ? HighlightUtils.Encoders.HTML : HighlightUtils.Encoders.DEFAULT;
 
-        if (fieldContext.cache.containsKey(CACHE_KEY) == false) {
-            fieldContext.cache.put(CACHE_KEY, new HighlighterEntry());
+        if (fieldContext.cache().containsKey(CACHE_KEY) == false) {
+            fieldContext.cache().put(CACHE_KEY, new HighlighterEntry());
         }
-        HighlighterEntry cache = (HighlighterEntry) fieldContext.cache.get(CACHE_KEY);
+        HighlighterEntry cache = (HighlighterEntry) fieldContext.cache().get(CACHE_KEY);
         FieldHighlightEntry entry = cache.fields.get(fieldType);
         if (entry == null) {
             FragListBuilder fragListBuilder;
@@ -99,7 +99,7 @@ public class FastVectorHighlighter implements Highlighter {
             Function<Source, FragmentsBuilder> fragmentsBuilderSupplier = fragmentsBuilderSupplier(
                 field,
                 fieldType,
-                fieldContext.context,
+                fieldContext.context(),
                 forceSource,
                 fixBrokenAnalysis
             );
@@ -111,7 +111,7 @@ public class FastVectorHighlighter implements Highlighter {
                  * with use caching it across hits (and across readers...)
                  */
                 entry.fieldMatchFieldQuery = new CustomFieldQuery(
-                    fieldContext.query,
+                        fieldContext.query(),
                     hitContext.topLevelReader(),
                     true,
                     field.fieldOptions().requireFieldMatch()
@@ -122,7 +122,7 @@ public class FastVectorHighlighter implements Highlighter {
                  * with use caching it across hits (and across readers...)
                  */
                 entry.noFieldMatchFieldQuery = new CustomFieldQuery(
-                    fieldContext.query,
+                        fieldContext.query(),
                     hitContext.topLevelReader(),
                     true,
                     field.fieldOptions().requireFieldMatch()
@@ -189,10 +189,10 @@ public class FastVectorHighlighter implements Highlighter {
         }
 
         if (CollectionUtils.isEmpty(fragments) == false) {
-            return new HighlightField(fieldContext.fieldName, Text.convertFromStringArray(fragments));
+            return new HighlightField(fieldContext.fieldName(), Text.convertFromStringArray(fragments));
         }
 
-        int noMatchSize = fieldContext.field.fieldOptions().noMatchSize();
+        int noMatchSize = fieldContext.field().fieldOptions().noMatchSize();
         if (noMatchSize > 0) {
             // Essentially we just request that a fragment is built from 0 to noMatchSize using
             // the normal fragmentsBuilder
@@ -209,7 +209,7 @@ public class FastVectorHighlighter implements Highlighter {
                 encoder
             );
             if (CollectionUtils.isEmpty(fragments) == false) {
-                return new HighlightField(fieldContext.fieldName, Text.convertFromStringArray(fragments));
+                return new HighlightField(fieldContext.fieldName(), Text.convertFromStringArray(fragments));
             }
         }
 

@@ -38,7 +38,7 @@ public class StemmerOverrideTokenFilterFactoryTests extends ESTokenStreamTestCas
             new CommonAnalysisPlugin()
         );
 
-        return analysis.tokenFilter.get("my_stemmer_override");
+        return analysis.tokenFilter().get("my_stemmer_override");
     }
 
     public void testRuleError() {

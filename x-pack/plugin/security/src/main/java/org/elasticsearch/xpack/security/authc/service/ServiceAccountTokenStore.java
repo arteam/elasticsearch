@@ -20,21 +20,5 @@ public interface ServiceAccountTokenStore {
      */
     void authenticate(ServiceAccountToken token, ActionListener<StoreAuthenticationResult> listener);
 
-    class StoreAuthenticationResult {
-        private final boolean success;
-        private final TokenSource tokenSource;
-
-        public StoreAuthenticationResult(boolean success, TokenSource tokenSource) {
-            this.success = success;
-            this.tokenSource = tokenSource;
-        }
-
-        public boolean isSuccess() {
-            return success;
-        }
-
-        public TokenSource getTokenSource() {
-            return tokenSource;
-        }
-    }
+    record StoreAuthenticationResult(boolean success, TokenSource tokenSource) {}
 }

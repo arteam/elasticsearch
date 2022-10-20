@@ -121,17 +121,17 @@ class DefaultCheckpointProvider implements CheckpointProvider {
                 groupedListener = new GroupedActionListener<>(mergeMapsListener, resolvedIndexes.numClusters());
             }
 
-            if (resolvedIndexes.getLocalIndices().isEmpty() == false) {
+            if (resolvedIndexes.localIndices().isEmpty() == false) {
                 getCheckpointsFromOneCluster(
                     client,
                     transformConfig.getHeaders(),
-                    resolvedIndexes.getLocalIndices().toArray(new String[0]),
+                    resolvedIndexes.localIndices().toArray(new String[0]),
                     RemoteClusterService.LOCAL_CLUSTER_GROUP_KEY,
                     groupedListener
                 );
             }
 
-            for (Map.Entry<String, List<String>> remoteIndex : resolvedIndexes.getRemoteIndicesPerClusterAlias().entrySet()) {
+            for (Map.Entry<String, List<String>> remoteIndex : resolvedIndexes.remoteIndicesPerClusterAlias().entrySet()) {
                 Client remoteClient = client.getRemoteClusterClient(remoteIndex.getKey());
                 getCheckpointsFromOneCluster(
                     remoteClient,

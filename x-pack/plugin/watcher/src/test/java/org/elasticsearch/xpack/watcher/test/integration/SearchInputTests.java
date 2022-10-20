@@ -180,7 +180,7 @@ public class SearchInputTests extends ESTestCase {
 
         SearchInput searchInput = factory.parseInput("_id", parser);
         assertEquals(SearchInput.TYPE, searchInput.type());
-        assertThat(searchInput.getTimeout(), equalTo(timeout));
+        assertThat(searchInput.timeout(), equalTo(timeout));
     }
 
     // source: https://discuss.elastic.co/t/need-help-for-energy-monitoring-system-alerts/89415/3
@@ -216,8 +216,8 @@ public class SearchInputTests extends ESTestCase {
 
             SearchInputFactory factory = new SearchInputFactory(Settings.EMPTY, client, xContentRegistry(), scriptService);
             SearchInput input = factory.parseInput("my-watch", parser);
-            assertThat(input.getRequest(), is(not(nullValue())));
-            assertThat(input.getRequest().getSearchSource(), is(BytesArray.EMPTY));
+            assertThat(input.request(), is(not(nullValue())));
+            assertThat(input.request().getSearchSource(), is(BytesArray.EMPTY));
 
             ExecutableSearchInput executableSearchInput = factory.createExecutable(input);
             WatchExecutionContext ctx = WatcherTestUtils.createWatchExecutionContext();

@@ -315,7 +315,13 @@ public class HierarchyCircuitBreakerService extends CircuitBreakerService {
         }
         // Manually add the parent breaker settings since they aren't part of the breaker map
         allStats.add(
-            new CircuitBreakerStats(CircuitBreaker.PARENT, parentSettings.getLimit(), memoryUsed(0L).totalUsage, 1.0, parentTripCount.get())
+            new CircuitBreakerStats(
+                CircuitBreaker.PARENT,
+                parentSettings.getLimit(),
+                memoryUsed(0L).totalUsage(),
+                1.0,
+                parentTripCount.get()
+            )
         );
         return new AllCircuitBreakerStats(allStats.toArray(CircuitBreakerStats[]::new));
     }
@@ -332,19 +338,7 @@ public class HierarchyCircuitBreakerService extends CircuitBreakerService {
         );
     }
 
-    static class MemoryUsage {
-        final long baseUsage;
-        final long totalUsage;
-        final long transientChildUsage;
-        final long permanentChildUsage;
-
-        MemoryUsage(final long baseUsage, final long totalUsage, final long transientChildUsage, final long permanentChildUsage) {
-            this.baseUsage = baseUsage;
-            this.totalUsage = totalUsage;
-            this.transientChildUsage = transientChildUsage;
-            this.permanentChildUsage = permanentChildUsage;
-        }
-    }
+    record MemoryUsage(long baseUsage, long totalUsage, long transientChildUsage, long permanentChildUsage) {}
 
     private MemoryUsage memoryUsed(long newBytesReserved) {
         long transientUsage = 0;
@@ -395,7 +389,7 @@ public class HierarchyCircuitBreakerService extends CircuitBreakerService {
     public void checkParentLimit(long newBytesReserved, String label) throws CircuitBreakingException {
         final MemoryUsage memoryUsed = memoryUsed(newBytesReserved);
         long parentLimit = this.parentSettings.getLimit();
-        if (memoryUsed.totalUsage > parentLimit && overLimitStrategy.overLimit(memoryUsed).totalUsage > parentLimit) {
+        if (memoryUsed.totalUsage() > parentLimit && overLimitStrategy.overLimit(memoryUsed).totalUsage() > parentLimit) {
             this.parentTripCount.incrementAndGet();
             final String messageString = buildParentTripMessage(
                 newBytesReserved,
@@ -407,11 +401,11 @@ public class HierarchyCircuitBreakerService extends CircuitBreakerService {
             );
             // derive durability of a tripped parent breaker depending on whether the majority of memory tracked by
             // child circuit breakers is categorized as transient or permanent.
-            CircuitBreaker.Durability durability = memoryUsed.transientChildUsage >= memoryUsed.permanentChildUsage
+            CircuitBreaker.Durability durability = memoryUsed.transientChildUsage() >= memoryUsed.permanentChildUsage()
                 ? CircuitBreaker.Durability.TRANSIENT
                 : CircuitBreaker.Durability.PERMANENT;
             logger.debug(() -> format("%s", messageString));
-            throw new CircuitBreakingException(messageString, memoryUsed.totalUsage, parentLimit, durability);
+            throw new CircuitBreakingException(messageString, memoryUsed.totalUsage(), parentLimit, durability);
         }
     }
 
@@ -428,12 +422,12 @@ public class HierarchyCircuitBreakerService extends CircuitBreakerService {
         message.append("[parent] Data too large, data for [");
         message.append(label);
         message.append("] would be [");
-        appendBytesSafe(message, memoryUsed.totalUsage);
+        appendBytesSafe(message, memoryUsed.totalUsage());
         message.append("], which is larger than the limit of [");
         appendBytesSafe(message, parentLimit);
         message.append("]");
         if (trackRealMemoryUsage) {
-            final long realUsage = memoryUsed.baseUsage;
+            final long realUsage = memoryUsed.baseUsage();
             message.append(", real usage: [");
             appendBytesSafe(message, realUsage);
             message.append("], new bytes reserved: [");
@@ -593,13 +587,13 @@ public class HierarchyCircuitBreakerService extends CircuitBreakerService {
                     overLimitTriggered(leader);
                     if (leader) {
                         long initialCollectionCount = gcCountSupplier.getAsLong();
-                        logger.info("attempting to trigger G1GC due to high heap usage [{}]", memoryUsed.baseUsage);
+                        logger.info("attempting to trigger G1GC due to high heap usage [{}]", memoryUsed.baseUsage());
                         long localBlackHole = 0;
                         // number of allocations, corresponding to (approximately) number of free regions + 1
-                        int allocationCount = Math.toIntExact((maxHeap - memoryUsed.baseUsage) / g1RegionSize + 1);
+                        int allocationCount = Math.toIntExact((maxHeap - memoryUsed.baseUsage()) / g1RegionSize + 1);
                         // allocations of half-region size becomes single humongous alloc, thus taking up a full region.
                         int allocationSize = (int) (g1RegionSize >> 1);
-                        long maxUsageObserved = memoryUsed.baseUsage;
+                        long maxUsageObserved = memoryUsed.baseUsage();
                         for (; allocationIndex < allocationCount; ++allocationIndex) {
                             long current = currentMemoryUsageSupplier.getAsLong();
                             if (current >= maxUsageObserved) {
@@ -628,11 +622,11 @@ public class HierarchyCircuitBreakerService extends CircuitBreakerService {
             }
 
             final long current = currentMemoryUsageSupplier.getAsLong();
-            if (current < memoryUsed.baseUsage) {
+            if (current < memoryUsed.baseUsage()) {
                 if (leader) {
                     logger.info(
                         "GC did bring memory usage down, before [{}], after [{}], allocations [{}], duration [{}]",
-                        memoryUsed.baseUsage,
+                        memoryUsed.baseUsage(),
                         current,
                         allocationIndex,
                         allocationDuration
@@ -640,15 +634,15 @@ public class HierarchyCircuitBreakerService extends CircuitBreakerService {
                 }
                 return new MemoryUsage(
                     current,
-                    memoryUsed.totalUsage - memoryUsed.baseUsage + current,
-                    memoryUsed.transientChildUsage,
-                    memoryUsed.permanentChildUsage
+                    memoryUsed.totalUsage() - memoryUsed.baseUsage() + current,
+                    memoryUsed.transientChildUsage(),
+                    memoryUsed.permanentChildUsage()
                 );
             } else {
                 if (leader) {
                     logger.info(
                         "GC did not bring memory usage down, before [{}], after [{}], allocations [{}], duration [{}]",
-                        memoryUsed.baseUsage,
+                        memoryUsed.baseUsage(),
                         current,
                         allocationIndex,
                         allocationDuration

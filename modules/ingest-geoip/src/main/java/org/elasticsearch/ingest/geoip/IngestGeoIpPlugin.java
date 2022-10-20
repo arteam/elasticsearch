@@ -93,13 +93,13 @@ public class IngestGeoIpPlugin extends Plugin implements IngestPlugin, SystemInd
 
     @Override
     public Map<String, Processor.Factory> getProcessors(Processor.Parameters parameters) {
-        ingestService.set(parameters.ingestService);
+        ingestService.set(parameters.ingestService());
 
-        long cacheSize = CACHE_SIZE.get(parameters.env.settings());
+        long cacheSize = CACHE_SIZE.get(parameters.env().settings());
         GeoIpCache geoIpCache = new GeoIpCache(cacheSize);
-        DatabaseNodeService registry = new DatabaseNodeService(parameters.env, parameters.client, geoIpCache, parameters.genericExecutor);
+        DatabaseNodeService registry = new DatabaseNodeService(parameters.env(), parameters.client(), geoIpCache, parameters.genericExecutor());
         databaseRegistry.set(registry);
-        return Map.of(GeoIpProcessor.TYPE, new GeoIpProcessor.Factory(registry, parameters.ingestService.getClusterService()));
+        return Map.of(GeoIpProcessor.TYPE, new GeoIpProcessor.Factory(registry, parameters.ingestService().getClusterService()));
     }
 
     @Override

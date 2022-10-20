@@ -31,7 +31,7 @@ public class PatternCaptureTokenFilterTests extends ESTokenStreamTestCase {
             .build();
 
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", settings);
-        IndexAnalyzers indexAnalyzers = createTestAnalysis(idxSettings, settings, new CommonAnalysisPlugin()).indexAnalyzers;
+        IndexAnalyzers indexAnalyzers = createTestAnalysis(idxSettings, settings, new CommonAnalysisPlugin()).indexAnalyzers();
         NamedAnalyzer analyzer1 = indexAnalyzers.get("single");
 
         assertTokenStreamContents(analyzer1.tokenStream("test", "foobarbaz"), new String[] { "foobarbaz", "foobar", "foo" });

@@ -44,17 +44,17 @@ public class ExecutableSearchTransform extends ExecutableTransform<SearchTransfo
         super(transform, logger);
         this.client = client;
         this.searchTemplateService = searchTemplateService;
-        this.timeout = transform.getTimeout() != null ? transform.getTimeout() : defaultTimeout;
+        this.timeout = transform.timeout() != null ? transform.timeout() : defaultTimeout;
     }
 
     @Override
     public SearchTransform.Result execute(WatchExecutionContext ctx, Payload payload) {
         WatcherSearchTemplateRequest request = null;
         try {
-            Script template = transform.getRequest().getOrCreateTemplate();
+            Script template = transform.request().getOrCreateTemplate();
             String renderedTemplate = searchTemplateService.renderTemplate(template, ctx, payload);
             // We need to make a copy, so that we don't modify the original instance that we keep around in a watch:
-            request = new WatcherSearchTemplateRequest(transform.getRequest(), new BytesArray(renderedTemplate));
+            request = new WatcherSearchTemplateRequest(transform.request(), new BytesArray(renderedTemplate));
             SearchRequest searchRequest = searchTemplateService.toSearchRequest(request);
             SearchResponse resp = ClientHelper.executeWithHeaders(
                 ctx.watch().status().getHeaders(),

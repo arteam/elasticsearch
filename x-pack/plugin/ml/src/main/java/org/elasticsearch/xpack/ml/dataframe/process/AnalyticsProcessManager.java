@@ -255,7 +255,7 @@ public class AnalyticsProcessManager {
                     if (row.shouldSkip()) {
                         dataCountsTracker.incrementSkippedDocsCount();
                     } else {
-                        String[] rowValues = row.getValues();
+                        String[] rowValues = row.values();
                         System.arraycopy(rowValues, 0, record, 0, rowValues.length);
                         record[record.length - 2] = String.valueOf(row.getChecksum());
                         if (row.isTraining()) {
@@ -460,8 +460,8 @@ public class AnalyticsProcessManager {
             int threads = Math.min(config.getMaxNumThreads(), numAllocatedProcessors);
             return new AnalyticsProcessConfig(
                 config.getId(),
-                dataSummary.rows,
-                dataSummary.cols,
+                    dataSummary.rows(),
+                    dataSummary.cols(),
                 config.getModelMemoryLimit(),
                 threads,
                 config.getDest().getResultsField(),

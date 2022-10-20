@@ -11,17 +11,7 @@ import org.elasticsearch.xpack.ql.execution.search.FieldExtraction;
 import org.elasticsearch.xpack.ql.execution.search.QlSourceBuilder;
 import org.elasticsearch.xpack.ql.expression.gen.pipeline.Pipe;
 
-public class ComputedRef implements FieldExtraction {
-
-    private final Pipe processor;
-
-    public ComputedRef(Pipe processor) {
-        this.processor = processor;
-    }
-
-    public Pipe processor() {
-        return processor;
-    }
+public record ComputedRef(Pipe processor) implements FieldExtraction {
 
     @Override
     public boolean supportedByAggsOnlyQuery() {

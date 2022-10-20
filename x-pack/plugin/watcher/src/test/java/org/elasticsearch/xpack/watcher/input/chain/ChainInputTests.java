@@ -94,11 +94,11 @@ public class ChainInputTests extends ESTestCase {
         parser.nextToken();
         ChainInput chainInput = chainInputFactory.parseInput("test", parser);
 
-        assertThat(chainInput.getInputs(), hasSize(2));
-        assertThat(chainInput.getInputs().get(0).v1(), is("first"));
-        assertThat(chainInput.getInputs().get(0).v2(), instanceOf(SimpleInput.class));
-        assertThat(chainInput.getInputs().get(1).v1(), is("second"));
-        assertThat(chainInput.getInputs().get(1).v2(), instanceOf(SimpleInput.class));
+        assertThat(chainInput.inputs(), hasSize(2));
+        assertThat(chainInput.inputs().get(0).v1(), is("first"));
+        assertThat(chainInput.inputs().get(0).v2(), instanceOf(SimpleInput.class));
+        assertThat(chainInput.inputs().get(1).v1(), is("second"));
+        assertThat(chainInput.inputs().get(1).v2(), instanceOf(SimpleInput.class));
 
         // now execute
         ExecutableChainInput executableChainInput = chainInputFactory.createExecutable(chainInput);
@@ -139,11 +139,11 @@ public class ChainInputTests extends ESTestCase {
         XContentParser parser = createParser(builder);
         parser.nextToken();
         ChainInput parsedChainInput = ChainInput.parse("testWatchId", parser, inputRegistry);
-        assertThat(parsedChainInput.getInputs(), hasSize(2));
-        assertThat(parsedChainInput.getInputs().get(0).v1(), is("first"));
-        assertThat(parsedChainInput.getInputs().get(0).v2(), is(instanceOf(SimpleInput.class)));
-        assertThat(parsedChainInput.getInputs().get(1).v1(), is("second"));
-        assertThat(parsedChainInput.getInputs().get(1).v2(), is(instanceOf(SimpleInput.class)));
+        assertThat(parsedChainInput.inputs(), hasSize(2));
+        assertThat(parsedChainInput.inputs().get(0).v1(), is("first"));
+        assertThat(parsedChainInput.inputs().get(0).v2(), is(instanceOf(SimpleInput.class)));
+        assertThat(parsedChainInput.inputs().get(1).v1(), is("second"));
+        assertThat(parsedChainInput.inputs().get(1).v2(), is(instanceOf(SimpleInput.class)));
     }
 
     public void testThatWatchSourceBuilderWorksWithChainInput() throws Exception {

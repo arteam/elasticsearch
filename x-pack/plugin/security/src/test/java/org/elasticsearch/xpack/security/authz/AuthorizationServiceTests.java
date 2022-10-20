@@ -1120,8 +1120,8 @@ public class AuthorizationServiceTests extends ESTestCase {
                 final IndicesAccessControl.IndexAccessControl indexAccessControl = indicesAccessControl.getIndexPermissions(
                     IndicesAndAliasesResolverField.NO_INDEX_PLACEHOLDER
                 );
-                assertFalse(indexAccessControl.getFieldPermissions().hasFieldLevelSecurity());
-                assertFalse(indexAccessControl.getDocumentPermissions().hasDocumentLevelPermissions());
+                assertFalse(indexAccessControl.fieldPermissions().hasFieldLevelSecurity());
+                assertFalse(indexAccessControl.documentPermissions().hasDocumentLevelPermissions());
             }, e -> { fail(e.getMessage()); });
             final CountDownLatch latch = new CountDownLatch(1);
             authorizationService.authorize(authentication, SearchAction.NAME, searchRequest, new LatchedActionListener<>(listener, latch));

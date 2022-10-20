@@ -99,66 +99,15 @@ public interface Processor {
      * Infrastructure class that holds services that can be used by processor factories to create processor instances
      * and that gets passed around to all {@link org.elasticsearch.plugins.IngestPlugin}s.
      */
-    class Parameters {
-
-        /**
-         * Useful to provide access to the node's environment like config directory to processor factories.
-         */
-        public final Environment env;
-
-        /**
-         * Provides processors script support.
-         */
-        public final ScriptService scriptService;
-
-        /**
-         * Provide analyzer support
-         */
-        public final AnalysisRegistry analysisRegistry;
-
-        /**
-         * Allows processors to read headers set by {@link org.elasticsearch.action.support.ActionFilter}
-         * instances that have run prior to in ingest.
-         */
-        public final ThreadContext threadContext;
-
-        public final LongSupplier relativeTimeSupplier;
-
-        public final IngestService ingestService;
-
-        public final Consumer<Runnable> genericExecutor;
-
-        /**
-         * Provides scheduler support
-         */
-        public final BiFunction<Long, Runnable, Scheduler.ScheduledCancellable> scheduler;
-
-        /**
-         * Provides access to the node client
-         */
-        public final Client client;
-
-        public Parameters(
-            Environment env,
-            ScriptService scriptService,
-            AnalysisRegistry analysisRegistry,
-            ThreadContext threadContext,
-            LongSupplier relativeTimeSupplier,
-            BiFunction<Long, Runnable, Scheduler.ScheduledCancellable> scheduler,
-            IngestService ingestService,
-            Client client,
-            Consumer<Runnable> genericExecutor
-        ) {
-            this.env = env;
-            this.scriptService = scriptService;
-            this.threadContext = threadContext;
-            this.analysisRegistry = analysisRegistry;
-            this.relativeTimeSupplier = relativeTimeSupplier;
-            this.scheduler = scheduler;
-            this.ingestService = ingestService;
-            this.client = client;
-            this.genericExecutor = genericExecutor;
-        }
-
-    }
+    record Parameters(
+        Environment env,
+        ScriptService scriptService,
+        AnalysisRegistry analysisRegistry,
+        ThreadContext threadContext,
+        LongSupplier relativeTimeSupplier,
+        BiFunction<Long, Runnable, Scheduler.ScheduledCancellable> scheduler,
+        IngestService ingestService,
+        Client client,
+        Consumer<Runnable> genericExecutor
+    ) {}
 }

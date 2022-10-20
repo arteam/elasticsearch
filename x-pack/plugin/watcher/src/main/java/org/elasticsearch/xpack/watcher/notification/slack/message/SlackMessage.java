@@ -17,19 +17,11 @@ import org.elasticsearch.xpack.watcher.common.text.TextTemplateEngine;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-public class SlackMessage implements MessageElement {
-
-    final String from;
-    final String[] to;
-    final String icon;
-    final String text;
-    final Attachment[] attachments;
+public record SlackMessage(String from, String[] to, String icon, String text, Attachment[] attachments) implements MessageElement {
 
     public SlackMessage(String from, String[] to, String icon, @Nullable String text, @Nullable Attachment[] attachments) {
         if (text == null && attachments == null) {
@@ -41,50 +33,6 @@ public class SlackMessage implements MessageElement {
         this.icon = icon;
         this.text = text;
         this.attachments = attachments;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public String[] getTo() {
-        return to;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public Attachment[] getAttachments() {
-        return attachments;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SlackMessage that = (SlackMessage) o;
-
-        return Objects.equals(from, that.from)
-            && Arrays.equals(to, that.to)
-            && Objects.equals(icon, that.icon)
-            && Objects.equals(text, that.text)
-            && Arrays.equals(attachments, that.attachments);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = from != null ? from.hashCode() : 0;
-        result = 31 * result + (to != null ? Arrays.hashCode(to) : 0);
-        result = 31 * result + (icon != null ? icon.hashCode() : 0);
-        result = 31 * result + (text != null ? text.hashCode() : 0);
-        result = 31 * result + (attachments != null ? Arrays.hashCode(attachments) : 0);
-        return result;
     }
 
     @Override
@@ -118,74 +66,14 @@ public class SlackMessage implements MessageElement {
         return builder.endObject();
     }
 
-    public static class Template implements ToXContentObject {
-
-        final TextTemplate from;
-        final TextTemplate[] to;
-        final TextTemplate text;
-        final TextTemplate icon;
-        final Attachment.Template[] attachments;
-        final DynamicAttachments dynamicAttachments;
-
-        public Template(
-            TextTemplate from,
-            TextTemplate[] to,
-            TextTemplate text,
-            TextTemplate icon,
-            Attachment.Template[] attachments,
-            DynamicAttachments dynamicAttachments
-        ) {
-            this.from = from;
-            this.to = to;
-            this.text = text;
-            this.icon = icon;
-            this.attachments = attachments;
-            this.dynamicAttachments = dynamicAttachments;
-        }
-
-        public TextTemplate getFrom() {
-            return from;
-        }
-
-        public TextTemplate[] getTo() {
-            return to;
-        }
-
-        public TextTemplate getText() {
-            return text;
-        }
-
-        public TextTemplate getIcon() {
-            return icon;
-        }
-
-        public Attachment.Template[] getAttachments() {
-            return attachments;
-        }
-
-        public DynamicAttachments dynamicAttachments() {
-            return dynamicAttachments;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Template template = (Template) o;
-
-            return Objects.equals(from, template.from)
-                && Objects.equals(text, template.text)
-                && Objects.equals(icon, template.icon)
-                && Objects.equals(dynamicAttachments, template.dynamicAttachments)
-                && Arrays.equals(to, template.to)
-                && Arrays.equals(attachments, template.attachments);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(from, to, text, icon, attachments, dynamicAttachments);
-        }
+    public record Template(
+        TextTemplate from,
+        TextTemplate[] to,
+        TextTemplate text,
+        TextTemplate icon,
+        Attachment.Template[] attachments,
+        DynamicAttachments dynamicAttachments
+    ) implements ToXContentObject {
 
         public SlackMessage render(
             String watchId,

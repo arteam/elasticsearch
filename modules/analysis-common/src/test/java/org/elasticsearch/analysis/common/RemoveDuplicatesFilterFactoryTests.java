@@ -29,7 +29,7 @@ public class RemoveDuplicatesFilterFactoryTests extends ESTokenStreamTestCase {
             .put("index.analysis.filter.removedups.type", "remove_duplicates")
             .build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("removedups");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("removedups");
         assertThat(tokenFilter, instanceOf(RemoveDuplicatesTokenFilterFactory.class));
 
         CannedTokenStream cts = new CannedTokenStream(

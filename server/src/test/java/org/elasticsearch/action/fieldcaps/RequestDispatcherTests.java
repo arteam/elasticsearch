@@ -608,16 +608,7 @@ public class RequestDispatcherTests extends ESAllocationTestCase {
         }
     }
 
-    private static class NodeRequest {
-        final int round;
-        final DiscoveryNode node;
-        final FieldCapabilitiesNodeRequest request;
-
-        NodeRequest(int round, DiscoveryNode node, FieldCapabilitiesNodeRequest request) {
-            this.round = round;
-            this.node = node;
-            this.request = request;
-        }
+    private record NodeRequest(int round, DiscoveryNode node, FieldCapabilitiesNodeRequest request) {
 
         Set<String> indices() {
             return request.shardIds().stream().map(ShardId::getIndexName).collect(Collectors.toSet());

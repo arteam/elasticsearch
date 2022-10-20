@@ -60,15 +60,15 @@ public abstract class CoreTestTranslater {
                 // The setup section contains an unsupported option
                 continue;
             }
-            if (false == suite.modifySections(candidate.getTestSection().getExecutableSections())) {
+            if (false == suite.modifySections(candidate.getTestSection().executableSections())) {
                 // The test section contains an unsupported option
                 continue;
             }
             ClientYamlTestSection modified = new ClientYamlTestSection(
-                candidate.getTestSection().getLocation(),
-                candidate.getTestSection().getName(),
-                candidate.getTestSection().getSkipSection(),
-                candidate.getTestSection().getExecutableSections()
+                candidate.getTestSection().location(),
+                candidate.getTestSection().name(),
+                candidate.getTestSection().skipSection(),
+                candidate.getTestSection().executableSections()
             );
             result.add(new Object[] { new ClientYamlTestCandidate(suite.modified, modified) });
         }
@@ -153,7 +153,7 @@ public abstract class CoreTestTranslater {
         private final ClientYamlTestSuite modified;
 
         public Suite(ClientYamlTestCandidate candidate) {
-            if (false == modifySections(candidate.getSetupSection().getExecutableSections())) {
+            if (false == modifySections(candidate.getSetupSection().executableSections())) {
                 modified = null;
                 return;
             }
@@ -162,13 +162,13 @@ public abstract class CoreTestTranslater {
              * to add a dynamic template that sets up any dynamic indices how we
              * expect them.
              */
-            List<ExecutableSection> setup = new ArrayList<>(candidate.getSetupSection().getExecutableSections().size() + 1);
+            List<ExecutableSection> setup = new ArrayList<>(candidate.getSetupSection().executableSections().size() + 1);
             setup.add(addIndexTemplate());
-            setup.addAll(candidate.getSetupSection().getExecutableSections());
+            setup.addAll(candidate.getSetupSection().executableSections());
             modified = new ClientYamlTestSuite(
                 candidate.getApi(),
                 candidate.getName(),
-                new SetupSection(candidate.getSetupSection().getSkipSection(), setup),
+                new SetupSection(candidate.getSetupSection().skipSection(), setup),
                 candidate.getTeardownSection(),
                 List.of()
             );

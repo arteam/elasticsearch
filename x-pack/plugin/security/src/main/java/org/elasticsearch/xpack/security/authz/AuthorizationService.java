@@ -506,7 +506,7 @@ public class AuthorizationService {
                 final RequestInfo aliasesRequestInfo = new RequestInfo(authentication, request, IndicesAliasesAction.NAME, parentContext);
                 authzEngine.authorizeIndexAction(aliasesRequestInfo, authzInfo, ril -> {
                     resolvedIndicesAsyncSupplier.getAsync(ActionListener.wrap(resolvedIndices -> {
-                        List<String> aliasesAndIndices = new ArrayList<>(resolvedIndices.getLocal());
+                        List<String> aliasesAndIndices = new ArrayList<>(resolvedIndices.local());
                         for (Alias alias : aliases) {
                             aliasesAndIndices.add(alias.name());
                         }
@@ -707,7 +707,7 @@ public class AuthorizationService {
         final AuditTrail auditTrail = auditTrailService.get();
 
         resolvedIndicesAsyncSupplier.getAsync(ActionListener.wrap(overallResolvedIndices -> {
-            final Set<String> localIndices = new HashSet<>(overallResolvedIndices.getLocal());
+            final Set<String> localIndices = new HashSet<>(overallResolvedIndices.local());
             for (BulkItemRequest item : request.items()) {
                 final String itemAction = getAction(item);
                 String resolvedIndex = resolvedIndexNames.computeIfAbsent(item.index(), key -> {
@@ -715,19 +715,19 @@ public class AuthorizationService {
                         itemAction,
                         item.request()
                     );
-                    if (resolvedIndices.getRemote().size() != 0) {
+                    if (resolvedIndices.remote().size() != 0) {
                         throw illegalArgument(
                             "Bulk item should not write to remote indices, but request writes to "
-                                + String.join(",", resolvedIndices.getRemote())
+                                + String.join(",", resolvedIndices.remote())
                         );
                     }
-                    if (resolvedIndices.getLocal().size() != 1) {
+                    if (resolvedIndices.local().size() != 1) {
                         throw illegalArgument(
                             "Bulk item should write to exactly 1 index, but request writes to "
-                                + String.join(",", resolvedIndices.getLocal())
+                                + String.join(",", resolvedIndices.local())
                         );
                     }
-                    final String resolved = resolvedIndices.getLocal().get(0);
+                    final String resolved = resolvedIndices.local().get(0);
                     if (localIndices.contains(resolved) == false) {
                         throw illegalArgument(
                             "Found bulk item that writes to index " + resolved + " but the request writes to " + localIndices

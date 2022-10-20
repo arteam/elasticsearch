@@ -76,11 +76,11 @@ public class IndicesPermissionTests extends ESTestCase {
             .build();
         IndicesAccessControl permissions = role.authorize(SearchAction.NAME, Sets.newHashSet("_index"), lookup, fieldPermissionsCache);
         assertThat(permissions.getIndexPermissions("_index"), notNullValue());
-        assertTrue(permissions.getIndexPermissions("_index").getFieldPermissions().grantsAccessTo("_field"));
-        assertTrue(permissions.getIndexPermissions("_index").getFieldPermissions().hasFieldLevelSecurity());
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().hasDocumentLevelPermissions(), is(true));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), hasSize(1));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), equalTo(query));
+        assertTrue(permissions.getIndexPermissions("_index").fieldPermissions().grantsAccessTo("_field"));
+        assertTrue(permissions.getIndexPermissions("_index").fieldPermissions().hasFieldLevelSecurity());
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().hasDocumentLevelPermissions(), is(true));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), hasSize(1));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), equalTo(query));
 
         // no document level security:
         role = Role.builder(RESTRICTED_INDICES, "_role")
@@ -88,10 +88,10 @@ public class IndicesPermissionTests extends ESTestCase {
             .build();
         permissions = role.authorize(SearchAction.NAME, Sets.newHashSet("_index"), lookup, fieldPermissionsCache);
         assertThat(permissions.getIndexPermissions("_index"), notNullValue());
-        assertTrue(permissions.getIndexPermissions("_index").getFieldPermissions().grantsAccessTo("_field"));
-        assertTrue(permissions.getIndexPermissions("_index").getFieldPermissions().hasFieldLevelSecurity());
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().hasDocumentLevelPermissions(), is(false));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), nullValue());
+        assertTrue(permissions.getIndexPermissions("_index").fieldPermissions().grantsAccessTo("_field"));
+        assertTrue(permissions.getIndexPermissions("_index").fieldPermissions().hasFieldLevelSecurity());
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().hasDocumentLevelPermissions(), is(false));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), nullValue());
 
         // no field level security:
         role = Role.builder(RESTRICTED_INDICES, "_role")
@@ -99,10 +99,10 @@ public class IndicesPermissionTests extends ESTestCase {
             .build();
         permissions = role.authorize(SearchAction.NAME, Sets.newHashSet("_index"), lookup, fieldPermissionsCache);
         assertThat(permissions.getIndexPermissions("_index"), notNullValue());
-        assertFalse(permissions.getIndexPermissions("_index").getFieldPermissions().hasFieldLevelSecurity());
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().hasDocumentLevelPermissions(), is(true));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), hasSize(1));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), equalTo(query));
+        assertFalse(permissions.getIndexPermissions("_index").fieldPermissions().hasFieldLevelSecurity());
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().hasDocumentLevelPermissions(), is(true));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), hasSize(1));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), equalTo(query));
 
         // index group associated with an alias:
         role = Role.builder(RESTRICTED_INDICES, "_role")
@@ -110,18 +110,18 @@ public class IndicesPermissionTests extends ESTestCase {
             .build();
         permissions = role.authorize(SearchAction.NAME, Sets.newHashSet("_alias"), lookup, fieldPermissionsCache);
         assertThat(permissions.getIndexPermissions("_index"), notNullValue());
-        assertTrue(permissions.getIndexPermissions("_index").getFieldPermissions().grantsAccessTo("_field"));
-        assertTrue(permissions.getIndexPermissions("_index").getFieldPermissions().hasFieldLevelSecurity());
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().hasDocumentLevelPermissions(), is(true));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), hasSize(1));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), equalTo(query));
+        assertTrue(permissions.getIndexPermissions("_index").fieldPermissions().grantsAccessTo("_field"));
+        assertTrue(permissions.getIndexPermissions("_index").fieldPermissions().hasFieldLevelSecurity());
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().hasDocumentLevelPermissions(), is(true));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), hasSize(1));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), equalTo(query));
 
         assertThat(permissions.getIndexPermissions("_alias"), notNullValue());
-        assertTrue(permissions.getIndexPermissions("_alias").getFieldPermissions().grantsAccessTo("_field"));
-        assertTrue(permissions.getIndexPermissions("_alias").getFieldPermissions().hasFieldLevelSecurity());
-        assertThat(permissions.getIndexPermissions("_alias").getDocumentPermissions().hasDocumentLevelPermissions(), is(true));
-        assertThat(permissions.getIndexPermissions("_alias").getDocumentPermissions().getQueries(), hasSize(1));
-        assertThat(permissions.getIndexPermissions("_alias").getDocumentPermissions().getQueries(), equalTo(query));
+        assertTrue(permissions.getIndexPermissions("_alias").fieldPermissions().grantsAccessTo("_field"));
+        assertTrue(permissions.getIndexPermissions("_alias").fieldPermissions().hasFieldLevelSecurity());
+        assertThat(permissions.getIndexPermissions("_alias").documentPermissions().hasDocumentLevelPermissions(), is(true));
+        assertThat(permissions.getIndexPermissions("_alias").documentPermissions().getQueries(), hasSize(1));
+        assertThat(permissions.getIndexPermissions("_alias").documentPermissions().getQueries(), equalTo(query));
 
         // match all fields
         String[] allFields = randomFrom(
@@ -134,16 +134,16 @@ public class IndicesPermissionTests extends ESTestCase {
             .build();
         permissions = role.authorize(SearchAction.NAME, Sets.newHashSet("_alias"), lookup, fieldPermissionsCache);
         assertThat(permissions.getIndexPermissions("_index"), notNullValue());
-        assertFalse(permissions.getIndexPermissions("_index").getFieldPermissions().hasFieldLevelSecurity());
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().hasDocumentLevelPermissions(), is(true));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), hasSize(1));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), equalTo(query));
+        assertFalse(permissions.getIndexPermissions("_index").fieldPermissions().hasFieldLevelSecurity());
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().hasDocumentLevelPermissions(), is(true));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), hasSize(1));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), equalTo(query));
 
         assertThat(permissions.getIndexPermissions("_alias"), notNullValue());
-        assertFalse(permissions.getIndexPermissions("_alias").getFieldPermissions().hasFieldLevelSecurity());
-        assertThat(permissions.getIndexPermissions("_alias").getDocumentPermissions().hasDocumentLevelPermissions(), is(true));
-        assertThat(permissions.getIndexPermissions("_alias").getDocumentPermissions().getQueries(), hasSize(1));
-        assertThat(permissions.getIndexPermissions("_alias").getDocumentPermissions().getQueries(), equalTo(query));
+        assertFalse(permissions.getIndexPermissions("_alias").fieldPermissions().hasFieldLevelSecurity());
+        assertThat(permissions.getIndexPermissions("_alias").documentPermissions().hasDocumentLevelPermissions(), is(true));
+        assertThat(permissions.getIndexPermissions("_alias").documentPermissions().getQueries(), hasSize(1));
+        assertThat(permissions.getIndexPermissions("_alias").documentPermissions().getQueries(), equalTo(query));
 
         IndexMetadata.Builder imbBuilder1 = IndexMetadata.builder("_index_1")
             .settings(
@@ -166,22 +166,22 @@ public class IndicesPermissionTests extends ESTestCase {
         permissions = role.authorize(SearchAction.NAME, Sets.newHashSet("_alias"), lookup, fieldPermissionsCache);
         Set<BytesReference> bothQueries = Sets.union(fooQuery, query);
         assertThat(permissions.getIndexPermissions("_index"), notNullValue());
-        assertFalse(permissions.getIndexPermissions("_index").getFieldPermissions().hasFieldLevelSecurity());
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().hasDocumentLevelPermissions(), is(true));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), hasSize(2));
-        assertThat(permissions.getIndexPermissions("_index").getDocumentPermissions().getQueries(), equalTo(bothQueries));
+        assertFalse(permissions.getIndexPermissions("_index").fieldPermissions().hasFieldLevelSecurity());
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().hasDocumentLevelPermissions(), is(true));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), hasSize(2));
+        assertThat(permissions.getIndexPermissions("_index").documentPermissions().getQueries(), equalTo(bothQueries));
 
         assertThat(permissions.getIndexPermissions("_index_1"), notNullValue());
-        assertFalse(permissions.getIndexPermissions("_index_1").getFieldPermissions().hasFieldLevelSecurity());
-        assertThat(permissions.getIndexPermissions("_index_1").getDocumentPermissions().hasDocumentLevelPermissions(), is(true));
-        assertThat(permissions.getIndexPermissions("_index_1").getDocumentPermissions().getQueries(), hasSize(2));
-        assertThat(permissions.getIndexPermissions("_index_1").getDocumentPermissions().getQueries(), equalTo(bothQueries));
+        assertFalse(permissions.getIndexPermissions("_index_1").fieldPermissions().hasFieldLevelSecurity());
+        assertThat(permissions.getIndexPermissions("_index_1").documentPermissions().hasDocumentLevelPermissions(), is(true));
+        assertThat(permissions.getIndexPermissions("_index_1").documentPermissions().getQueries(), hasSize(2));
+        assertThat(permissions.getIndexPermissions("_index_1").documentPermissions().getQueries(), equalTo(bothQueries));
 
         assertThat(permissions.getIndexPermissions("_alias"), notNullValue());
-        assertFalse(permissions.getIndexPermissions("_alias").getFieldPermissions().hasFieldLevelSecurity());
-        assertThat(permissions.getIndexPermissions("_alias").getDocumentPermissions().hasDocumentLevelPermissions(), is(true));
-        assertThat(permissions.getIndexPermissions("_alias").getDocumentPermissions().getQueries(), hasSize(2));
-        assertThat(permissions.getIndexPermissions("_alias").getDocumentPermissions().getQueries(), equalTo(bothQueries));
+        assertFalse(permissions.getIndexPermissions("_alias").fieldPermissions().hasFieldLevelSecurity());
+        assertThat(permissions.getIndexPermissions("_alias").documentPermissions().hasDocumentLevelPermissions(), is(true));
+        assertThat(permissions.getIndexPermissions("_alias").documentPermissions().getQueries(), hasSize(2));
+        assertThat(permissions.getIndexPermissions("_alias").documentPermissions().getQueries(), equalTo(bothQueries));
 
     }
 
@@ -206,9 +206,9 @@ public class IndicesPermissionTests extends ESTestCase {
             .build();
         IndicesAccessControl permissions = role.authorize(SearchAction.NAME, Sets.newHashSet("_index"), lookup, fieldPermissionsCache);
         assertThat(permissions.getIndexPermissions("_index"), notNullValue());
-        assertTrue(permissions.getIndexPermissions("_index").getFieldPermissions().grantsAccessTo("_field"));
-        assertFalse(permissions.getIndexPermissions("_index").getFieldPermissions().hasFieldLevelSecurity());
-        assertFalse(permissions.getIndexPermissions("_index").getDocumentPermissions().hasDocumentLevelPermissions());
+        assertTrue(permissions.getIndexPermissions("_index").fieldPermissions().grantsAccessTo("_field"));
+        assertFalse(permissions.getIndexPermissions("_index").fieldPermissions().hasFieldLevelSecurity());
+        assertFalse(permissions.getIndexPermissions("_index").documentPermissions().hasDocumentLevelPermissions());
     }
 
     public void testIndicesPrivilegesStreaming() throws IOException {
@@ -272,8 +272,8 @@ public class IndicesPermissionTests extends ESTestCase {
             )
             .build();
         IndicesAccessControl iac = core.authorize(SearchAction.NAME, Sets.newHashSet("a1", "ba"), lookup, fieldPermissionsCache);
-        assertTrue(iac.getIndexPermissions("a1").getFieldPermissions().grantsAccessTo("denied_field"));
-        assertTrue(iac.getIndexPermissions("a1").getFieldPermissions().grantsAccessTo(randomAlphaOfLength(5)));
+        assertTrue(iac.getIndexPermissions("a1").fieldPermissions().grantsAccessTo("denied_field"));
+        assertTrue(iac.getIndexPermissions("a1").fieldPermissions().grantsAccessTo(randomAlphaOfLength(5)));
         // did not define anything for ba so we allow all
         assertFalse(iac.hasIndexPermissions("ba"));
 
@@ -313,12 +313,12 @@ public class IndicesPermissionTests extends ESTestCase {
             )
             .build();
         iac = core.authorize(SearchAction.NAME, Sets.newHashSet("a1", "a2"), lookup, fieldPermissionsCache);
-        assertFalse(iac.getIndexPermissions("a1").getFieldPermissions().hasFieldLevelSecurity());
-        assertFalse(iac.getIndexPermissions("a2").getFieldPermissions().grantsAccessTo("denied_field2"));
-        assertFalse(iac.getIndexPermissions("a2").getFieldPermissions().grantsAccessTo("denied_field"));
-        assertTrue(iac.getIndexPermissions("a2").getFieldPermissions().grantsAccessTo(randomAlphaOfLength(5) + "_field"));
-        assertTrue(iac.getIndexPermissions("a2").getFieldPermissions().grantsAccessTo(randomAlphaOfLength(5) + "_field2"));
-        assertTrue(iac.getIndexPermissions("a2").getFieldPermissions().hasFieldLevelSecurity());
+        assertFalse(iac.getIndexPermissions("a1").fieldPermissions().hasFieldLevelSecurity());
+        assertFalse(iac.getIndexPermissions("a2").fieldPermissions().grantsAccessTo("denied_field2"));
+        assertFalse(iac.getIndexPermissions("a2").fieldPermissions().grantsAccessTo("denied_field"));
+        assertTrue(iac.getIndexPermissions("a2").fieldPermissions().grantsAccessTo(randomAlphaOfLength(5) + "_field"));
+        assertTrue(iac.getIndexPermissions("a2").fieldPermissions().grantsAccessTo(randomAlphaOfLength(5) + "_field2"));
+        assertTrue(iac.getIndexPermissions("a2").fieldPermissions().hasFieldLevelSecurity());
 
         assertTrue(core.check(SearchAction.NAME));
         assertTrue(core.check(PutMappingAction.NAME));

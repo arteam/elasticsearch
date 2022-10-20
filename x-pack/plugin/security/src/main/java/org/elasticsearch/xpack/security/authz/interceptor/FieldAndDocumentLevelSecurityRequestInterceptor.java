@@ -59,15 +59,15 @@ abstract class FieldAndDocumentLevelSecurityRequestInterceptor implements Reques
                 for (String index : requestIndices(indicesRequest)) {
                     IndicesAccessControl.IndexAccessControl indexAccessControl = indicesAccessControl.getIndexPermissions(index);
                     if (indexAccessControl != null
-                        && (indexAccessControl.getFieldPermissions().hasFieldLevelSecurity()
-                            || indexAccessControl.getDocumentPermissions().hasDocumentLevelPermissions())
+                        && (indexAccessControl.fieldPermissions().hasFieldLevelSecurity()
+                            || indexAccessControl.documentPermissions().hasDocumentLevelPermissions())
                         && isDlsLicensed) {
                         logger.trace(
                             "intercepted request for index [{}] with field level access controls [{}] "
                                 + "document level access controls [{}]. disabling conflicting features",
                             index,
-                            indexAccessControl.getFieldPermissions().hasFieldLevelSecurity(),
-                            indexAccessControl.getDocumentPermissions().hasDocumentLevelPermissions()
+                            indexAccessControl.fieldPermissions().hasFieldLevelSecurity(),
+                            indexAccessControl.documentPermissions().hasDocumentLevelPermissions()
                         );
                         accessControlByIndex.put(index, indexAccessControl);
                     }

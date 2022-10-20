@@ -369,8 +369,8 @@ public class PersistentTasksExecutorIT extends ESIntegTestCase {
         persistentTasksClusterService.unassignPersistentTask(taskId, task.getAllocationId() + 1, "unassignment test", unassignmentFuture);
         PersistentTask<?> unassignedTask = unassignmentFuture.get();
         assertThat(unassignedTask.getId(), equalTo(taskId));
-        assertThat(unassignedTask.getAssignment().getExplanation(), equalTo("unassignment test"));
-        assertThat(unassignedTask.getAssignment().getExecutorNode(), is(nullValue()));
+        assertThat(unassignedTask.getAssignment().explanation(), equalTo("unassignment test"));
+        assertThat(unassignedTask.getAssignment().executorNode(), is(nullValue()));
 
         assertBusy(() -> {
             // Verify that the task is NOT running on the node
@@ -454,12 +454,12 @@ public class PersistentTasksExecutorIT extends ESIntegTestCase {
 
             // Verify that the task is STILL in internal cluster state, unassigned, with a reason indicating local abort
             PersistentTask<?> task = assertClusterStateHasTask(taskId);
-            assertThat(task.getAssignment().getExecutorNode(), nullValue());
+            assertThat(task.getAssignment().executorNode(), nullValue());
             // Although the assignment explanation is initially set to "Simulating local abort", because
             // of the way we prevent reassignment to the same node in this test it may quickly change to
             // "non cluster state condition prevents assignment" - either proves the unassignment worked
             assertThat(
-                task.getAssignment().getExplanation(),
+                task.getAssignment().explanation(),
                 either(equalTo("Simulating local abort")).or(equalTo("non cluster state condition prevents assignment"))
             );
         });
@@ -476,7 +476,7 @@ public class PersistentTasksExecutorIT extends ESIntegTestCase {
         // reason has not been published, hence the busy wait here.)
         assertBusy(() -> {
             PersistentTask<?> task = assertClusterStateHasTask(taskId);
-            assertThat(task.getAssignment().getExplanation(), not(equalTo("Simulating local abort")));
+            assertThat(task.getAssignment().explanation(), not(equalTo("Simulating local abort")));
         });
 
         // Complete or cancel the running task

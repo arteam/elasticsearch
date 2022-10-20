@@ -266,7 +266,7 @@ public class TransportSamlLogoutActionTests extends SamlTestCase {
         final String userTokenId = UUIDs.randomBase64UUID();
         final String refreshToken = UUIDs.randomBase64UUID();
         tokenService.createOAuth2Tokens(userTokenId, refreshToken, authentication, authentication, tokenMetadata, future);
-        final String accessToken = future.actionGet().getAccessToken();
+        final String accessToken = future.actionGet().accessToken();
         mockGetTokenFromId(tokenService, userTokenId, authentication, tokenMetadata, false, client);
 
         final SamlLogoutRequest request = new SamlLogoutRequest();

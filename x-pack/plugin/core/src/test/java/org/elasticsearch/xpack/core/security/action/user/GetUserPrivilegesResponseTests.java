@@ -178,9 +178,9 @@ public class GetUserPrivilegesResponseTests extends ESTestCase {
                 return cmp;
             }
             cmp = compareCollection(a.getFieldSecurity(), b.getFieldSecurity(), (f1, f2) -> {
-                int c = compareCollection(Arrays.asList(f1.getGrantedFields()), Arrays.asList(f2.getGrantedFields()), String::compareTo);
+                int c = compareCollection(Arrays.asList(f1.grantedFields()), Arrays.asList(f2.grantedFields()), String::compareTo);
                 if (c == 0) {
-                    c = compareCollection(Arrays.asList(f1.getExcludedFields()), Arrays.asList(f2.getExcludedFields()), String::compareTo);
+                    c = compareCollection(Arrays.asList(f1.excludedFields()), Arrays.asList(f2.excludedFields()), String::compareTo);
                 }
                 return c;
             });

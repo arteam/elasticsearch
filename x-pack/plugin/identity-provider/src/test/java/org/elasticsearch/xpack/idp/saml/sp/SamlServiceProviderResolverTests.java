@@ -80,10 +80,10 @@ public class SamlServiceProviderResolverTests extends ESTestCase {
         assertThat(serviceProvider.shouldSignLogoutRequests(), equalTo(false));
 
         assertThat(serviceProvider.getAttributeNames(), notNullValue());
-        assertThat(serviceProvider.getAttributeNames().principal, equalTo(principalAttribute));
-        assertThat(serviceProvider.getAttributeNames().name, nullValue());
-        assertThat(serviceProvider.getAttributeNames().email, nullValue());
-        assertThat(serviceProvider.getAttributeNames().roles, equalTo(rolesAttribute));
+        assertThat(serviceProvider.getAttributeNames().principal(), equalTo(principalAttribute));
+        assertThat(serviceProvider.getAttributeNames().name(), nullValue());
+        assertThat(serviceProvider.getAttributeNames().email(), nullValue());
+        assertThat(serviceProvider.getAttributeNames().roles(), equalTo(rolesAttribute));
 
         assertThat(serviceProvider.getPrivileges(), notNullValue());
         assertThat(serviceProvider.getPrivileges().getApplicationName(), equalTo(serviceProviderDefaults.applicationName));
@@ -128,10 +128,10 @@ public class SamlServiceProviderResolverTests extends ESTestCase {
         assertThat(serviceProvider2, not(sameInstance(serviceProvider1a)));
         assertThat(serviceProvider2.getEntityId(), equalTo(document2.entityId));
         assertThat(serviceProvider2.getAssertionConsumerService().toString(), equalTo(document2.acs));
-        assertThat(serviceProvider2.getAttributeNames().principal, equalTo(document2.attributeNames.principal));
-        assertThat(serviceProvider2.getAttributeNames().name, equalTo(document2.attributeNames.name));
-        assertThat(serviceProvider2.getAttributeNames().email, equalTo(document2.attributeNames.email));
-        assertThat(serviceProvider2.getAttributeNames().roles, equalTo(document2.attributeNames.roles));
+        assertThat(serviceProvider2.getAttributeNames().principal(), equalTo(document2.attributeNames.principal));
+        assertThat(serviceProvider2.getAttributeNames().name(), equalTo(document2.attributeNames.name));
+        assertThat(serviceProvider2.getAttributeNames().email(), equalTo(document2.attributeNames.email));
+        assertThat(serviceProvider2.getAttributeNames().roles(), equalTo(document2.attributeNames.roles));
         assertThat(serviceProvider2.getPrivileges().getResource(), equalTo(document2.privileges.resource));
     }
 

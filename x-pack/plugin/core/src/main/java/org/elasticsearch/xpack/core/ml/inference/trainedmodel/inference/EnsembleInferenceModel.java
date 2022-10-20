@@ -154,7 +154,7 @@ public class EnsembleInferenceModel implements InferenceModel {
             InferenceResults result = model.infer(features, subModelInferenceConfig);
             assert result instanceof RawInferenceResults;
             RawInferenceResults inferenceResult = (RawInferenceResults) result;
-            inferenceResults[i++] = inferenceResult.getValue();
+            inferenceResults[i++] = inferenceResult.value();
             if (config.requestingImportance()) {
                 addFeatureImportance(featureInfluence, inferenceResult);
             }
@@ -177,7 +177,7 @@ public class EnsembleInferenceModel implements InferenceModel {
     }
 
     private void addFeatureImportance(double[][] featureInfluence, RawInferenceResults inferenceResult) {
-        double[][] modelFeatureImportance = inferenceResult.getFeatureImportance();
+        double[][] modelFeatureImportance = inferenceResult.featureImportance();
         assert modelFeatureImportance.length == featureInfluence.length;
         for (int j = 0; j < modelFeatureImportance.length; j++) {
             if (featureInfluence[j] == null) {

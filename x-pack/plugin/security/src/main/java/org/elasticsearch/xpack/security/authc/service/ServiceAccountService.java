@@ -132,9 +132,9 @@ public class ServiceAccountService {
         }
 
         compositeServiceAccountTokenStore.authenticate(serviceAccountToken, ActionListener.wrap(storeAuthenticationResult -> {
-            if (storeAuthenticationResult.isSuccess()) {
+            if (storeAuthenticationResult.success()) {
                 listener.onResponse(
-                    createAuthentication(account, serviceAccountToken, storeAuthenticationResult.getTokenSource(), nodeName)
+                    createAuthentication(account, serviceAccountToken, storeAuthenticationResult.tokenSource(), nodeName)
                 );
             } else {
                 final ElasticsearchSecurityException e = createAuthenticationException(serviceAccountToken);

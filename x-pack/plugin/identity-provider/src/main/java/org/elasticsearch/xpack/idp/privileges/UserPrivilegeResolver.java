@@ -29,11 +29,7 @@ import java.util.stream.Collectors;
  */
 public class UserPrivilegeResolver {
 
-    public static class UserPrivileges {
-        public final String principal;
-        public final boolean hasAccess;
-        public final Set<String> roles;
-
+    public record UserPrivileges(String principal, boolean hasAccess, Set<String> roles) {
         public UserPrivileges(String principal, boolean hasAccess, Set<String> roles) {
             this.principal = Objects.requireNonNull(principal, "principal may not be null");
             if (hasAccess == false && roles.isEmpty() == false) {
@@ -41,20 +37,6 @@ public class UserPrivilegeResolver {
             }
             this.hasAccess = hasAccess;
             this.roles = Set.copyOf(Objects.requireNonNull(roles, "roles may not be null"));
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder str = new StringBuilder().append(getClass().getSimpleName())
-                .append("{")
-                .append(principal)
-                .append(", ")
-                .append(hasAccess);
-            if (hasAccess) {
-                str.append(", ").append(roles);
-            }
-            str.append("}");
-            return str.toString();
         }
 
         public static UserPrivileges noAccess(String principal) {

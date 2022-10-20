@@ -128,12 +128,12 @@ public class ClassificationTests extends AbstractXContentSerializingTestCase<Cla
     public void testGetFields() {
         Classification evaluation = new Classification("foo", "bar", "results", null);
         EvaluationFields fields = evaluation.getFields();
-        assertThat(fields.getActualField(), is(equalTo("foo")));
-        assertThat(fields.getPredictedField(), is(equalTo("bar")));
-        assertThat(fields.getTopClassesField(), is(equalTo("results")));
-        assertThat(fields.getPredictedClassField(), is(equalTo("results.class_name")));
-        assertThat(fields.getPredictedProbabilityField(), is(equalTo("results.class_probability")));
-        assertThat(fields.isPredictedProbabilityFieldNested(), is(true));
+        assertThat(fields.actualField(), is(equalTo("foo")));
+        assertThat(fields.predictedField(), is(equalTo("bar")));
+        assertThat(fields.topClassesField(), is(equalTo("results")));
+        assertThat(fields.predictedClassField(), is(equalTo("results.class_name")));
+        assertThat(fields.predictedProbabilityField(), is(equalTo("results.class_probability")));
+        assertThat(fields.predictedProbabilityFieldNested(), is(true));
     }
 
     public void testBuildSearch_WithDefaultNonRequiredNestedFields() {

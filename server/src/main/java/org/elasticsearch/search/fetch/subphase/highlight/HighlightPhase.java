@@ -61,7 +61,7 @@ public class HighlightPhase implements FetchSubPhase {
                 Map<String, HighlightField> highlightFields = new HashMap<>();
                 for (String field : contextBuilders.keySet()) {
                     FieldHighlightContext fieldContext = contextBuilders.get(field).apply(hitContext);
-                    Highlighter highlighter = getHighlighter(fieldContext.field);
+                    Highlighter highlighter = getHighlighter(fieldContext.field());
                     HighlightField highlightField = highlighter.highlight(fieldContext);
                     if (highlightField != null) {
                         // Note that we make sure to use the original field name in the response. This is because the

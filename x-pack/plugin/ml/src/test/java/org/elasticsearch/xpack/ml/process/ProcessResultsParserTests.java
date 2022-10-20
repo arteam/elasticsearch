@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import static org.hamcrest.Matchers.contains;
 
@@ -75,7 +74,7 @@ public class ProcessResultsParserTests extends ESTestCase {
         }
     }
 
-    private static class TestResult {
+    private record TestResult(String field1, double field2) {
 
         private static final ParseField FIELD_1 = new ParseField("field_1");
         private static final ParseField FIELD_2 = new ParseField("field_2");
@@ -88,31 +87,6 @@ public class ProcessResultsParserTests extends ESTestCase {
         static {
             PARSER.declareString(ConstructingObjectParser.constructorArg(), FIELD_1);
             PARSER.declareDouble(ConstructingObjectParser.constructorArg(), FIELD_2);
-        }
-
-        private final String field1;
-        private final double field2;
-
-        private TestResult(String field1, double field2) {
-            this.field1 = field1;
-            this.field2 = field2;
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (this == other) {
-                return true;
-            }
-            if (other == null || getClass() != other.getClass()) {
-                return false;
-            }
-            TestResult that = (TestResult) other;
-            return Objects.equals(field1, that.field1) && Objects.equals(field2, that.field2);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(field1, field2);
         }
     }
 }

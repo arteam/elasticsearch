@@ -508,7 +508,7 @@ public abstract class AsyncTwoPhaseIndexer<JobPosition, JobStats extends Indexer
             if (iterationResult.isDone()) {
                 logger.debug("Finished indexing for job [{}], saving state and shutting down.", getJobId());
 
-                position.set(iterationResult.getPosition());
+                position.set(iterationResult.position());
                 stats.markEndProcessing();
                 // execute finishing tasks
                 onFinish(
@@ -521,7 +521,7 @@ public abstract class AsyncTwoPhaseIndexer<JobPosition, JobStats extends Indexer
             }
 
             final BulkRequest bulkRequest = new BulkRequest();
-            iterationResult.getToIndex().forEach(bulkRequest::add);
+            iterationResult.toIndex().forEach(bulkRequest::add);
             stats.markEndProcessing();
 
             // an iteration result might return an empty set of documents to be indexed
@@ -538,7 +538,7 @@ public abstract class AsyncTwoPhaseIndexer<JobPosition, JobStats extends Indexer
                     // As we have already indexed the documents, updated the stats, etc.
                     // We do an another `checkState` in `onBulkResponse` which will stop the indexer if necessary
                     // And, we will still be at our new position due to setting it here.
-                    JobPosition newPosition = iterationResult.getPosition();
+                    JobPosition newPosition = iterationResult.position();
                     position.set(newPosition);
 
                     onBulkResponse(bulkResponse, newPosition);
@@ -546,7 +546,7 @@ public abstract class AsyncTwoPhaseIndexer<JobPosition, JobStats extends Indexer
             } else {
                 // no documents need to be indexed, continue with search
                 try {
-                    JobPosition newPosition = iterationResult.getPosition();
+                    JobPosition newPosition = iterationResult.position();
                     position.set(newPosition);
 
                     if (triggerSaveState()) {

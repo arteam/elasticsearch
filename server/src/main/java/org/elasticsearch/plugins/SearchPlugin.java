@@ -581,15 +581,5 @@ public interface SearchPlugin {
     /**
      * Context available during fetch phase construction.
      */
-    class FetchPhaseConstructionContext {
-        private final Map<String, Highlighter> highlighters;
-
-        public FetchPhaseConstructionContext(Map<String, Highlighter> highlighters) {
-            this.highlighters = highlighters;
-        }
-
-        public Map<String, Highlighter> getHighlighters() {
-            return highlighters;
-        }
-    }
+    record FetchPhaseConstructionContext(Map<String, Highlighter> highlighters) {}
 }

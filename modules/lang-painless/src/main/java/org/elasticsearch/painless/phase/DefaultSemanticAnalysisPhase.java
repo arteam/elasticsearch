@@ -2299,7 +2299,7 @@ public class DefaultSemanticAnalysisPhase extends UserTreeBaseVisitor<SemanticSc
         try {
             compiled = Pattern.compile(pattern, regexFlags);
         } catch (PatternSyntaxException pse) {
-            throw new Location(location.getSourceName(), location.getOffset() + 1 + pse.getIndex()).createError(
+            throw new Location(location.sourceName(), location.offset() + 1 + pse.getIndex()).createError(
                 new IllegalArgumentException(
                     "invalid regular expression: "
                         + "could not compile regex constant ["

@@ -235,7 +235,7 @@ public class TokenListCategoryTests extends CategorizationTestCase {
         }
         unfilteredStringLength += randomIntBetween(numBaseTokens, numBaseTokens + 100);
         List<TokenAndWeight> uniqueWeightedTokenIds = baseWeightedTokenIds.stream()
-            .collect(Collectors.groupingBy(TokenAndWeight::getTokenId, TreeMap::new, Collectors.summingInt(TokenAndWeight::getWeight)))
+            .collect(Collectors.groupingBy(TokenAndWeight::tokenId, TreeMap::new, Collectors.summingInt(TokenAndWeight::weight)))
             .entrySet()
             .stream()
             .map(entry -> new TokenAndWeight(entry.getKey(), entry.getValue()))

@@ -141,14 +141,11 @@ public class IndicesAccessControl {
     }
 
     /**
-     * Encapsulates the field and document permissions for an index.
-     */
-    public static class IndexAccessControl implements CacheKey {
+         * Encapsulates the field and document permissions for an index.
+         */
+    public record IndexAccessControl(FieldPermissions fieldPermissions, DocumentPermissions documentPermissions) implements CacheKey {
 
         public static final IndexAccessControl ALLOW_ALL = new IndexAccessControl(null, null);
-
-        private final FieldPermissions fieldPermissions;
-        private final DocumentPermissions documentPermissions;
 
         public IndexAccessControl(FieldPermissions fieldPermissions, DocumentPermissions documentPermissions) {
             this.fieldPermissions = (fieldPermissions == null) ? FieldPermissions.DEFAULT : fieldPermissions;
@@ -158,15 +155,17 @@ public class IndicesAccessControl {
         /**
          * @return The allowed fields for this index permissions.
          */
-        public FieldPermissions getFieldPermissions() {
+        @Override
+        public FieldPermissions fieldPermissions() {
             return fieldPermissions;
         }
 
         /**
          * @return The allowed documents expressed as a query for this index permission. If <code>null</code> is returned
-         *         then this means that there are no document level restrictions
+         * then this means that there are no document level restrictions
          */
-        public DocumentPermissions getDocumentPermissions() {
+        @Override
+        public DocumentPermissions documentPermissions() {
             return documentPermissions;
         }
 
@@ -182,18 +181,13 @@ public class IndicesAccessControl {
          * @see DocumentPermissions#limitDocumentPermissions(DocumentPermissions)
          */
         public IndexAccessControl limitIndexAccessControl(IndexAccessControl limitedByIndexAccessControl) {
-            FieldPermissions constrainedFieldPermissions = getFieldPermissions().limitFieldPermissions(
+            FieldPermissions constrainedFieldPermissions = fieldPermissions().limitFieldPermissions(
                 limitedByIndexAccessControl.fieldPermissions
             );
-            DocumentPermissions constrainedDocumentPermissions = getDocumentPermissions().limitDocumentPermissions(
-                limitedByIndexAccessControl.getDocumentPermissions()
+            DocumentPermissions constrainedDocumentPermissions = documentPermissions().limitDocumentPermissions(
+                limitedByIndexAccessControl.documentPermissions()
             );
             return new IndexAccessControl(constrainedFieldPermissions, constrainedDocumentPermissions);
-        }
-
-        @Override
-        public String toString() {
-            return "IndexAccessControl{" + "fieldPermissions=" + fieldPermissions + ", documentPermissions=" + documentPermissions + '}';
         }
 
         @Override
@@ -210,19 +204,6 @@ public class IndicesAccessControl {
             } else {
                 out.writeBoolean(false);
             }
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            IndexAccessControl that = (IndexAccessControl) o;
-            return Objects.equals(fieldPermissions, that.fieldPermissions) && Objects.equals(documentPermissions, that.documentPermissions);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(fieldPermissions, documentPermissions);
         }
     }
 

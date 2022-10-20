@@ -107,7 +107,7 @@ public abstract class AbstractPercentilesTestCase<T extends InternalAggregation 
         T agg = createTestInstance("test", Collections.emptyMap(), keyed, docValueFormat, percents, new double[0]);
 
         for (Percentile percentile : agg) {
-            Double value = percentile.getValue();
+            Double value = percentile.value();
             assertPercentile(agg, value);
         }
 

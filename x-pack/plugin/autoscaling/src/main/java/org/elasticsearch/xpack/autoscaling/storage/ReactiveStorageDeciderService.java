@@ -544,14 +544,7 @@ public class ReactiveStorageDeciderService implements AutoscalingDeciderService 
             return nodeIds.stream().map(routingNodes::node);
         }
 
-        private static class SingleForecast {
-            private final Map<IndexMetadata, Long> additionalIndices;
-            private final DataStream updatedDataStream;
-
-            private SingleForecast(Map<IndexMetadata, Long> additionalIndices, DataStream updatedDataStream) {
-                this.additionalIndices = additionalIndices;
-                this.updatedDataStream = updatedDataStream;
-            }
+        private record SingleForecast(Map<IndexMetadata, Long> additionalIndices, DataStream updatedDataStream) {
 
             public void applyRouting(RoutingTable.Builder routing) {
                 additionalIndices.keySet().forEach(routing::addAsNew);

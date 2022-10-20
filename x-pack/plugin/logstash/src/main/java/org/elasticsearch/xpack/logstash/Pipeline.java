@@ -18,7 +18,14 @@ import java.util.Map;
 
 import static org.elasticsearch.xcontent.ConstructingObjectParser.constructorArg;
 
-public class Pipeline {
+public record Pipeline(
+    String id,
+    Instant lastModified,
+    Map<String, Object> pipelineMetadata,
+    String username,
+    String pipeline,
+    Map<String, Object> pipelineSettings
+) {
 
     @SuppressWarnings("unchecked")
     public static final ConstructingObjectParser<Pipeline, String> PARSER = new ConstructingObjectParser<>(
@@ -54,50 +61,4 @@ public class Pipeline {
         PARSER.declareObject(constructorArg(), (parser, s) -> parser.map(), PIPELINE_SETTINGS);
     }
 
-    private final String id;
-    private final Instant lastModified;
-    private final Map<String, Object> pipelineMetadata;
-    private final String username;
-    private final String pipeline;
-    private final Map<String, Object> pipelineSettings;
-
-    public Pipeline(
-        String id,
-        Instant lastModified,
-        Map<String, Object> pipelineMetadata,
-        String username,
-        String pipeline,
-        Map<String, Object> pipelineSettings
-    ) {
-        this.id = id;
-        this.lastModified = lastModified;
-        this.pipelineMetadata = pipelineMetadata;
-        this.username = username;
-        this.pipeline = pipeline;
-        this.pipelineSettings = pipelineSettings;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public Instant getLastModified() {
-        return lastModified;
-    }
-
-    public Map<String, Object> getPipelineMetadata() {
-        return pipelineMetadata;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPipeline() {
-        return pipeline;
-    }
-
-    public Map<String, Object> getPipelineSettings() {
-        return pipelineSettings;
-    }
 }

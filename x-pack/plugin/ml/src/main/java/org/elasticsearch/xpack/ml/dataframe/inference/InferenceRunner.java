@@ -241,14 +241,5 @@ public class InferenceRunner {
         );
     }
 
-    private static class InferenceState {
-
-        private final Long lastIncrementalId;
-        private final long processedTestDocsCount;
-
-        InferenceState(@Nullable Long lastIncrementalId, long processedTestDocsCount) {
-            this.lastIncrementalId = lastIncrementalId;
-            this.processedTestDocsCount = processedTestDocsCount;
-        }
-    }
+    private record InferenceState(@Nullable Long lastIncrementalId, long processedTestDocsCount) {}
 }

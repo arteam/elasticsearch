@@ -174,7 +174,7 @@ public class TransportRollupSearchAction extends TransportAction<SearchRequest, 
         } else if (context.hasLiveIndices() && context.hasRollupIndices() == false) {
             // not best practice, but if the user accidentally only sends "normal" indices we can support that
             logger.debug("Creating msearch with only normal request");
-            final SearchRequest originalRequest = new SearchRequest(context.getLiveIndices(), request.source());
+            final SearchRequest originalRequest = new SearchRequest(context.liveIndices(), request.source());
             return new MultiSearchRequest().add(originalRequest);
         }
 
@@ -183,7 +183,7 @@ public class TransportRollupSearchAction extends TransportAction<SearchRequest, 
         validateSearchRequest(request);
 
         // The original request is added as-is (if normal indices exist), minus the rollup indices
-        final SearchRequest originalRequest = new SearchRequest(context.getLiveIndices(), request.source());
+        final SearchRequest originalRequest = new SearchRequest(context.liveIndices(), request.source());
         MultiSearchRequest msearch = new MultiSearchRequest();
         if (context.hasLiveIndices()) {
             msearch.add(originalRequest);
@@ -201,14 +201,14 @@ public class TransportRollupSearchAction extends TransportAction<SearchRequest, 
             // Note: we can't apply any query rewriting or filtering on the query because there
             // are no validated caps, so we have no idea what job is intended here. The only thing
             // this affects is doc count, since hits and aggs will both be empty it doesn't really matter.
-            msearch.add(new SearchRequest(context.getRollupIndices(), request.source()));
+            msearch.add(new SearchRequest(context.rollupIndices(), request.source()));
             return msearch;
         }
 
         // Find our list of "best" job caps
         Set<RollupJobCaps> validatedCaps = new HashSet<>();
         sourceAgg.getAggregatorFactories()
-            .forEach(agg -> validatedCaps.addAll(RollupJobIdentifierUtils.findBestJobs(agg, context.getJobCaps())));
+            .forEach(agg -> validatedCaps.addAll(RollupJobIdentifierUtils.findBestJobs(agg, context.jobCaps())));
         List<String> jobIds = validatedCaps.stream().map(RollupJobCaps::getJobID).collect(Collectors.toList());
 
         for (AggregationBuilder agg : sourceAgg.getAggregatorFactories()) {
@@ -252,7 +252,7 @@ public class TransportRollupSearchAction extends TransportAction<SearchRequest, 
             );
 
             // And add a new msearch per JobID
-            msearch.add(new SearchRequest(context.getRollupIndices(), copiedSource));
+            msearch.add(new SearchRequest(context.rollupIndices(), copiedSource));
         }
 
         return msearch;
@@ -471,15 +471,11 @@ public class TransportRollupSearchAction extends TransportAction<SearchRequest, 
         }
     }
 
-    static class RollupSearchContext {
-        private final String[] liveIndices;
-        private final String[] rollupIndices;
-        private final Set<RollupJobCaps> jobCaps;
-
-        RollupSearchContext(String[] liveIndices, String[] rollupIndices, Set<RollupJobCaps> jobCaps) {
-            this.liveIndices = Objects.requireNonNull(liveIndices);
-            this.rollupIndices = Objects.requireNonNull(rollupIndices);
-            this.jobCaps = Objects.requireNonNull(jobCaps);
+    record RollupSearchContext(String[] liveIndices, String[] rollupIndices, Set<RollupJobCaps> jobCaps) {
+        RollupSearchContext {
+            Objects.requireNonNull(liveIndices);
+            Objects.requireNonNull(rollupIndices);
+            Objects.requireNonNull(jobCaps);
         }
 
         boolean hasLiveIndices() {
@@ -488,18 +484,6 @@ public class TransportRollupSearchAction extends TransportAction<SearchRequest, 
 
         boolean hasRollupIndices() {
             return rollupIndices.length != 0;
-        }
-
-        String[] getLiveIndices() {
-            return liveIndices;
-        }
-
-        String[] getRollupIndices() {
-            return rollupIndices;
-        }
-
-        Set<RollupJobCaps> getJobCaps() {
-            return jobCaps;
         }
 
     }

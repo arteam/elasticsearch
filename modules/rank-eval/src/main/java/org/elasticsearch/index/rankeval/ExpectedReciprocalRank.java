@@ -215,17 +215,12 @@ public class ExpectedReciprocalRank implements EvaluationMetric {
         return Objects.hash(unknownDocRating, k, maxRelevance);
     }
 
-    public static final class Detail implements MetricDetail {
+    public record Detail(int unratedDocs) implements MetricDetail {
 
-        private static ParseField UNRATED_FIELD = new ParseField("unrated_docs");
-        private final int unratedDocs;
+        private static final ParseField UNRATED_FIELD = new ParseField("unrated_docs");
 
-        Detail(int unratedDocs) {
-            this.unratedDocs = unratedDocs;
-        }
-
-        Detail(StreamInput in) throws IOException {
-            this.unratedDocs = in.readVInt();
+        static Detail from(StreamInput in) throws IOException {
+            return new Detail(in.readVInt());
         }
 
         @Override
@@ -265,25 +260,9 @@ public class ExpectedReciprocalRank implements EvaluationMetric {
         /**
          * @return the number of unrated documents in the search results
          */
-        public Object getUnratedDocs() {
+        @Override
+        public int unratedDocs() {
             return this.unratedDocs;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || getClass() != obj.getClass()) {
-                return false;
-            }
-            ExpectedReciprocalRank.Detail other = (ExpectedReciprocalRank.Detail) obj;
-            return this.unratedDocs == other.unratedDocs;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.unratedDocs);
         }
     }
 }

@@ -13,33 +13,12 @@ import java.util.Objects;
 /**
  * Represents a location in script code (name of script + character offset)
  */
-public final class Location {
-    private final String sourceName;
-    private final int offset;
+public record Location(String sourceName, int offset) {
 
-    /**
-     * Create a new Location
-     * @param sourceName script's name
-     * @param offset character offset of script element
-     */
-    public Location(String sourceName, int offset) {
-        this.sourceName = Objects.requireNonNull(sourceName);
-        this.offset = offset;
+    public Location {
+        Objects.requireNonNull(sourceName);
     }
 
-    /**
-     * Return the script's name
-     */
-    public String getSourceName() {
-        return sourceName;
-    }
-
-    /**
-     * Return the character offset
-     */
-    public int getOffset() {
-        return offset;
-    }
 
     /**
      * Augments an exception with this location's information.
@@ -58,7 +37,9 @@ public final class Location {
     // This maximum length is theoretically 65535 bytes, but as it's CESU-8 encoded we don't know how large it is in bytes, so be safe
     private static final int MAX_NAME_LENGTH = 256;
 
-    /** Computes the file name (mostly important for stacktraces) */
+    /**
+     * Computes the file name (mostly important for stacktraces)
+     */
     public static String computeSourceName(String scriptName) {
         StringBuilder fileName = new StringBuilder();
         // its an anonymous script, include at least a portion of the source to help identify which one it is

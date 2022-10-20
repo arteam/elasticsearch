@@ -108,7 +108,7 @@ abstract class TopDocsCollectorContext extends QueryCollectorContext {
             boolean hasFilterCollector
         ) throws IOException {
             super(REASON_SEARCH_COUNT, 0);
-            this.sort = sortAndFormats == null ? null : sortAndFormats.sort;
+            this.sort = sortAndFormats == null ? null : sortAndFormats.sort();
             if (trackTotalHitsUpTo == SearchContext.TRACK_TOTAL_HITS_DISABLED) {
                 this.collector = new EarlyTerminatingCollector(new TotalHitCountCollector(), 0, false);
                 // for bwc hit count is set to 0, it will be converted to -1 by the coordinating node
@@ -177,8 +177,8 @@ abstract class TopDocsCollectorContext extends QueryCollectorContext {
             super(REASON_SEARCH_TOP_HITS, numHits);
             assert numHits > 0;
             assert collapseContext != null;
-            Sort sort = sortAndFormats == null ? Sort.RELEVANCE : sortAndFormats.sort;
-            this.sortFmt = sortAndFormats == null ? new DocValueFormat[] { DocValueFormat.RAW } : sortAndFormats.formats;
+            Sort sort = sortAndFormats == null ? Sort.RELEVANCE : sortAndFormats.sort();
+            this.sortFmt = sortAndFormats == null ? new DocValueFormat[] { DocValueFormat.RAW } : sortAndFormats.formats();
             this.topDocsCollector = collapseContext.createTopDocs(sort, numHits, after);
 
             MaxScoreCollector maxScoreCollector;
@@ -214,7 +214,7 @@ abstract class TopDocsCollectorContext extends QueryCollectorContext {
             if (sortAndFormats == null) {
                 return TopScoreDocCollector.create(numHits, searchAfter, hitCountThreshold);
             } else {
-                return TopFieldCollector.create(sortAndFormats.sort, numHits, (FieldDoc) searchAfter, hitCountThreshold);
+                return TopFieldCollector.create(sortAndFormats.sort(), numHits, (FieldDoc) searchAfter, hitCountThreshold);
             }
         }
 
@@ -250,7 +250,7 @@ abstract class TopDocsCollectorContext extends QueryCollectorContext {
 
             final TopDocsCollector<?> topDocsCollector;
 
-            if ((sortAndFormats == null || SortField.FIELD_SCORE.equals(sortAndFormats.sort.getSort()[0])) && hasInfMaxScore(query)) {
+            if ((sortAndFormats == null || SortField.FIELD_SCORE.equals(sortAndFormats.sort().getSort()[0])) && hasInfMaxScore(query)) {
                 // disable max score optimization since we have a mandatory clause
                 // that doesn't track the maximum score
                 topDocsCollector = createCollector(sortAndFormats, numHits, searchAfter, Integer.MAX_VALUE);
@@ -317,7 +317,7 @@ abstract class TopDocsCollectorContext extends QueryCollectorContext {
         @Override
         void postProcess(QuerySearchResult result) throws IOException {
             final TopDocsAndMaxScore topDocs = newTopDocs();
-            result.topDocs(topDocs, sortAndFormats == null ? null : sortAndFormats.formats);
+            result.topDocs(topDocs, sortAndFormats == null ? null : sortAndFormats.formats());
         }
     }
 
@@ -370,7 +370,7 @@ abstract class TopDocsCollectorContext extends QueryCollectorContext {
                     scrollContext.lastEmittedDoc = topDocs.topDocs.scoreDocs[topDocs.topDocs.scoreDocs.length - 1];
                 }
             }
-            result.topDocs(topDocs, sortAndFormats == null ? null : sortAndFormats.formats);
+            result.topDocs(topDocs, sortAndFormats == null ? null : sortAndFormats.formats());
         }
     }
 

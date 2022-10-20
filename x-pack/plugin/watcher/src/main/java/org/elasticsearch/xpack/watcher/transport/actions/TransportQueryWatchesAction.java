@@ -55,7 +55,7 @@ public class TransportQueryWatchesAction extends WatcherTransportAction<QueryWat
         WatchParser parser
     ) {
         super(QueryWatchesAction.NAME, transportService, actionFilters, licenseState, QueryWatchesAction.Request::new);
-        this.clock = clockHolder.clock;
+        this.clock = clockHolder.clock();
         this.client = client;
         this.parser = parser;
     }
@@ -122,8 +122,8 @@ public class TransportQueryWatchesAction extends WatcherTransportAction<QueryWat
                 searchHit.getId(),
                 new XContentSource(builder),
                 watch.status(),
-                watch.getSourceSeqNo(),
-                watch.getSourcePrimaryTerm()
+                watch.sourceSeqNo(),
+                watch.sourcePrimaryTerm()
             );
         } catch (IOException e) {
             throw new UncheckedIOException(e);

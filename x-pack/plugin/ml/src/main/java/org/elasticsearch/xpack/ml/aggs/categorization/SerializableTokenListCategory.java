@@ -58,8 +58,8 @@ public class SerializableTokenListCategory implements Writeable {
      */
     public SerializableTokenListCategory(TokenListCategory category, CategorizationBytesRefHash bytesRefHash) {
         List<TokenListCategory.TokenAndWeight> baseWeightedTokenIds = category.getBaseWeightedTokenIds();
-        this.baseTokens = baseWeightedTokenIds.stream().map(tw -> bytesRefHash.getDeep(tw.getTokenId())).toArray(BytesRef[]::new);
-        this.baseTokenWeights = category.getBaseWeightedTokenIds().stream().mapToInt(TokenListCategory.TokenAndWeight::getWeight).toArray();
+        this.baseTokens = baseWeightedTokenIds.stream().map(tw -> bytesRefHash.getDeep(tw.tokenId())).toArray(BytesRef[]::new);
+        this.baseTokenWeights = category.getBaseWeightedTokenIds().stream().mapToInt(TokenListCategory.TokenAndWeight::weight).toArray();
         this.baseUnfilteredLength = category.getBaseUnfilteredLength();
         this.maxUnfilteredStringLength = category.getMaxUnfilteredStringLength();
         this.orderedCommonTokenBeginIndex = category.getOrderedCommonTokenBeginIndex();
@@ -68,11 +68,11 @@ public class SerializableTokenListCategory implements Writeable {
         // the full strings twice we serialize indexes into the base tokens
         Map<Integer, Integer> tokenIdToIndex = new HashMap<>();
         for (int index = 0; index < baseWeightedTokenIds.size(); ++index) {
-            tokenIdToIndex.putIfAbsent(baseWeightedTokenIds.get(index).getTokenId(), index);
+            tokenIdToIndex.putIfAbsent(baseWeightedTokenIds.get(index).tokenId(), index);
         }
         List<TokenListCategory.TokenAndWeight> commonUniqueTokenIds = category.getCommonUniqueTokenIds();
-        this.commonUniqueTokenIndexes = commonUniqueTokenIds.stream().mapToInt(tw -> tokenIdToIndex.get(tw.getTokenId())).toArray();
-        this.commonUniqueTokenWeights = commonUniqueTokenIds.stream().mapToInt(TokenListCategory.TokenAndWeight::getWeight).toArray();
+        this.commonUniqueTokenIndexes = commonUniqueTokenIds.stream().mapToInt(tw -> tokenIdToIndex.get(tw.tokenId())).toArray();
+        this.commonUniqueTokenWeights = commonUniqueTokenIds.stream().mapToInt(TokenListCategory.TokenAndWeight::weight).toArray();
         // Get the terms that will be displayed in the results.
         // When categorization was first written there were three aspects to the category definition:
         // 1. Common unique terms
@@ -102,7 +102,7 @@ public class SerializableTokenListCategory implements Writeable {
             if (category.isTokenIdCommon(tokenAndWeight) == false) {
                 continue;
             }
-            int index = tokenIdToIndex.get(tokenAndWeight.getTokenId());
+            int index = tokenIdToIndex.get(tokenAndWeight.tokenId());
             // For the space separator - not needed for the first token, but we took that into account by adding 1 to the budget
             --budgetRemaining;
             if (baseTokens[index].length > budgetRemaining) {

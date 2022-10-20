@@ -22,33 +22,13 @@ import static org.elasticsearch.common.xcontent.XContentParserUtils.ensureExpect
 
 /**
  * A response to _count API request.
+ * @param count Number of documents matching request
  */
-public final class CountResponse {
+public record CountResponse(long count, Boolean terminatedEarly, ShardStats shardStats) {
 
     static final ParseField COUNT = new ParseField("count");
     static final ParseField TERMINATED_EARLY = new ParseField("terminated_early");
     static final ParseField SHARDS = new ParseField("_shards");
-
-    private final long count;
-    private final Boolean terminatedEarly;
-    private final ShardStats shardStats;
-
-    public CountResponse(long count, Boolean terminatedEarly, ShardStats shardStats) {
-        this.count = count;
-        this.terminatedEarly = terminatedEarly;
-        this.shardStats = shardStats;
-    }
-
-    public ShardStats getShardStats() {
-        return shardStats;
-    }
-
-    /**
-     * Number of documents matching request.
-     */
-    public long getCount() {
-        return count;
-    }
 
     /**
      * The total number of shards the search was executed on.
@@ -120,37 +100,16 @@ public final class CountResponse {
         return new CountResponse(count, terminatedEarly, shardStats);
     }
 
-    @Override
-    public String toString() {
-        String s = "{"
-            + "count="
-            + count
-            + (isTerminatedEarly() != null ? ", terminatedEarly=" + terminatedEarly : "")
-            + ", "
-            + shardStats
-            + '}';
-        return s;
-    }
-
-    public Boolean isTerminatedEarly() {
-        return terminatedEarly;
-    }
-
     /**
      * Encapsulates _shards section of count api response.
      */
-    public static final class ShardStats {
+    public record ShardStats(int successfulShards, int totalShards, int skippedShards, ShardSearchFailure[] shardFailures) {
 
         static final ParseField FAILED = new ParseField("failed");
         static final ParseField SKIPPED = new ParseField("skipped");
         static final ParseField TOTAL = new ParseField("total");
         static final ParseField SUCCESSFUL = new ParseField("successful");
         static final ParseField FAILURES = new ParseField("failures");
-
-        private final int successfulShards;
-        private final int totalShards;
-        private final int skippedShards;
-        private final ShardSearchFailure[] shardFailures;
 
         public ShardStats(int successfulShards, int totalShards, int skippedShards, ShardSearchFailure[] shardFailures) {
             this.successfulShards = successfulShards;
@@ -159,19 +118,8 @@ public final class CountResponse {
             this.shardFailures = Arrays.copyOf(shardFailures, shardFailures.length);
         }
 
-        public int getSuccessfulShards() {
-            return successfulShards;
-        }
-
-        public int getTotalShards() {
-            return totalShards;
-        }
-
-        public int getSkippedShards() {
-            return skippedShards;
-        }
-
-        public ShardSearchFailure[] getShardFailures() {
+        @Override
+        public ShardSearchFailure[] shardFailures() {
             return Arrays.copyOf(shardFailures, shardFailures.length, ShardSearchFailure[].class);
         }
 
@@ -210,21 +158,6 @@ public final class CountResponse {
                 }
             }
             return new ShardStats(successfulShards, totalShards, skippedShards, failures.toArray(new ShardSearchFailure[failures.size()]));
-        }
-
-        @Override
-        public String toString() {
-            return "_shards : {"
-                + "total="
-                + totalShards
-                + ", successful="
-                + successfulShards
-                + ", skipped="
-                + skippedShards
-                + ", failed="
-                + (shardFailures != null && shardFailures.length > 0 ? shardFailures.length : 0)
-                + (shardFailures != null && shardFailures.length > 0 ? ", failures: " + Arrays.asList(shardFailures) : "")
-                + '}';
         }
     }
 }

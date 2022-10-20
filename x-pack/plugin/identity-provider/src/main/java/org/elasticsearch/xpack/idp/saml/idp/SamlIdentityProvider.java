@@ -182,7 +182,8 @@ public class SamlIdentityProvider {
         return Objects.hash(entityId);
     }
 
-    public static class ContactInfo {
+    public record ContactInfo(ContactPersonTypeEnumeration type, String givenName, String surName, String email) {
+
         static final Map<String, ContactPersonTypeEnumeration> TYPES = Collections.unmodifiableMap(
             MapBuilder.newMapBuilder(new LinkedHashMap<String, ContactPersonTypeEnumeration>())
                 .put(ContactPersonTypeEnumeration.ADMINISTRATIVE.toString(), ContactPersonTypeEnumeration.ADMINISTRATIVE)
@@ -193,16 +194,9 @@ public class SamlIdentityProvider {
                 .map()
         );
 
-        public final ContactPersonTypeEnumeration type;
-        public final String givenName;
-        public final String surName;
-        public final String email;
-
-        public ContactInfo(ContactPersonTypeEnumeration type, String givenName, String surName, String email) {
-            this.type = Objects.requireNonNull(type, "Contact Person Type is required");
-            this.givenName = givenName;
-            this.surName = surName;
-            this.email = Objects.requireNonNull(email, "Contact Person email is required");
+        public ContactInfo {
+            Objects.requireNonNull(type, "Contact Person Type is required");
+            Objects.requireNonNull(email, "Contact Person email is required");
         }
 
         public static ContactPersonTypeEnumeration getType(String name) {
@@ -216,30 +210,5 @@ public class SamlIdentityProvider {
         }
     }
 
-    public static class OrganizationInfo {
-        public final String organizationName;
-        public final String displayName;
-        public final String url;
-
-        public OrganizationInfo(String organizationName, String displayName, String url) {
-            this.organizationName = organizationName;
-            this.displayName = displayName;
-            this.url = url;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            OrganizationInfo that = (OrganizationInfo) o;
-            return Objects.equals(organizationName, that.organizationName)
-                && Objects.equals(displayName, that.displayName)
-                && Objects.equals(url, that.url);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(organizationName, displayName, url);
-        }
-    }
+    public record OrganizationInfo(String organizationName, String displayName, String url) {}
 }

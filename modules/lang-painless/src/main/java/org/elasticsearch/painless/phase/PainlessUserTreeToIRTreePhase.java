@@ -137,7 +137,7 @@ public class PainlessUserTreeToIRTreePhase extends DefaultUserTreeToIRTreePhase 
             List<String> parameterNames = new ArrayList<>(scriptClassInfo.getExecuteArguments().size());
 
             for (MethodArgument methodArgument : scriptClassInfo.getExecuteArguments()) {
-                parameterNames.add(methodArgument.getName());
+                parameterNames.add(methodArgument.name());
             }
 
             FunctionNode irFunctionNode = new FunctionNode(userFunctionNode.getLocation());

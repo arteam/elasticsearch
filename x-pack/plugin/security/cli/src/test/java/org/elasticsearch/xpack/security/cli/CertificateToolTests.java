@@ -514,11 +514,11 @@ public class CertificateToolTests extends ESTestCase {
 
         assertTrue(terminal.getOutput().isEmpty());
         CertificateTool.CertificateAndKey caCK = caInfo.certAndKey;
-        assertEquals(caCK.cert.getSubjectX500Principal().getName(), "CN=Elasticsearch Test Node,OU=elasticsearch,O=org");
-        assertThat(caCK.key.getAlgorithm(), containsString("RSA"));
-        assertEquals(2048, ((RSAKey) caCK.key).getModulus().bitLength());
+        assertEquals(caCK.cert().getSubjectX500Principal().getName(), "CN=Elasticsearch Test Node,OU=elasticsearch,O=org");
+        assertThat(caCK.key().getAlgorithm(), containsString("RSA"));
+        assertEquals(2048, ((RSAKey) caCK.key()).getModulus().bitLength());
         assertFalse(caInfo.generated);
-        long daysBetween = getDurationInDays(caCK.cert);
+        long daysBetween = getDurationInDays(caCK.cert());
         assertEquals(1460L, daysBetween);
 
         // test generation

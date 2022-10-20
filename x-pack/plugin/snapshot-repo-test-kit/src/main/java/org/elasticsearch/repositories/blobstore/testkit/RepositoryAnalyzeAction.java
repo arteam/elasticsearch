@@ -650,19 +650,7 @@ public class RepositoryAnalyzeAction extends ActionType<RepositoryAnalyzeAction.
             }
         }
 
-        private static class VerifyBlobTask {
-            final DiscoveryNode node;
-            final BlobAnalyzeAction.Request request;
-
-            VerifyBlobTask(DiscoveryNode node, BlobAnalyzeAction.Request request) {
-                this.node = node;
-                this.request = request;
-            }
-
-            @Override
-            public String toString() {
-                return "VerifyBlobTask{" + "node=" + node + ", request=" + request + '}';
-            }
+        private record VerifyBlobTask(DiscoveryNode node, BlobAnalyzeAction.Request request) {
         }
     }
 

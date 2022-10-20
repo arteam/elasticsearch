@@ -29,7 +29,7 @@ public class ASCIIFoldingTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_ascii_folding");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_ascii_folding");
         String source = "Ansprüche";
         String[] expected = new String[] { "Anspruche" };
         Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -46,7 +46,7 @@ public class ASCIIFoldingTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_ascii_folding");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_ascii_folding");
         String source = "Ansprüche";
         String[] expected = new String[] { "Anspruche", "Ansprüche" };
         Tokenizer tokenizer = new WhitespaceTokenizer();

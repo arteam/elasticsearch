@@ -74,46 +74,9 @@ public class JvmGcMonitorService extends AbstractLifecycleComponent {
         Property.NodeScope
     );
 
-    static class GcOverheadThreshold {
-        final int warnThreshold;
-        final int infoThreshold;
-        final int debugThreshold;
+    record GcOverheadThreshold(int warnThreshold, int infoThreshold, int debugThreshold) {}
 
-        GcOverheadThreshold(final int warnThreshold, final int infoThreshold, final int debugThreshold) {
-            this.warnThreshold = warnThreshold;
-            this.infoThreshold = infoThreshold;
-            this.debugThreshold = debugThreshold;
-        }
-    }
-
-    static class GcThreshold {
-        public final String name;
-        public final long warnThreshold;
-        public final long infoThreshold;
-        public final long debugThreshold;
-
-        GcThreshold(String name, long warnThreshold, long infoThreshold, long debugThreshold) {
-            this.name = name;
-            this.warnThreshold = warnThreshold;
-            this.infoThreshold = infoThreshold;
-            this.debugThreshold = debugThreshold;
-        }
-
-        @Override
-        public String toString() {
-            return "GcThreshold{"
-                + "name='"
-                + name
-                + '\''
-                + ", warnThreshold="
-                + warnThreshold
-                + ", infoThreshold="
-                + infoThreshold
-                + ", debugThreshold="
-                + debugThreshold
-                + '}';
-        }
-    }
+    record GcThreshold(String name, long warnThreshold, long infoThreshold, long debugThreshold) {}
 
     public JvmGcMonitorService(Settings settings, ThreadPool threadPool) {
         this.threadPool = threadPool;
@@ -238,15 +201,15 @@ public class JvmGcMonitorService extends AbstractLifecycleComponent {
         BiFunction<JvmStats, JvmStats, String> pools
     ) {
 
-        final String name = slowGcEvent.currentGc.getName();
-        final long elapsed = slowGcEvent.elapsed;
-        final long totalGcCollectionCount = slowGcEvent.currentGc.getCollectionCount();
-        final long currentGcCollectionCount = slowGcEvent.collectionCount;
-        final TimeValue totalGcCollectionTime = slowGcEvent.currentGc.getCollectionTime();
-        final TimeValue currentGcCollectionTime = slowGcEvent.collectionTime;
-        final JvmStats lastJvmStats = slowGcEvent.lastJvmStats;
-        final JvmStats currentJvmStats = slowGcEvent.currentJvmStats;
-        final ByteSizeValue maxHeapUsed = slowGcEvent.maxHeapUsed;
+        final String name = slowGcEvent.currentGc().getName();
+        final long elapsed = slowGcEvent.elapsed();
+        final long totalGcCollectionCount = slowGcEvent.currentGc().getCollectionCount();
+        final long currentGcCollectionCount = slowGcEvent.collectionCount();
+        final TimeValue totalGcCollectionTime = slowGcEvent.currentGc().getCollectionTime();
+        final TimeValue currentGcCollectionTime = slowGcEvent.collectionTime();
+        final JvmStats lastJvmStats = slowGcEvent.lastJvmStats();
+        final JvmStats currentJvmStats = slowGcEvent.currentJvmStats();
+        final ByteSizeValue maxHeapUsed = slowGcEvent.maxHeapUsed();
 
         switch (threshold) {
             case WARN:
@@ -379,33 +342,15 @@ public class JvmGcMonitorService extends AbstractLifecycleComponent {
             WARN
         }
 
-        static class SlowGcEvent {
-
-            final GarbageCollector currentGc;
-            final long collectionCount;
-            final TimeValue collectionTime;
-            final long elapsed;
-            final JvmStats lastJvmStats;
-            final JvmStats currentJvmStats;
-            final ByteSizeValue maxHeapUsed;
-
-            SlowGcEvent(
-                final GarbageCollector currentGc,
-                final long collectionCount,
-                final TimeValue collectionTime,
-                final long elapsed,
-                final JvmStats lastJvmStats,
-                final JvmStats currentJvmStats,
-                final ByteSizeValue maxHeapUsed
-            ) {
-                this.currentGc = currentGc;
-                this.collectionCount = collectionCount;
-                this.collectionTime = collectionTime;
-                this.elapsed = elapsed;
-                this.lastJvmStats = lastJvmStats;
-                this.currentJvmStats = currentJvmStats;
-                this.maxHeapUsed = maxHeapUsed;
-            }
+        record SlowGcEvent(
+            GarbageCollector currentGc,
+            long collectionCount,
+            TimeValue collectionTime,
+            long elapsed,
+            JvmStats lastJvmStats,
+            JvmStats currentJvmStats,
+            ByteSizeValue maxHeapUsed
+        ) {
 
         }
 

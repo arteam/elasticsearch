@@ -62,7 +62,7 @@ public class TickerScheduleTriggerEngine extends ScheduleTriggerEngine {
         Map<String, ActiveSchedule> startingSchedules = Maps.newMapWithExpectedSize(jobs.size());
         for (Watch job : jobs) {
             if (job.trigger()instanceof ScheduleTrigger trigger) {
-                startingSchedules.put(job.id(), new ActiveSchedule(job.id(), trigger.getSchedule(), startTime));
+                startingSchedules.put(job.id(), new ActiveSchedule(job.id(), trigger.schedule(), startTime));
             }
         }
         // why are we calling putAll() here instead of assigning a brand
@@ -97,8 +97,8 @@ public class TickerScheduleTriggerEngine extends ScheduleTriggerEngine {
         // resulting in later executions, as the time would only count after a watch has been stored, as this code is triggered by the
         // watcher indexing listener
         // this also means that updating an existing watch would not retrigger the schedule time, if it remains the same schedule
-        if (currentSchedule == null || currentSchedule.schedule.equals(trigger.getSchedule()) == false) {
-            schedules.put(watch.id(), new ActiveSchedule(watch.id(), trigger.getSchedule(), clock.millis()));
+        if (currentSchedule == null || currentSchedule.schedule.equals(trigger.schedule()) == false) {
+            schedules.put(watch.id(), new ActiveSchedule(watch.id(), trigger.schedule(), clock.millis()));
         }
     }
 

@@ -328,7 +328,7 @@ public class PublicationTransportHandler {
             ActionListener<PublishWithJoinResponse> listener
         ) {
             assert refCount() > 0;
-            assert publishRequest.getAcceptedState() == newState : "state got switched on us";
+            assert publishRequest.acceptedState() == newState : "state got switched on us";
             assert transportService.getThreadPool().getThreadContext().isSystemContext();
             final var newStateVersion = newState.version();
             if (destination.equals(discoveryNodes.getLocalNode())) {

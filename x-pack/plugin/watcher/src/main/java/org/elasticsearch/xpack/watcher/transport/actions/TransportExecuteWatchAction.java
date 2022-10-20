@@ -87,7 +87,7 @@ public class TransportExecuteWatchAction extends WatcherTransportAction<ExecuteW
         super(ExecuteWatchAction.NAME, transportService, actionFilters, licenseState, ExecuteWatchRequest::new);
         this.threadPool = threadPool;
         this.executionService = executionService;
-        this.clock = clockHolder.clock;
+        this.clock = clockHolder.clock();
         this.triggerService = triggerService;
         this.watchParser = watchParser;
         this.client = client;

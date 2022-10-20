@@ -29,7 +29,6 @@ import org.elasticsearch.rest.RestHeaderDefinition;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -96,43 +95,17 @@ public interface ActionPlugin {
         return Collections.emptyList();
     }
 
-    final class ActionHandler<Request extends ActionRequest, Response extends ActionResponse> {
-        private final ActionType<Response> action;
-        private final Class<? extends TransportAction<Request, Response>> transportAction;
-
-        /**
-         * Create a record of an action, the {@linkplain TransportAction} that handles it.
-         */
-        public ActionHandler(ActionType<Response> action, Class<? extends TransportAction<Request, Response>> transportAction) {
-            this.action = action;
-            this.transportAction = transportAction;
-        }
-
-        public ActionType<Response> getAction() {
-            return action;
-        }
-
-        public Class<? extends TransportAction<Request, Response>> getTransportAction() {
-            return transportAction;
-        }
+    /**
+     * Record of an action, the {@linkplain TransportAction} that handles it
+     */
+    record ActionHandler<Request extends ActionRequest, Response extends ActionResponse> (
+        ActionType<Response> action,
+        Class<? extends TransportAction<Request, Response>> transportAction
+    ) {
 
         @Override
         public String toString() {
             return action.name() + " is handled by " + transportAction.getName();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null || obj.getClass() != ActionHandler.class) {
-                return false;
-            }
-            ActionHandler<?, ?> other = (ActionHandler<?, ?>) obj;
-            return Objects.equals(action, other.action) && Objects.equals(transportAction, other.transportAction);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(action, transportAction);
         }
     }
 

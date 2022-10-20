@@ -108,11 +108,11 @@ public class Accuracy implements EvaluationMetric {
         EvaluationFields fields
     ) {
         // Store given {@code actualField} for the purpose of generating error message in {@code process}.
-        this.actualField.trySet(fields.getActualField());
+        this.actualField.trySet(fields.actualField());
         List<AggregationBuilder> aggs = new ArrayList<>();
         List<PipelineAggregationBuilder> pipelineAggs = new ArrayList<>();
         if (overallAccuracy.get() == null) {
-            Script script = PainlessScripts.buildIsEqualScript(fields.getActualField(), fields.getPredictedField());
+            Script script = PainlessScripts.buildIsEqualScript(fields.actualField(), fields.predictedField());
             aggs.add(AggregationBuilders.avg(OVERALL_ACCURACY_AGG_NAME).script(script));
         }
         if (result.get() == null) {

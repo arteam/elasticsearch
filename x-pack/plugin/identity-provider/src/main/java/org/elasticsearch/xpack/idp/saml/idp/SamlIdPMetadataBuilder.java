@@ -230,13 +230,13 @@ public class SamlIdPMetadataBuilder {
     private Organization buildOrganization() {
         final String lang = locale.toLanguageTag();
         final OrganizationName name = new OrganizationNameBuilder().buildObject();
-        name.setValue(this.organization.organizationName);
+        name.setValue(this.organization.organizationName());
         name.setXMLLang(lang);
         final OrganizationDisplayName displayName = new OrganizationDisplayNameBuilder().buildObject();
-        displayName.setValue(this.organization.displayName);
+        displayName.setValue(this.organization.displayName());
         displayName.setXMLLang(lang);
         final OrganizationURL url = new OrganizationURLBuilder().buildObject();
-        url.setURI(this.organization.url);
+        url.setURI(this.organization.url());
         url.setXMLLang(lang);
 
         final Organization org = new OrganizationBuilder().buildObject();
@@ -248,14 +248,14 @@ public class SamlIdPMetadataBuilder {
 
     private ContactPerson buildContact(SamlIdentityProvider.ContactInfo contact) {
         final GivenName givenName = new GivenNameBuilder().buildObject();
-        givenName.setValue(contact.givenName);
+        givenName.setValue(contact.givenName());
         final SurName surName = new SurNameBuilder().buildObject();
-        surName.setValue(contact.surName);
+        surName.setValue(contact.surName());
         final EmailAddress email = new EmailAddressBuilder().buildObject();
-        email.setURI(contact.email);
+        email.setURI(contact.email());
 
         final ContactPerson person = new ContactPersonBuilder().buildObject();
-        person.setType(contact.type);
+        person.setType(contact.type());
         person.setGivenName(givenName);
         person.setSurName(surName);
         person.getEmailAddresses().add(email);

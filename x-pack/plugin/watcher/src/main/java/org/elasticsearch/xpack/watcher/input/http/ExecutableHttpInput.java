@@ -48,7 +48,7 @@ public class ExecutableHttpInput extends ExecutableInput<HttpInput, HttpInput.Re
         HttpRequest request = null;
         try {
             Map<String, Object> model = Variables.createCtxParamsMap(ctx, payload);
-            request = input.getRequest().render(templateEngine, model);
+            request = input.request().render(templateEngine, model);
             return doExecute(ctx, request);
         } catch (Exception e) {
             logger.error(() -> format("failed to execute [%s] input for watch [%s]", TYPE, ctx.watch().id()), e);
@@ -71,17 +71,17 @@ public class ExecutableHttpInput extends ExecutableInput<HttpInput, HttpInput.Re
 
         final XContentType contentType;
         XContentType responseContentType = response.xContentType();
-        if (input.getExpectedResponseXContentType() == null) {
+        if (input.expectedResponseXContentType() == null) {
             // Attempt to auto detect content type, if not set in response
             contentType = responseContentType != null ? responseContentType : XContentHelper.xContentType(response.body());
         } else {
-            contentType = input.getExpectedResponseXContentType().contentType();
+            contentType = input.expectedResponseXContentType().contentType();
             if (responseContentType != contentType) {
                 logger.warn(
                     "[{}] [{}] input expected content type [{}] but read [{}] from headers, using expected one",
                     type(),
                     ctx.id(),
-                    input.getExpectedResponseXContentType(),
+                    input.expectedResponseXContentType(),
                     responseContentType
                 );
             }
@@ -94,8 +94,8 @@ public class ExecutableHttpInput extends ExecutableInput<HttpInput, HttpInput.Re
                 XContentParser parser = contentType.xContent()
                     .createParser(NamedXContentRegistry.EMPTY, LoggingDeprecationHandler.INSTANCE, stream)
             ) {
-                if (input.getExtractKeys() != null) {
-                    payloadMap.putAll(XContentFilterKeysUtils.filterMapOrdered(input.getExtractKeys(), parser));
+                if (input.extractKeys() != null) {
+                    payloadMap.putAll(XContentFilterKeysUtils.filterMapOrdered(input.extractKeys(), parser));
                 } else {
                     // special handling if a list is returned, i.e. JSON like [ {},{} ]
                     XContentParser.Token token = parser.nextToken();

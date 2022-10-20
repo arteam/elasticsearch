@@ -7,19 +7,19 @@
  */
 package org.elasticsearch.client.core;
 
-import org.elasticsearch.core.Nullable;
 import org.elasticsearch.xcontent.ConstructingObjectParser;
 import org.elasticsearch.xcontent.ParseField;
 import org.elasticsearch.xcontent.ToXContentObject;
 import org.elasticsearch.xcontent.XContentBuilder;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Paging parameters for GET requests
+ * @param from skips the specified number of items. When {@code null} the default value will be used.
+ * @param size specifies the maximum number of items to obtain. When {@code null} the default value will be used.
  */
-public class PageParams implements ToXContentObject {
+public record PageParams(Integer from, Integer size) implements ToXContentObject {
 
     public static final ParseField PAGE = new ParseField("page");
     public static final ParseField FROM = new ParseField("from");
@@ -35,27 +35,6 @@ public class PageParams implements ToXContentObject {
         PARSER.declareInt(ConstructingObjectParser.optionalConstructorArg(), SIZE);
     }
 
-    private final Integer from;
-    private final Integer size;
-
-    /**
-     * Constructs paging parameters
-     * @param from skips the specified number of items. When {@code null} the default value will be used.
-     * @param size specifies the maximum number of items to obtain. When {@code null} the default value will be used.
-     */
-    public PageParams(@Nullable Integer from, @Nullable Integer size) {
-        this.from = from;
-        this.size = size;
-    }
-
-    public Integer getFrom() {
-        return from;
-    }
-
-    public Integer getSize() {
-        return size;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
@@ -67,23 +46,6 @@ public class PageParams implements ToXContentObject {
         }
         builder.endObject();
         return builder;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(from, size);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        PageParams other = (PageParams) obj;
-        return Objects.equals(from, other.from) && Objects.equals(size, other.size);
     }
 
 }

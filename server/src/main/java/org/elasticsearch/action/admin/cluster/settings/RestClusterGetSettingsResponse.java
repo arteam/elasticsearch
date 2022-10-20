@@ -26,11 +26,9 @@ import static org.elasticsearch.xcontent.ConstructingObjectParser.optionalConstr
  * This response is specific to the REST client. {@link org.elasticsearch.action.admin.cluster.state.ClusterStateResponse}
  * is used on the transport layer.
  */
-public class RestClusterGetSettingsResponse implements ToXContentObject {
-
-    private final Settings persistentSettings;
-    private final Settings transientSettings;
-    private final Settings defaultSettings;
+public record RestClusterGetSettingsResponse(Settings persistentSettings, Settings transientSettings, Settings defaultSettings)
+    implements
+        ToXContentObject {
 
     static final String PERSISTENT_FIELD = "persistent";
     static final String TRANSIENT_FIELD = "transient";
@@ -44,6 +42,7 @@ public class RestClusterGetSettingsResponse implements ToXContentObject {
             return new RestClusterGetSettingsResponse((Settings) a[0], (Settings) a[1], defaultSettings);
         }
     );
+
     static {
         PARSER.declareObject(constructorArg(), (p, c) -> Settings.fromXContent(p), new ParseField(PERSISTENT_FIELD));
         PARSER.declareObject(constructorArg(), (p, c) -> Settings.fromXContent(p), new ParseField(TRANSIENT_FIELD));
@@ -57,32 +56,9 @@ public class RestClusterGetSettingsResponse implements ToXContentObject {
     }
 
     /**
-     * Returns the persistent settings for the cluster
-     * @return Settings
-     */
-    public Settings getPersistentSettings() {
-        return persistentSettings;
-    }
-
-    /**
-     * Returns the transient settings for the cluster
-     * @return Settings
-     */
-    public Settings getTransientSettings() {
-        return transientSettings;
-    }
-
-    /**
-     * Returns the default settings for the cluster (only if {@code include_defaults} was set to true in the request)
-     * @return Settings
-     */
-    public Settings getDefaultSettings() {
-        return defaultSettings;
-    }
-
-    /**
      * Returns the string value of the setting for the specified index. The order of search is first
      * in persistent settings the transient settings and finally the default settings.
+     *
      * @param setting the name of the setting to get
      * @return String
      */
@@ -121,21 +97,6 @@ public class RestClusterGetSettingsResponse implements ToXContentObject {
 
     public static RestClusterGetSettingsResponse fromXContent(XContentParser parser) {
         return PARSER.apply(parser, null);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RestClusterGetSettingsResponse that = (RestClusterGetSettingsResponse) o;
-        return Objects.equals(transientSettings, that.transientSettings)
-            && Objects.equals(persistentSettings, that.persistentSettings)
-            && Objects.equals(defaultSettings, that.defaultSettings);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(transientSettings, persistentSettings, defaultSettings);
     }
 
     @Override

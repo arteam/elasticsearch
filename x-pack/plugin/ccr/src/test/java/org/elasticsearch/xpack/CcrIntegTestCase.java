@@ -912,15 +912,7 @@ public abstract class CcrIntegTestCase extends ESTestCase {
         latch.await();
     }
 
-    static class ClusterGroup implements Closeable {
-
-        final InternalTestCluster leaderCluster;
-        final InternalTestCluster followerCluster;
-
-        ClusterGroup(InternalTestCluster leaderCluster, InternalTestCluster followerCluster) {
-            this.leaderCluster = leaderCluster;
-            this.followerCluster = followerCluster;
-        }
+    record ClusterGroup(InternalTestCluster leaderCluster, InternalTestCluster followerCluster) implements Closeable {
 
         @Override
         public void close() throws IOException {

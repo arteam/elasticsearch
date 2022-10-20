@@ -36,14 +36,14 @@ public class CustomNormalizerTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
             .build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, MOCK_ANALYSIS_PLUGIN);
-        assertNull(analysis.indexAnalyzers.get("my_normalizer"));
-        NamedAnalyzer normalizer = analysis.indexAnalyzers.getNormalizer("my_normalizer");
+        assertNull(analysis.indexAnalyzers().get("my_normalizer"));
+        NamedAnalyzer normalizer = analysis.indexAnalyzers().getNormalizer("my_normalizer");
         assertNotNull(normalizer);
         assertEquals("my_normalizer", normalizer.name());
         assertTokenStreamContents(normalizer.tokenStream("foo", "Cet été-là"), new String[] { "cet été-là" });
         assertEquals(new BytesRef("cet été-là"), normalizer.normalize("foo", "Cet été-là"));
 
-        normalizer = analysis.indexAnalyzers.getWhitespaceNormalizer("my_normalizer");
+        normalizer = analysis.indexAnalyzers().getWhitespaceNormalizer("my_normalizer");
         assertNotNull(normalizer);
         assertEquals("my_normalizer", normalizer.name());
         assertTokenStreamContents(normalizer.tokenStream("foo", "Cet été-là"), new String[] { "cet", "été-là" });
@@ -82,14 +82,14 @@ public class CustomNormalizerTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
             .build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, MOCK_ANALYSIS_PLUGIN);
-        assertNull(analysis.indexAnalyzers.get("my_normalizer"));
-        NamedAnalyzer normalizer = analysis.indexAnalyzers.getNormalizer("my_normalizer");
+        assertNull(analysis.indexAnalyzers().get("my_normalizer"));
+        NamedAnalyzer normalizer = analysis.indexAnalyzers().getNormalizer("my_normalizer");
         assertNotNull(normalizer);
         assertEquals("my_normalizer", normalizer.name());
         assertTokenStreamContents(normalizer.tokenStream("foo", "abc acd"), new String[] { "zbc zcd" });
         assertEquals(new BytesRef("zbc"), normalizer.normalize("foo", "abc"));
 
-        normalizer = analysis.indexAnalyzers.getWhitespaceNormalizer("my_normalizer");
+        normalizer = analysis.indexAnalyzers().getWhitespaceNormalizer("my_normalizer");
         assertNotNull(normalizer);
         assertEquals("my_normalizer", normalizer.name());
         assertTokenStreamContents(normalizer.tokenStream("foo", "abc acd"), new String[] { "zbc", "zcd" });

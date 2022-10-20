@@ -64,7 +64,7 @@ public class ShardSearchRequestInterceptor extends FieldAndDocumentLevelSecurity
         final String indexName = request.shardId().getIndexName();
         final IndicesAccessControl.IndexAccessControl indexAccessControl = indexAccessControlByIndex.get(indexName);
         assert indexAccessControl != null : "index access control cannot be null";
-        final DocumentPermissions documentPermissions = indexAccessControl.getDocumentPermissions();
+        final DocumentPermissions documentPermissions = indexAccessControl.documentPermissions();
         if (documentPermissions.hasDocumentLevelPermissions()) {
             try {
                 return documentPermissions.hasStoredScript();

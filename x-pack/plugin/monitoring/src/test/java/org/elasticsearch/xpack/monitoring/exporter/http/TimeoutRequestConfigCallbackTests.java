@@ -51,8 +51,8 @@ public class TimeoutRequestConfigCallbackTests extends ESTestCase {
         final TimeoutRequestConfigCallback callback = new TimeoutRequestConfigCallback(optionalConnectTimeout, optionalSocketTimeout);
 
         assertSame(builder, callback.customizeRequestConfig(builder));
-        assertSame(optionalConnectTimeout, callback.getConnectTimeout());
-        assertSame(optionalSocketTimeout, callback.getSocketTimeout());
+        assertSame(optionalConnectTimeout, callback.connectTimeout());
+        assertSame(optionalSocketTimeout, callback.socketTimeout());
 
         if (optionalConnectTimeout != null) {
             verify(builder).setConnectTimeout(connectTimeoutMillis);

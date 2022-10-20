@@ -61,7 +61,7 @@ public class TransportAckWatchAction extends WatcherTransportAction<AckWatchRequ
         Client client
     ) {
         super(AckWatchAction.NAME, transportService, actionFilters, licenseState, AckWatchRequest::new);
-        this.clock = clockHolder.clock;
+        this.clock = clockHolder.clock();
         this.parser = parser;
         this.client = client;
     }

@@ -30,7 +30,7 @@ public class SimpleUkrainianAnalyzerTests extends ESTestCase {
 
     private static void testAnalyzer(String source, String... expected_terms) throws IOException {
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), Settings.EMPTY, new AnalysisUkrainianPlugin());
-        Analyzer analyzer = analysis.indexAnalyzers.get("ukrainian").analyzer();
+        Analyzer analyzer = analysis.indexAnalyzers().get("ukrainian").analyzer();
         TokenStream ts = analyzer.tokenStream("test", source);
         CharTermAttribute term1 = ts.addAttribute(CharTermAttribute.class);
         ts.reset();

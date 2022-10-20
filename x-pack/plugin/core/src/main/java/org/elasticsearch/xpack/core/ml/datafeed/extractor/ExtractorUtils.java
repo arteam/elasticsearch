@@ -172,7 +172,7 @@ public final class ExtractorUtils {
         );
     }
 
-    private static class DateHistogramAggOrValueSource {
+    private record DateHistogramAggOrValueSource(DateHistogramAggregationBuilder agg, DateHistogramValuesSourceBuilder sourceBuilder) {
 
         static DateHistogramAggOrValueSource fromAgg(DateHistogramAggregationBuilder agg) {
             return new DateHistogramAggOrValueSource(agg, null);
@@ -182,13 +182,8 @@ public final class ExtractorUtils {
             return new DateHistogramAggOrValueSource(null, getDateHistogramValuesSource(compositeAggregationBuilder));
         }
 
-        private final DateHistogramAggregationBuilder agg;
-        private final DateHistogramValuesSourceBuilder sourceBuilder;
-
-        private DateHistogramAggOrValueSource(DateHistogramAggregationBuilder agg, DateHistogramValuesSourceBuilder sourceBuilder) {
+        private DateHistogramAggOrValueSource {
             assert agg != null || sourceBuilder != null;
-            this.agg = agg;
-            this.sourceBuilder = sourceBuilder;
         }
 
         private ZoneId timeZone() {

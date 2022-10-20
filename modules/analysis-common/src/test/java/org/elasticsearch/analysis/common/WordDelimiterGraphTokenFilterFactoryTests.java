@@ -45,7 +45,7 @@ public class WordDelimiterGraphTokenFilterFactoryTests extends BaseWordDelimiter
             new CommonAnalysisPlugin()
         );
 
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot 500-42 wi-fi wi-fi-4000 j2se O'Neil's";
         String[] expected = new String[] {
             "PowerShot",
@@ -94,7 +94,7 @@ public class WordDelimiterGraphTokenFilterFactoryTests extends BaseWordDelimiter
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot";
         int[] expectedIncr = new int[] { 1, 0, 1 };
         int[] expectedPosLen = new int[] { 2, 1, 1 };
@@ -126,7 +126,7 @@ public class WordDelimiterGraphTokenFilterFactoryTests extends BaseWordDelimiter
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot";
         int[] expectedIncr = new int[] { 1, 0, 1 };
         int[] expectedPosLen = new int[] { 2, 1, 1 };
@@ -164,13 +164,13 @@ public class WordDelimiterGraphTokenFilterFactoryTests extends BaseWordDelimiter
         int[] expectedStartOffsets = new int[] { 0, 5, 10, 15 };
         int[] expectedEndOffsets = new int[] { 5, 9, 15, 21 };
         String[] expected = new String[] { "Power", "Shot", "Power", "Hungry" };
-        NamedAnalyzer analyzer = analysis.indexAnalyzers.get("my_analyzer");
+        NamedAnalyzer analyzer = analysis.indexAnalyzers().get("my_analyzer");
         assertAnalyzesTo(analyzer, source, expected, expectedStartOffsets, expectedEndOffsets);
 
         // test with keywords but ignore_keywords is set as true
         settings = Settings.builder().put(settings).put("index.analysis.filter.my_word_delimiter.ignore_keywords", "true").build();
         analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        analyzer = analysis.indexAnalyzers.get("my_analyzer");
+        analyzer = analysis.indexAnalyzers().get("my_analyzer");
         expectedStartOffsets = new int[] { 0, 5, 10 };
         expectedEndOffsets = new int[] { 5, 9, 21 };
         expected = new String[] { "Power", "Shot", "PowerHungry" };

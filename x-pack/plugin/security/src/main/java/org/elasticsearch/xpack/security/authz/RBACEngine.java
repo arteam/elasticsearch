@@ -356,7 +356,7 @@ public class RBACEngine implements AuthorizationEngine {
                     // check action name
                     listener.onResponse(authorizeIndexActionName(action, authorizationInfo, IndicesAccessControl.ALLOW_NO_INDICES));
                 } else {
-                    assert resolvedIndices.getLocal().stream().noneMatch(Regex::isSimpleMatchPattern)
+                    assert resolvedIndices.local().stream().noneMatch(Regex::isSimpleMatchPattern)
                         || replaceable.indicesOptions().expandWildcardExpressions() == false
                         || (request instanceof AliasesRequest aliasesRequest && aliasesRequest.expandAliasesWildcards() == false)
                         : "expanded wildcards for local indices OR the request should not expand wildcards at all";
@@ -364,7 +364,7 @@ public class RBACEngine implements AuthorizationEngine {
                         buildIndicesAccessControl(
                             action,
                             authorizationInfo,
-                            Sets.newHashSet(resolvedIndices.getLocal()),
+                            Sets.newHashSet(resolvedIndices.local()),
                             aliasOrIndexLookup
                         )
                     );
@@ -386,7 +386,7 @@ public class RBACEngine implements AuthorizationEngine {
                         if (resolvedIndices.isNoIndicesPlaceholder()) {
                             listener.onResponse(new IndexAuthorizationResult(true, IndicesAccessControl.ALLOW_NO_INDICES));
                         } else {
-                            assert resolvedIndices.getLocal().stream().noneMatch(Regex::isSimpleMatchPattern)
+                            assert resolvedIndices.local().stream().noneMatch(Regex::isSimpleMatchPattern)
                                 || ((IndicesRequest) request).indicesOptions().expandWildcardExpressions() == false
                                 || (request instanceof AliasesRequest aliasesRequest && aliasesRequest.expandAliasesWildcards() == false)
                                 || (request instanceof IndicesAliasesRequest indicesAliasesRequest
@@ -398,7 +398,7 @@ public class RBACEngine implements AuthorizationEngine {
                                 buildIndicesAccessControl(
                                     action,
                                     authorizationInfo,
-                                    Sets.newHashSet(resolvedIndices.getLocal()),
+                                    Sets.newHashSet(resolvedIndices.local()),
                                     aliasOrIndexLookup
                                 )
                             );

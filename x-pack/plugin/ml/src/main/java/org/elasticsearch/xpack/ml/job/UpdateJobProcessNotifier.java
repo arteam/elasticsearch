@@ -161,13 +161,5 @@ public class UpdateJobProcessNotifier {
         });
     }
 
-    private static class UpdateHolder {
-        private final UpdateParams update;
-        private final ActionListener<Boolean> listener;
-
-        private UpdateHolder(UpdateParams update, ActionListener<Boolean> listener) {
-            this.update = update;
-            this.listener = listener;
-        }
-    }
+    private record UpdateHolder(UpdateParams update, ActionListener<Boolean> listener) {}
 }

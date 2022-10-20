@@ -26,11 +26,11 @@ public class ClientYamlTestCandidate {
     }
 
     public String getApi() {
-        return restTestSuite.getApi();
+        return restTestSuite.api();
     }
 
     public String getName() {
-        return restTestSuite.getName();
+        return restTestSuite.name();
     }
 
     public String getSuitePath() {
@@ -38,11 +38,11 @@ public class ClientYamlTestCandidate {
     }
 
     public String getTestPath() {
-        return restTestSuite.getPath() + "/" + testSection.getName();
+        return restTestSuite.getPath() + "/" + testSection.name();
     }
 
     public SetupSection getSetupSection() {
-        return restTestSuite.getSetupSection();
+        return restTestSuite.setupSection();
     }
 
     public ClientYamlTestSuite getRestTestSuite() {
@@ -50,7 +50,7 @@ public class ClientYamlTestCandidate {
     }
 
     public TeardownSection getTeardownSection() {
-        return restTestSuite.getTeardownSection();
+        return restTestSuite.teardownSection();
     }
 
     public ClientYamlTestSection getTestSection() {

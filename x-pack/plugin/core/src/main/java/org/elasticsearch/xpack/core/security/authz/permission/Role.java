@@ -307,26 +307,12 @@ public interface Role {
             );
         }
 
-        private static class IndicesPermissionGroupDefinition {
-            private final IndexPrivilege privilege;
-            private final FieldPermissions fieldPermissions;
-            private final @Nullable Set<BytesReference> query;
-            private final boolean allowRestrictedIndices;
-            private final String[] indices;
-
-            private IndicesPermissionGroupDefinition(
-                IndexPrivilege privilege,
-                FieldPermissions fieldPermissions,
-                @Nullable Set<BytesReference> query,
-                boolean allowRestrictedIndices,
-                String... indices
-            ) {
-                this.privilege = privilege;
-                this.fieldPermissions = fieldPermissions;
-                this.query = query;
-                this.allowRestrictedIndices = allowRestrictedIndices;
-                this.indices = indices;
-            }
-        }
+        private record IndicesPermissionGroupDefinition(
+            IndexPrivilege privilege,
+            FieldPermissions fieldPermissions,
+            @Nullable Set<BytesReference> query,
+            boolean allowRestrictedIndices,
+            String[] indices
+        ) {}
     }
 }

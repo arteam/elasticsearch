@@ -36,7 +36,8 @@ import java.util.stream.Stream;
  * Holds a REST test suite loaded from a specific yaml file.
  * Supports a setup section and multiple test sections.
  */
-public class ClientYamlTestSuite {
+public record ClientYamlTestSuite(String api, String name, SetupSection setupSection, TeardownSection teardownSection,
+                                  List<ClientYamlTestSection> testSections) {
     public static ClientYamlTestSuite parse(NamedXContentRegistry executeableSectionRegistry, String api, Path file) throws IOException {
         if (Files.isRegularFile(file) == false) {
             throw new IllegalArgumentException(file.toAbsolutePath() + " is not a file");
@@ -95,18 +96,12 @@ public class ClientYamlTestSuite {
             }
             ClientYamlTestSection testSection = ClientYamlTestSection.parse(parser);
             if (testSections.add(testSection) == false) {
-                throw new ParsingException(testSection.getLocation(), "duplicate test section [" + testSection.getName() + "]");
+                throw new ParsingException(testSection.location(), "duplicate test section [" + testSection.name() + "]");
             }
         }
 
         return new ClientYamlTestSuite(api, suiteName, setupSection, teardownSection, new ArrayList<>(testSections));
     }
-
-    private final String api;
-    private final String name;
-    private final SetupSection setupSection;
-    private final TeardownSection teardownSection;
-    private final List<ClientYamlTestSection> testSections;
 
     public ClientYamlTestSuite(
         String api,
@@ -122,33 +117,17 @@ public class ClientYamlTestSuite {
         this.testSections = Collections.unmodifiableList(testSections);
     }
 
-    public String getApi() {
-        return api;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public String getPath() {
         return api + "/" + name;
     }
 
-    public SetupSection getSetupSection() {
-        return setupSection;
-    }
-
-    public TeardownSection getTeardownSection() {
-        return teardownSection;
-    }
-
     public void validate() {
-        Stream<String> errors = validateExecutableSections(setupSection.getExecutableSections(), null, setupSection, null);
+        Stream<String> errors = validateExecutableSections(setupSection.executableSections(), null, setupSection, null);
         errors = Stream.concat(errors, validateExecutableSections(teardownSection.getDoSections(), null, null, teardownSection));
         errors = Stream.concat(
             errors,
             testSections.stream()
-                .flatMap(section -> validateExecutableSections(section.getExecutableSections(), section, setupSection, teardownSection))
+                .flatMap(section -> validateExecutableSections(section.executableSections(), section, setupSection, teardownSection))
         );
         String errorMessage = errors.collect(Collectors.joining(",\n"));
         if (errorMessage.isEmpty() == false) {
@@ -273,16 +252,12 @@ public class ClientYamlTestSuite {
         SetupSection setupSection,
         TeardownSection teardownSection
     ) {
-        return (testSection != null && hasSkipFeature(feature, testSection.getSkipSection()))
-            || (setupSection != null && hasSkipFeature(feature, setupSection.getSkipSection()))
+        return (testSection != null && hasSkipFeature(feature, testSection.skipSection()))
+            || (setupSection != null && hasSkipFeature(feature, setupSection.skipSection()))
             || (teardownSection != null && hasSkipFeature(feature, teardownSection.getSkipSection()));
     }
 
     private static boolean hasSkipFeature(String feature, SkipSection skipSection) {
         return skipSection != null && skipSection.getFeatures().contains(feature);
-    }
-
-    public List<ClientYamlTestSection> getTestSections() {
-        return testSections;
     }
 }

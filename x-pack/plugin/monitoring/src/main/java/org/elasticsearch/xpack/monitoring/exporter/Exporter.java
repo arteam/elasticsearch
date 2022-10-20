@@ -248,18 +248,7 @@ public abstract class Exporter implements AutoCloseable {
         Exporter create(Config config);
     }
 
-    public static class ExporterResourceStatus {
-        private final String exporterName;
-        private final String exporterType;
-        private final boolean complete;
-        private final List<Exception> exceptions;
-
-        public ExporterResourceStatus(String exporterName, String exporterType, boolean complete, List<Exception> exceptions) {
-            this.exporterName = exporterName;
-            this.exporterType = exporterType;
-            this.complete = complete;
-            this.exceptions = exceptions;
-        }
+    public record ExporterResourceStatus(String exporterName, String exporterType, boolean complete, List<Exception> exceptions) {
 
         public static ExporterResourceStatus ready(String exporterName, String exporterType) {
             return new ExporterResourceStatus(exporterName, exporterType, true, null);
@@ -275,23 +264,6 @@ public abstract class Exporter implements AutoCloseable {
 
         public static ExporterResourceStatus determineReadiness(String exporterName, String exporterType, List<Exception> exceptions) {
             return new ExporterResourceStatus(exporterName, exporterType, exceptions.size() <= 0, exceptions);
-        }
-
-        public String getExporterName() {
-            return exporterName;
-        }
-
-        public String getExporterType() {
-            return exporterType;
-        }
-
-        public boolean isComplete() {
-            return complete;
-        }
-
-        @Nullable
-        public List<Exception> getExceptions() {
-            return exceptions;
         }
     }
 }

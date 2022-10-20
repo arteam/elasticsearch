@@ -30,7 +30,7 @@ public class ShingleTokenFilterTests extends ESTokenStreamTestCase {
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("shingle");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("shingle");
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader("this is a test"));
         TokenStream tokenStream = tokenFilter.create(tokenizer);

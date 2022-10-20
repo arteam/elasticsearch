@@ -153,12 +153,12 @@ public class ChunkedTrainedModelPersisterTests extends ESTestCase {
         assertThat(analyticsConfigAsMap, equalTo(metadata.get("analytics_config")));
 
         TrainedModelDefinitionDoc storedDoc1 = storedDocCapture.getAllValues().get(0);
-        assertThat(storedDoc1.getDocNum(), equalTo(0));
+        assertThat(storedDoc1.docNum(), equalTo(0));
         TrainedModelDefinitionDoc storedDoc2 = storedDocCapture.getAllValues().get(1);
-        assertThat(storedDoc2.getDocNum(), equalTo(1));
+        assertThat(storedDoc2.docNum(), equalTo(1));
 
-        assertThat(storedModel.getModelId(), equalTo(storedDoc1.getModelId()));
-        assertThat(storedModel.getModelId(), equalTo(storedDoc2.getModelId()));
+        assertThat(storedModel.getModelId(), equalTo(storedDoc1.modelId()));
+        assertThat(storedModel.getModelId(), equalTo(storedDoc2.modelId()));
 
         TrainedModelMetadata storedMetadata = storedMetadataCaptor.getValue();
         assertThat(storedMetadata.getModelId(), equalTo(storedModel.getModelId()));

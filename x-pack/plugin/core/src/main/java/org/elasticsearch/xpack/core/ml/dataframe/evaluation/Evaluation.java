@@ -95,32 +95,32 @@ public interface Evaluation extends ToXContentObject, NamedWriteable {
         Objects.requireNonNull(userProvidedQueryBuilder);
         Set<String> requiredFields = new HashSet<>(getRequiredFields());
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-        if (getFields().getActualField() != null && requiredFields.contains(getFields().getActualField())) {
+        if (getFields().actualField() != null && requiredFields.contains(getFields().actualField())) {
             // Verify existence of the actual field if required
-            boolQuery.filter(QueryBuilders.existsQuery(getFields().getActualField()));
+            boolQuery.filter(QueryBuilders.existsQuery(getFields().actualField()));
         }
-        if (getFields().getPredictedField() != null && requiredFields.contains(getFields().getPredictedField())) {
+        if (getFields().predictedField() != null && requiredFields.contains(getFields().predictedField())) {
             // Verify existence of the predicted field if required
-            boolQuery.filter(QueryBuilders.existsQuery(getFields().getPredictedField()));
+            boolQuery.filter(QueryBuilders.existsQuery(getFields().predictedField()));
         }
-        if (getFields().getPredictedClassField() != null && requiredFields.contains(getFields().getPredictedClassField())) {
-            assert getFields().getTopClassesField() != null;
+        if (getFields().predictedClassField() != null && requiredFields.contains(getFields().predictedClassField())) {
+            assert getFields().topClassesField() != null;
             // Verify existence of the predicted class name field if required
-            QueryBuilder predictedClassFieldExistsQuery = QueryBuilders.existsQuery(getFields().getPredictedClassField());
+            QueryBuilder predictedClassFieldExistsQuery = QueryBuilders.existsQuery(getFields().predictedClassField());
             boolQuery.filter(
-                QueryBuilders.nestedQuery(getFields().getTopClassesField(), predictedClassFieldExistsQuery, ScoreMode.None)
+                QueryBuilders.nestedQuery(getFields().topClassesField(), predictedClassFieldExistsQuery, ScoreMode.None)
                     .ignoreUnmapped(true)
             );
         }
-        if (getFields().getPredictedProbabilityField() != null && requiredFields.contains(getFields().getPredictedProbabilityField())) {
+        if (getFields().predictedProbabilityField() != null && requiredFields.contains(getFields().predictedProbabilityField())) {
             // Verify existence of the predicted probability field if required
-            QueryBuilder predictedProbabilityFieldExistsQuery = QueryBuilders.existsQuery(getFields().getPredictedProbabilityField());
+            QueryBuilder predictedProbabilityFieldExistsQuery = QueryBuilders.existsQuery(getFields().predictedProbabilityField());
             // predicted probability field may be either nested (just like in case of classification evaluation) or non-nested (just like
             // in case of outlier detection evaluation). Here we support both modes.
-            if (getFields().isPredictedProbabilityFieldNested()) {
-                assert getFields().getTopClassesField() != null;
+            if (getFields().predictedProbabilityFieldNested()) {
+                assert getFields().topClassesField() != null;
                 boolQuery.filter(
-                    QueryBuilders.nestedQuery(getFields().getTopClassesField(), predictedProbabilityFieldExistsQuery, ScoreMode.None)
+                    QueryBuilders.nestedQuery(getFields().topClassesField(), predictedProbabilityFieldExistsQuery, ScoreMode.None)
                         .ignoreUnmapped(true)
                 );
             } else {

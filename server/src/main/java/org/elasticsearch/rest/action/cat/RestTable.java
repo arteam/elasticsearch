@@ -66,7 +66,7 @@ public class RestTable {
         for (Integer row : rowOrder) {
             builder.startObject();
             for (DisplayHeader header : displayHeaders) {
-                builder.field(header.display, renderValue(request, table.getAsMap().get(header.name).get(row).value));
+                builder.field(header.display, renderValue(request, table.getAsMap().get(header.name()).get(row).value));
             }
             builder.endObject();
         }
@@ -88,7 +88,7 @@ public class RestTable {
             for (int col = 0; col < headers.size(); col++) {
                 DisplayHeader header = headers.get(col);
                 boolean isLastColumn = col == lastHeader;
-                pad(new Table.Cell(header.display, table.findHeaderByName(header.name)), width[col], request, out, isLastColumn);
+                pad(new Table.Cell(header.display, table.findHeaderByName(header.name())), width[col], request, out, isLastColumn);
                 if (isLastColumn == false) {
                     out.append(" ");
                 }
@@ -102,7 +102,7 @@ public class RestTable {
             for (int col = 0; col < headers.size(); col++) {
                 DisplayHeader header = headers.get(col);
                 boolean isLastColumn = col == lastHeader;
-                pad(table.getAsMap().get(header.name).get(row), width[col], request, out, isLastColumn);
+                pad(table.getAsMap().get(header.name()).get(row), width[col], request, out, isLastColumn);
                 if (isLastColumn == false) {
                     out.append(" ");
                 }
@@ -175,11 +175,11 @@ public class RestTable {
                     display.add(dispHeader);
 
                     // Look for accompanying sibling column
-                    Table.Cell hcell = table.getHeaderMap().get(dispHeader.name);
+                    Table.Cell hcell = table.getHeaderMap().get(dispHeader.name());
                     String siblingFlag = hcell.attr.get("sibling");
                     if (siblingFlag != null) {
                         // ...link the sibling and check that its flag is set
-                        String sibling = siblingFlag + "." + dispHeader.name;
+                        String sibling = siblingFlag + "." + dispHeader.name();
                         Table.Cell c = table.getHeaderMap().get(sibling);
                         if (c != null && request.paramAsBoolean(siblingFlag, false)) {
                             display.add(new DisplayHeader(c.value.toString(), siblingFlag + "." + dispHeader.display));
@@ -199,7 +199,7 @@ public class RestTable {
     }
 
     static boolean checkOutputTimestamp(DisplayHeader dispHeader, RestRequest request) {
-        return checkOutputTimestamp(dispHeader.name, request);
+        return checkOutputTimestamp(dispHeader.name(), request);
     }
 
     static boolean checkOutputTimestamp(String disp, RestRequest request) {
@@ -285,7 +285,7 @@ public class RestTable {
 
         i = 0;
         for (DisplayHeader hdr : headers) {
-            for (Table.Cell cell : table.getAsMap().get(hdr.name)) {
+            for (Table.Cell cell : table.getAsMap().get(hdr.name())) {
                 String v = renderValue(request, cell.value);
                 int vWidth = v == null ? 0 : v.length();
                 if (width[i] < vWidth) {
@@ -393,15 +393,7 @@ public class RestTable {
         return value.toString();
     }
 
-    static class DisplayHeader {
-        public final String name;
-        public final String display;
-
-        DisplayHeader(String name, String display) {
-            this.name = name;
-            this.display = display;
-        }
-    }
+    record DisplayHeader(String name, String display) {}
 
     static class TableIndexComparator implements Comparator<Integer> {
         private final Table table;

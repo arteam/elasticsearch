@@ -34,15 +34,7 @@ import java.util.stream.IntStream;
  */
 public class DateFormatRandomDatasetGenerator {
 
-    private static class TestRecord {
-        private final LocalDateTime localDateTime;
-        private final String formatString;
-
-        TestRecord(LocalDateTime localDateTime, String formatString) {
-            this.localDateTime = localDateTime;
-            this.formatString = formatString;
-        }
-    }
+    private record TestRecord(LocalDateTime localDateTime, String formatString) {}
 
     private static final List<String> PATTERNS = new ArrayList<>(DateFormatter.FORMATTER_MAP.keySet());
     private static final List<TestRecord> TESTRECORDS = new ArrayList<>();

@@ -104,7 +104,7 @@ public final class TransportDelegatePkiAuthenticationAction extends HandledTrans
                         ActionListener.wrap(tokenResult -> {
                             final TimeValue expiresIn = tokenService.getExpirationDelay();
                             listener.onResponse(
-                                new DelegatePkiAuthenticationResponse(tokenResult.getAccessToken(), expiresIn, authentication)
+                                new DelegatePkiAuthenticationResponse(tokenResult.accessToken(), expiresIn, authentication)
                             );
                         }, listener::onFailure)
                     );

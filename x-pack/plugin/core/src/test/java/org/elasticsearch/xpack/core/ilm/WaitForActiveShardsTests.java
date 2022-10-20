@@ -121,7 +121,7 @@ public class WaitForActiveShardsTests extends AbstractStepTestCase<WaitForActive
 
         assertThat(
             "the rolled index has both the primary and the replica shards started so the condition should be met",
-            createRandomInstance().isConditionMet(originalIndex.getIndex(), clusterState).isComplete(),
+            createRandomInstance().isConditionMet(originalIndex.getIndex(), clusterState).complete(),
             is(true)
         );
     }
@@ -156,7 +156,7 @@ public class WaitForActiveShardsTests extends AbstractStepTestCase<WaitForActive
 
         assertThat(
             "the index the alias is pointing to has both the primary and the replica shards started so the condition should be" + " met",
-            createRandomInstance().isConditionMet(originalIndex.getIndex(), clusterState).isComplete(),
+            createRandomInstance().isConditionMet(originalIndex.getIndex(), clusterState).complete(),
             is(true)
         );
     }
@@ -198,13 +198,13 @@ public class WaitForActiveShardsTests extends AbstractStepTestCase<WaitForActive
         WaitForActiveShardsStep waitForActiveShardsStep = createRandomInstance();
 
         ClusterStateWaitStep.Result result = waitForActiveShardsStep.isConditionMet(originalIndexMeta.getIndex(), clusterState);
-        assertThat(result.isComplete(), is(false));
+        assertThat(result.complete(), is(false));
 
         XContentBuilder expected = new WaitForActiveShardsStep.ActiveShardsInfo(2, "3", false).toXContent(
             JsonXContent.contentBuilder(),
             ToXContent.EMPTY_PARAMS
         );
-        String actualResultAsString = Strings.toString(result.getInfomationContext());
+        String actualResultAsString = Strings.toString(result.infomationContext());
         assertThat(actualResultAsString, is(Strings.toString(expected)));
         assertThat(actualResultAsString, containsString("waiting for [3] shards to become active, but only [2] are active"));
     }
@@ -238,13 +238,13 @@ public class WaitForActiveShardsTests extends AbstractStepTestCase<WaitForActive
             .build();
 
         ClusterStateWaitStep.Result result = createRandomInstance().isConditionMet(originalIndex.getIndex(), clusterState);
-        assertThat(result.isComplete(), is(false));
+        assertThat(result.complete(), is(false));
 
         XContentBuilder expected = new WaitForActiveShardsStep.ActiveShardsInfo(2, "3", false).toXContent(
             JsonXContent.contentBuilder(),
             ToXContent.EMPTY_PARAMS
         );
-        String actualResultAsString = Strings.toString(result.getInfomationContext());
+        String actualResultAsString = Strings.toString(result.infomationContext());
         assertThat(actualResultAsString, is(Strings.toString(expected)));
         assertThat(actualResultAsString, containsString("waiting for [3] shards to become active, but only [2] are active"));
     }
@@ -265,9 +265,9 @@ public class WaitForActiveShardsTests extends AbstractStepTestCase<WaitForActive
 
         WaitForActiveShardsStep step = createRandomInstance();
         ClusterStateWaitStep.Result result = step.isConditionMet(new Index("index-000000", UUID.randomUUID().toString()), clusterState);
-        assertThat(result.isComplete(), is(false));
+        assertThat(result.complete(), is(false));
 
-        String actualResultAsString = Strings.toString(result.getInfomationContext());
+        String actualResultAsString = Strings.toString(result.infomationContext());
         assertThat(
             actualResultAsString,
             containsString(

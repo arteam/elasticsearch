@@ -499,20 +499,11 @@ public abstract class ReplicaShardAllocator extends BaseGatewayShardAllocator {
      */
     protected abstract boolean hasInitiatedFetching(ShardRouting shard);
 
-    private static class MatchingNode {
+    private record MatchingNode(long matchingBytes, long retainingSeqNo, boolean isNoopRecovery) {
+
         static final Comparator<MatchingNode> COMPARATOR = Comparator.<MatchingNode, Boolean>comparing(m -> m.isNoopRecovery)
             .thenComparing(m -> m.retainingSeqNo)
             .thenComparing(m -> m.matchingBytes);
-
-        final long matchingBytes;
-        final long retainingSeqNo;
-        final boolean isNoopRecovery;
-
-        MatchingNode(long matchingBytes, long retainingSeqNo, boolean isNoopRecovery) {
-            this.matchingBytes = matchingBytes;
-            this.retainingSeqNo = retainingSeqNo;
-            this.isNoopRecovery = isNoopRecovery;
-        }
 
         boolean anyMatch() {
             return isNoopRecovery || retainingSeqNo >= 0 || matchingBytes > 0;

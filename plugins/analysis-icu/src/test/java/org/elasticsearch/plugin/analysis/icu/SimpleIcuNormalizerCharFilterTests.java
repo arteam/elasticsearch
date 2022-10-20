@@ -25,7 +25,7 @@ public class SimpleIcuNormalizerCharFilterTests extends ESTestCase {
     public void testDefaultSetting() throws Exception {
         Settings settings = Settings.builder().put("index.analysis.char_filter.myNormalizerChar.type", "icu_normalizer").build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
-        CharFilterFactory charFilterFactory = analysis.charFilter.get("myNormalizerChar");
+        CharFilterFactory charFilterFactory = analysis.charFilter().get("myNormalizerChar");
 
         String input = "ʰ㌰゙5℃№㈱㌘，バッファーの正規化のテスト．㋐㋑㋒㋓㋔ｶｷｸｹｺｻﾞｼﾞｽﾞｾﾞｿﾞg̈각/각நிเกषिchkʷक्षि";
         Normalizer2 normalizer = Normalizer2.getInstance(null, "nfkc_cf", Normalizer2.Mode.COMPOSE);
@@ -49,7 +49,7 @@ public class SimpleIcuNormalizerCharFilterTests extends ESTestCase {
             .put("index.analysis.char_filter.myNormalizerChar.mode", "decompose")
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
-        CharFilterFactory charFilterFactory = analysis.charFilter.get("myNormalizerChar");
+        CharFilterFactory charFilterFactory = analysis.charFilter().get("myNormalizerChar");
 
         String input = "ʰ㌰゙5℃№㈱㌘，バッファーの正規化のテスト．㋐㋑㋒㋓㋔ｶｷｸｹｺｻﾞｼﾞｽﾞｾﾞｿﾞg̈각/각நிเกषिchkʷक्षि";
         Normalizer2 normalizer = Normalizer2.getInstance(null, "nfkc", Normalizer2.Mode.DECOMPOSE);

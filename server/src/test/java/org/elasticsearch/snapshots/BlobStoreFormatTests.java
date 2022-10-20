@@ -20,7 +20,6 @@ import org.elasticsearch.common.io.Streams;
 import org.elasticsearch.common.xcontent.XContentParserUtils;
 import org.elasticsearch.repositories.blobstore.ChecksumBlobStoreFormat;
 import org.elasticsearch.test.ESTestCase;
-import org.elasticsearch.xcontent.ToXContent;
 import org.elasticsearch.xcontent.ToXContentFragment;
 import org.elasticsearch.xcontent.XContentBuilder;
 import org.elasticsearch.xcontent.XContentParser;
@@ -36,17 +35,7 @@ public class BlobStoreFormatTests extends ESTestCase {
 
     public static final String BLOB_CODEC = "blob";
 
-    private static class BlobObj implements ToXContentFragment {
-
-        private final String text;
-
-        BlobObj(String text) {
-            this.text = text;
-        }
-
-        public String getText() {
-            return text;
-        }
+    private record BlobObj(String text) implements ToXContentFragment {
 
         public static BlobObj fromXContent(XContentParser parser) throws IOException {
             String text = null;
@@ -68,8 +57,8 @@ public class BlobStoreFormatTests extends ESTestCase {
         }
 
         @Override
-        public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params params) throws IOException {
-            builder.field("text", getText());
+        public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
+            builder.field("text", text());
             return builder;
         }
     }
@@ -91,8 +80,8 @@ public class BlobStoreFormatTests extends ESTestCase {
         checksumSMILE.write(new BlobObj(compressedText), blobContainer, "check-smile-comp", true);
 
         // Assert that all checksum blobs can be read
-        assertEquals(normalText, checksumSMILE.read("repo", blobContainer, "check-smile", xContentRegistry()).getText());
-        assertEquals(compressedText, checksumSMILE.read("repo", blobContainer, "check-smile-comp", xContentRegistry()).getText());
+        assertEquals(normalText, checksumSMILE.read("repo", blobContainer, "check-smile", xContentRegistry()).text());
+        assertEquals(compressedText, checksumSMILE.read("repo", blobContainer, "check-smile-comp", xContentRegistry()).text());
     }
 
     public void testCompressionIsApplied() throws IOException {
@@ -127,7 +116,7 @@ public class BlobStoreFormatTests extends ESTestCase {
             (repo, parser) -> BlobObj.fromXContent(parser)
         );
         checksumFormat.write(blobObj, blobContainer, "test-path", randomBoolean());
-        assertEquals(checksumFormat.read("repo", blobContainer, "test-path", xContentRegistry()).getText(), testString);
+        assertEquals(checksumFormat.read("repo", blobContainer, "test-path", xContentRegistry()).text(), testString);
         randomCorruption(blobContainer, "test-path");
         try {
             checksumFormat.read("repo", blobContainer, "test-path", xContentRegistry());

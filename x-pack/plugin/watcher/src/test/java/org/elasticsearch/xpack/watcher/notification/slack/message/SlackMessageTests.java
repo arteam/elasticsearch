@@ -122,9 +122,9 @@ public class SlackMessageTests extends ESTestCase {
                     builder.startArray("fields");
                     for (Field field : attachment.fields) {
                         builder.startObject();
-                        builder.field("title", field.title);
-                        builder.field("value", field.value);
-                        builder.field("short", field.isShort);
+                        builder.field("title", field.title());
+                        builder.field("value", field.value());
+                        builder.field("short", field.isShort());
                         builder.endObject();
                     }
                     builder.endArray();
@@ -293,7 +293,7 @@ public class SlackMessageTests extends ESTestCase {
 
         if (includeTarget == false) {
             assertThat(to, nullValue());
-            to = expected.to;
+            to = expected.to();
         }
 
         SlackMessage actual = new SlackMessage(from, to, icon, text, attachments);
@@ -464,19 +464,19 @@ public class SlackMessageTests extends ESTestCase {
 
         SlackMessage.Template template = SlackMessage.Template.parse(parser);
         assertThat(template, notNullValue());
-        assertThat(template.from, is(from));
+        assertThat(template.from(), is(from));
         if (to == null) {
-            assertThat(template.to, nullValue());
+            assertThat(template.to(), nullValue());
         } else {
-            assertThat(template.to, arrayContaining(to));
+            assertThat(template.to(), arrayContaining(to));
         }
-        assertThat(template.icon, is(icon));
-        assertThat(template.text, is(text));
+        assertThat(template.icon(), is(icon));
+        assertThat(template.text(), is(text));
         if (attachments == null) {
-            assertThat(template.attachments, nullValue());
+            assertThat(template.attachments(), nullValue());
         } else {
             for (int i = 0; i < attachments.length; i++) {
-                assertThat(template.attachments[i], is(attachments[i]));
+                assertThat(template.attachments()[i], is(attachments[i]));
             }
         }
     }
@@ -532,97 +532,97 @@ public class SlackMessageTests extends ESTestCase {
 
         SlackMessage message = template.render("_w1", "_a1", engine, Collections.emptyMap(), defaults);
         assertThat(message, notNullValue());
-        if (template.from != null) {
-            assertThat(message.from, is(template.from.getTemplate()));
+        if (template.from() != null) {
+            assertThat(message.from(), is(template.from().getTemplate()));
         } else {
-            assertThat(message.from, is(defaults.from != null ? defaults.from : "_w1"));
+            assertThat(message.from(), is(defaults.from != null ? defaults.from : "_w1"));
         }
-        if (template.to == null) {
-            assertThat(message.to, is(defaults.to));
+        if (template.to() == null) {
+            assertThat(message.to(), is(defaults.to));
         } else {
-            String[] expected = new String[message.to.length];
+            String[] expected = new String[message.to().length];
             for (int i = 0; i < expected.length; i++) {
-                expected[i] = template.to[i].getTemplate();
+                expected[i] = template.to()[i].getTemplate();
             }
-            assertThat(message.to, arrayContaining(expected));
+            assertThat(message.to(), arrayContaining(expected));
         }
-        assertThat(message.icon, is(template.icon != null ? template.icon.getTemplate() : defaults.icon));
-        assertThat(message.text, is(template.text != null ? template.text.getTemplate() : defaults.text));
-        if (template.attachments == null) {
-            assertThat(message.attachments, nullValue());
+        assertThat(message.icon(), is(template.icon() != null ? template.icon().getTemplate() : defaults.icon));
+        assertThat(message.text(), is(template.text() != null ? template.text().getTemplate() : defaults.text));
+        if (template.attachments ()== null) {
+            assertThat(message.attachments(), nullValue());
         } else {
-            for (int i = 0; i < template.attachments.length; i++) {
-                Attachment.Template attachmentTemplate = template.attachments[i];
-                Attachment attachment = message.attachments[i];
+            for (int i = 0; i < template.attachments().length; i++) {
+                Attachment.Template attachmentTemplate = template.attachments()[i];
+                Attachment attachment = message.attachments()[i];
                 assertThat(
                     attachment.authorName,
-                    is(attachmentTemplate.authorName != null ? attachmentTemplate.authorName.getTemplate() : defaults.attachment.authorName)
+                    is(attachmentTemplate.authorName() != null ? attachmentTemplate.authorName().getTemplate() : defaults.attachment.authorName)
                 );
                 assertThat(
                     attachment.authorLink,
-                    is(attachmentTemplate.authorLink != null ? attachmentTemplate.authorLink.getTemplate() : defaults.attachment.authorLink)
+                    is(attachmentTemplate.authorLink() != null ? attachmentTemplate.authorLink().getTemplate() : defaults.attachment.authorLink)
                 );
                 assertThat(
                     attachment.authorIcon,
-                    is(attachmentTemplate.authorIcon != null ? attachmentTemplate.authorIcon.getTemplate() : defaults.attachment.authorIcon)
+                    is(attachmentTemplate.authorIcon() != null ? attachmentTemplate.authorIcon().getTemplate() : defaults.attachment.authorIcon)
                 );
                 assertThat(
                     attachment.color,
-                    is(attachmentTemplate.color != null ? attachmentTemplate.color.getTemplate() : defaults.attachment.color)
+                    is(attachmentTemplate.color() != null ? attachmentTemplate.color().getTemplate() : defaults.attachment.color)
                 );
                 assertThat(
                     attachment.fallback,
-                    is(attachmentTemplate.fallback != null ? attachmentTemplate.fallback.getTemplate() : defaults.attachment.fallback)
+                    is(attachmentTemplate.fallback() != null ? attachmentTemplate.fallback().getTemplate() : defaults.attachment.fallback)
                 );
                 assertThat(
                     attachment.imageUrl,
-                    is(attachmentTemplate.imageUrl != null ? attachmentTemplate.imageUrl.getTemplate() : defaults.attachment.imageUrl)
+                    is(attachmentTemplate.imageUrl() != null ? attachmentTemplate.imageUrl().getTemplate() : defaults.attachment.imageUrl)
                 );
                 assertThat(
                     attachment.pretext,
-                    is(attachmentTemplate.pretext != null ? attachmentTemplate.pretext.getTemplate() : defaults.attachment.pretext)
+                    is(attachmentTemplate.pretext() != null ? attachmentTemplate.pretext().getTemplate() : defaults.attachment.pretext)
                 );
                 assertThat(
                     attachment.thumbUrl,
-                    is(attachmentTemplate.thumbUrl != null ? attachmentTemplate.thumbUrl.getTemplate() : defaults.attachment.thumbUrl)
+                    is(attachmentTemplate.thumbUrl() != null ? attachmentTemplate.thumbUrl().getTemplate() : defaults.attachment.thumbUrl)
                 );
                 assertThat(
                     attachment.title,
-                    is(attachmentTemplate.title != null ? attachmentTemplate.title.getTemplate() : defaults.attachment.title)
+                    is(attachmentTemplate.title() != null ? attachmentTemplate.title().getTemplate() : defaults.attachment.title)
                 );
                 assertThat(
                     attachment.titleLink,
-                    is(attachmentTemplate.titleLink != null ? attachmentTemplate.titleLink.getTemplate() : defaults.attachment.titleLink)
+                    is(attachmentTemplate.titleLink() != null ? attachmentTemplate.titleLink().getTemplate() : defaults.attachment.titleLink)
                 );
                 assertThat(
                     attachment.text,
-                    is(attachmentTemplate.text != null ? attachmentTemplate.text.getTemplate() : defaults.attachment.text)
+                    is(attachmentTemplate.text() != null ? attachmentTemplate.text().getTemplate() : defaults.attachment.text)
                 );
-                if (attachmentTemplate.fields == null) {
+                if (attachmentTemplate.fields() == null) {
                     assertThat(attachment.fields, nullValue());
                 } else {
-                    for (int j = 0; j < attachmentTemplate.fields.length; j++) {
-                        Field.Template fieldTemplate = attachmentTemplate.fields[j];
+                    for (int j = 0; j < attachmentTemplate.fields().length; j++) {
+                        Field.Template fieldTemplate = attachmentTemplate.fields()[j];
                         Field field = attachment.fields[j];
                         assertThat(
-                            field.title,
-                            is(fieldTemplate.title != null ? fieldTemplate.title.getTemplate() : defaults.attachment.field.title)
+                            field.title(),
+                            is(fieldTemplate.title() != null ? fieldTemplate.title().getTemplate() : defaults.attachment.field.title)
                         );
                         assertThat(
-                            field.value,
-                            is(fieldTemplate.value != null ? fieldTemplate.value.getTemplate() : defaults.attachment.field.value)
+                            field.value(),
+                            is(fieldTemplate.value() != null ? fieldTemplate.value().getTemplate() : defaults.attachment.field.value)
                         );
                         assertThat(
-                            field.isShort,
-                            is(fieldTemplate.isShort != null ? fieldTemplate.isShort : defaults.attachment.field.isShort)
+                            field.isShort(),
+                            is(fieldTemplate.isShort() != null ? fieldTemplate.isShort() : defaults.attachment.field.isShort)
                         );
                     }
                 }
-                if (attachmentTemplate.markdownSupportedFields == null) {
+                if (attachmentTemplate.markdownSupportedFields() == null) {
                     assertThat(attachment.markdownSupportedFields, nullValue());
                 } else {
-                    for (int j = 0; j < attachmentTemplate.markdownSupportedFields.length; j++) {
-                        String[] templateMarkdownSupportFields = Arrays.stream(attachmentTemplate.markdownSupportedFields)
+                    for (int j = 0; j < attachmentTemplate.markdownSupportedFields().length; j++) {
+                        String[] templateMarkdownSupportFields = Arrays.stream(attachmentTemplate.markdownSupportedFields())
                             .map(TextTemplate::getTemplate)
                             .toArray(String[]::new);
 
@@ -673,14 +673,14 @@ public class SlackMessageTests extends ESTestCase {
 
     public void testCanHaveNullText() throws Exception {
         SlackMessage slackMessage = new SlackMessage("from", new String[] { "to" }, "icon", null, new Attachment[1]);
-        assertNull(slackMessage.getText());
-        assertNotNull(slackMessage.getAttachments());
+        assertNull(slackMessage.text());
+        assertNotNull(slackMessage.attachments());
     }
 
     public void testCanHaveNullAttachments() throws Exception {
         SlackMessage slackMessage = new SlackMessage("from", new String[] { "to" }, "icon", "text", null);
-        assertNotNull(slackMessage.getText());
-        assertNull(slackMessage.getAttachments());
+        assertNotNull(slackMessage.text());
+        assertNull(slackMessage.attachments());
     }
 
     public void testCannotHaveNullAttachmentsAndNullText() throws Exception {

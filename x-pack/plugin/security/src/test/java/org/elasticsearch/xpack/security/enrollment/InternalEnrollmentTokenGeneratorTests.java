@@ -139,11 +139,11 @@ public class InternalEnrollmentTokenGeneratorTests extends ESTestCase {
         generator.createKibanaEnrollmentToken(token -> future.onResponse(token), BackoffPolicy.exponentialBackoff().iterator());
         EnrollmentToken token = future.actionGet();
         assertThat(nodeInfoApiCalls, equalTo(1));
-        assertThat(token.getApiKey(), equalTo("api-key-id:api-key-secret"));
-        assertThat(token.getBoundAddress().size(), equalTo(1));
-        assertThat(token.getBoundAddress().get(0), equalTo("192.168.1.2:9200"));
-        assertThat(token.getVersion(), equalTo(Version.CURRENT.toString()));
-        assertThat(token.getFingerprint(), equalTo("ce480d53728605674fcfd8ffb51000d8a33bf32de7c7f1e26b4d428f8a91362d"));
+        assertThat(token.apiKey(), equalTo("api-key-id:api-key-secret"));
+        assertThat(token.boundAddress().size(), equalTo(1));
+        assertThat(token.boundAddress().get(0), equalTo("192.168.1.2:9200"));
+        assertThat(token.version(), equalTo(Version.CURRENT.toString()));
+        assertThat(token.fingerprint(), equalTo("ce480d53728605674fcfd8ffb51000d8a33bf32de7c7f1e26b4d428f8a91362d"));
     }
 
     public void testFailureToGenerateKey() {
@@ -193,11 +193,11 @@ public class InternalEnrollmentTokenGeneratorTests extends ESTestCase {
         generator.createKibanaEnrollmentToken(token -> future.onResponse(token), BackoffPolicy.exponentialBackoff().iterator());
         EnrollmentToken token = future.actionGet();
         assertThat(nodeInfoApiCalls, equalTo(3));
-        assertThat(token.getApiKey(), equalTo("api-key-id:api-key-secret"));
-        assertThat(token.getBoundAddress().size(), equalTo(1));
-        assertThat(token.getBoundAddress().get(0), equalTo("192.168.1.2:9200"));
-        assertThat(token.getVersion(), equalTo(Version.CURRENT.toString()));
-        assertThat(token.getFingerprint(), equalTo("ce480d53728605674fcfd8ffb51000d8a33bf32de7c7f1e26b4d428f8a91362d"));
+        assertThat(token.apiKey(), equalTo("api-key-id:api-key-secret"));
+        assertThat(token.boundAddress().size(), equalTo(1));
+        assertThat(token.boundAddress().get(0), equalTo("192.168.1.2:9200"));
+        assertThat(token.version(), equalTo(Version.CURRENT.toString()));
+        assertThat(token.fingerprint(), equalTo("ce480d53728605674fcfd8ffb51000d8a33bf32de7c7f1e26b4d428f8a91362d"));
     }
 
     public void testRetryButFailToGetNodesHttpInfo() {

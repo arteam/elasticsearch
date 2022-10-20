@@ -38,19 +38,19 @@ public class NoriAnalysisTests extends ESTokenStreamTestCase {
     public void testDefaultsNoriAnalysis() throws IOException {
         TestAnalysis analysis = createTestAnalysis(Settings.EMPTY);
 
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("nori_tokenizer");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("nori_tokenizer");
         assertThat(tokenizerFactory, instanceOf(NoriTokenizerFactory.class));
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("nori_part_of_speech");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("nori_part_of_speech");
         assertThat(filterFactory, instanceOf(NoriPartOfSpeechStopFilterFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("nori_readingform");
+        filterFactory = analysis.tokenFilter().get("nori_readingform");
         assertThat(filterFactory, instanceOf(NoriReadingFormFilterFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("nori_number");
+        filterFactory = analysis.tokenFilter().get("nori_number");
         assertThat(filterFactory, instanceOf(NoriNumberFilterFactory.class));
 
-        IndexAnalyzers indexAnalyzers = analysis.indexAnalyzers;
+        IndexAnalyzers indexAnalyzers = analysis.indexAnalyzers();
         NamedAnalyzer analyzer = indexAnalyzers.get("nori");
         assertThat(analyzer.analyzer(), instanceOf(KoreanAnalyzer.class));
     }
@@ -62,7 +62,7 @@ public class NoriAnalysisTests extends ESTokenStreamTestCase {
             .put("index.analysis.analyzer.my_analyzer.decompound_mode", "mixed")
             .build();
         TestAnalysis analysis = createTestAnalysis(settings);
-        Analyzer analyzer = analysis.indexAnalyzers.get("my_analyzer");
+        Analyzer analyzer = analysis.indexAnalyzers().get("my_analyzer");
         try (TokenStream stream = analyzer.tokenStream("", "여섯 용이")) {
             assertTokenStreamContents(stream, new String[] { "용", "이" });
         }
@@ -78,7 +78,7 @@ public class NoriAnalysisTests extends ESTokenStreamTestCase {
             .putList("index.analysis.analyzer.my_analyzer.user_dictionary_rules", "c++", "C샤프", "세종", "세종시 세종 시")
             .build();
         TestAnalysis analysis = createTestAnalysis(settings);
-        Analyzer analyzer = analysis.indexAnalyzers.get("my_analyzer");
+        Analyzer analyzer = analysis.indexAnalyzers().get("my_analyzer");
         try (TokenStream stream = analyzer.tokenStream("", "세종시")) {
             assertTokenStreamContents(stream, new String[] { "세종", "시" });
         }
@@ -94,7 +94,7 @@ public class NoriAnalysisTests extends ESTokenStreamTestCase {
             .put("index.analysis.analyzer.my_analyzer.user_dictionary", "user_dict.txt")
             .build();
         TestAnalysis analysis = createTestAnalysis(settings);
-        Analyzer analyzer = analysis.indexAnalyzers.get("my_analyzer");
+        Analyzer analyzer = analysis.indexAnalyzers().get("my_analyzer");
         try (TokenStream stream = analyzer.tokenStream("", "세종시")) {
             assertTokenStreamContents(stream, new String[] { "세종", "시" });
         }
@@ -123,7 +123,7 @@ public class NoriAnalysisTests extends ESTokenStreamTestCase {
             .put("index.analysis.tokenizer.my_tokenizer.decompound_mode", "mixed")
             .build();
         TestAnalysis analysis = createTestAnalysis(settings);
-        Tokenizer tokenizer = analysis.tokenizer.get("my_tokenizer").create();
+        Tokenizer tokenizer = analysis.tokenizer().get("my_tokenizer").create();
         tokenizer.setReader(new StringReader("뿌리가 깊은 나무"));
         assertTokenStreamContents(tokenizer, new String[] { "뿌리", "가", "깊", "은", "나무" });
         tokenizer.setReader(new StringReader("가늠표"));
@@ -136,7 +136,7 @@ public class NoriAnalysisTests extends ESTokenStreamTestCase {
     public void testNoriTokenizerDiscardPunctuationOptionTrue() throws Exception {
         Settings settings = createDiscardPunctuationOption("true");
         TestAnalysis analysis = createTestAnalysis(settings);
-        Tokenizer tokenizer = analysis.tokenizer.get("my_tokenizer").create();
+        Tokenizer tokenizer = analysis.tokenizer().get("my_tokenizer").create();
         tokenizer.setReader(new StringReader("3.2개"));
         assertTokenStreamContents(tokenizer, new String[] { "3", "2", "개" });
     }
@@ -144,7 +144,7 @@ public class NoriAnalysisTests extends ESTokenStreamTestCase {
     public void testNoriTokenizerDiscardPunctuationOptionFalse() throws Exception {
         Settings settings = createDiscardPunctuationOption("false");
         TestAnalysis analysis = createTestAnalysis(settings);
-        Tokenizer tokenizer = analysis.tokenizer.get("my_tokenizer").create();
+        Tokenizer tokenizer = analysis.tokenizer().get("my_tokenizer").create();
         tokenizer.setReader(new StringReader("3.2개"));
         assertTokenStreamContents(tokenizer, new String[] { "3", ".", "2", "개" });
     }
@@ -162,7 +162,7 @@ public class NoriAnalysisTests extends ESTokenStreamTestCase {
             .put("index.analysis.filter.my_filter.stoptags", "NR, SP")
             .build();
         TestAnalysis analysis = createTestAnalysis(settings);
-        TokenFilterFactory factory = analysis.tokenFilter.get("my_filter");
+        TokenFilterFactory factory = analysis.tokenFilter().get("my_filter");
         Tokenizer tokenizer = new KoreanTokenizer();
         tokenizer.setReader(new StringReader("여섯 용이"));
         TokenStream stream = factory.create(tokenizer);
@@ -176,7 +176,7 @@ public class NoriAnalysisTests extends ESTokenStreamTestCase {
             .put("index.analysis.filter.my_filter.type", "nori_readingform")
             .build();
         TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new AnalysisNoriPlugin());
-        TokenFilterFactory factory = analysis.tokenFilter.get("my_filter");
+        TokenFilterFactory factory = analysis.tokenFilter().get("my_filter");
         Tokenizer tokenizer = new KoreanTokenizer();
         tokenizer.setReader(new StringReader("鄕歌"));
         TokenStream stream = factory.create(tokenizer);
@@ -190,7 +190,7 @@ public class NoriAnalysisTests extends ESTokenStreamTestCase {
             .put("index.analysis.filter.my_filter.type", "nori_number")
             .build();
         TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new AnalysisNoriPlugin());
-        TokenFilterFactory factory = analysis.tokenFilter.get("my_filter");
+        TokenFilterFactory factory = analysis.tokenFilter().get("my_filter");
         Tokenizer tokenizer = new KoreanTokenizer();
         tokenizer.setReader(new StringReader("오늘 십만이천오백원짜리 와인 구입"));
         TokenStream stream = factory.create(tokenizer);

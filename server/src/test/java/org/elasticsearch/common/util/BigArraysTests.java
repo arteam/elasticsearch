@@ -502,16 +502,7 @@ public class BigArraysTests extends ESTestCase {
         return (withBreaking ? bigArrays.withCircuitBreaking() : bigArrays);
     }
 
-    private static class BigArraysHelper {
-        final BigArrays bigArrays;
-        final Function<Long, BigArray> arrayAllocator;
-        final Function<Long, Long> ramEstimator;
-
-        BigArraysHelper(BigArrays bigArrays, Function<Long, BigArray> arrayAllocator, Function<Long, Long> ramEstimator) {
-            this.bigArrays = bigArrays;
-            this.arrayAllocator = arrayAllocator;
-            this.ramEstimator = ramEstimator;
-        }
+    private record BigArraysHelper(BigArrays bigArrays, Function<Long, BigArray> arrayAllocator, Function<Long, Long> ramEstimator) {
     }
 
 }

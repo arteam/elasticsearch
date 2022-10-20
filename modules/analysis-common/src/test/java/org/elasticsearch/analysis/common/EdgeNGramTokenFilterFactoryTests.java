@@ -30,7 +30,7 @@ public class EdgeNGramTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_edge_ngram");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_edge_ngram");
         String source = "foo";
         String[] expected = new String[] { "f", "fo" };
         Tokenizer tokenizer = new StandardTokenizer();
@@ -47,7 +47,7 @@ public class EdgeNGramTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_edge_ngram");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_edge_ngram");
         String source = "foo";
         String[] expected = new String[] { "f", "fo", "foo" };
         Tokenizer tokenizer = new StandardTokenizer();

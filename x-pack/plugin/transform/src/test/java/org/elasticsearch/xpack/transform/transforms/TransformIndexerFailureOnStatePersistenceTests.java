@@ -140,7 +140,7 @@ public class TransformIndexerFailureOnStatePersistenceTests extends ESTestCase {
             ActionListener<SeqNoPrimaryTermAndIndex> listener
         ) {
             if (seqNo != -1) {
-                if (seqNoPrimaryTermAndIndex.getSeqNo() != seqNo || seqNoPrimaryTermAndIndex.getPrimaryTerm() != primaryTerm) {
+                if (seqNoPrimaryTermAndIndex.seqNo() != seqNo || seqNoPrimaryTermAndIndex.primaryTerm() != primaryTerm) {
                     listener.onFailure(
                         new VersionConflictEngineException(new ShardId("index", "indexUUID", 42), "some_id", 45L, 44L, 43L, 42L)
                     );
@@ -479,8 +479,8 @@ public class TransformIndexerFailureOnStatePersistenceTests extends ESTestCase {
                     listener
                 ),
                 seqNoPrimaryTermAndIndex -> assertThat(
-                    seqNoPrimaryTermAndIndex.getSeqNo(),
-                    equalTo(indexer.getSeqNoPrimaryTermAndIndex().getSeqNo() + 1)
+                    seqNoPrimaryTermAndIndex.seqNo(),
+                    equalTo(indexer.getSeqNoPrimaryTermAndIndex().seqNo() + 1)
                 )
             );
 
@@ -504,7 +504,7 @@ public class TransformIndexerFailureOnStatePersistenceTests extends ESTestCase {
                     listener
                 ),
                 r -> {
-                    assertThat(indexer.getSeqNoPrimaryTermAndIndex().getSeqNo(), equalTo(2L));
+                    assertThat(indexer.getSeqNoPrimaryTermAndIndex().seqNo(), equalTo(2L));
                     assertThat(state.get(), equalTo(TransformTaskState.STARTED));
                     assertThat(indexer.getStatePersistenceFailures(), equalTo(0));
                 }
@@ -517,7 +517,7 @@ public class TransformIndexerFailureOnStatePersistenceTests extends ESTestCase {
                     listener
                 ),
                 r -> {
-                    assertThat(indexer.getSeqNoPrimaryTermAndIndex().getSeqNo(), equalTo(3L));
+                    assertThat(indexer.getSeqNoPrimaryTermAndIndex().seqNo(), equalTo(3L));
                     assertThat(state.get(), equalTo(TransformTaskState.STARTED));
                     assertThat(indexer.getStatePersistenceFailures(), equalTo(0));
                 }

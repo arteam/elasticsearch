@@ -14,44 +14,18 @@ import org.elasticsearch.core.TimeValue;
 /**
  * {@code TimeoutRequestConfigCallback} enables the setting of connection-related timeouts for HTTP requests.
  */
-class TimeoutRequestConfigCallback implements RestClientBuilder.RequestConfigCallback {
-
-    @Nullable
-    private final TimeValue connectTimeout;
-    @Nullable
-    private final TimeValue socketTimeout;
+record TimeoutRequestConfigCallback(@Nullable TimeValue connectTimeout, @Nullable TimeValue socketTimeout)
+    implements
+        RestClientBuilder.RequestConfigCallback {
 
     /**
      * Create a new {@link TimeoutRequestConfigCallback}.
      *
      * @param connectTimeout The initial connection timeout, if any is supplied
-     * @param socketTimeout The socket timeout, if any is supplied
+     * @param socketTimeout  The socket timeout, if any is supplied
      */
-    TimeoutRequestConfigCallback(@Nullable final TimeValue connectTimeout, @Nullable final TimeValue socketTimeout) {
+    TimeoutRequestConfigCallback {
         assert connectTimeout != null || socketTimeout != null : "pointless to use with defaults";
-
-        this.connectTimeout = connectTimeout;
-        this.socketTimeout = socketTimeout;
-    }
-
-    /**
-     * Get the initial connection timeout.
-     *
-     * @return Can be {@code null} for default (1 second).
-     */
-    @Nullable
-    TimeValue getConnectTimeout() {
-        return connectTimeout;
-    }
-
-    /**
-     * Get the socket timeout.
-     *
-     * @return Can be {@code null} for default (10 seconds).
-     */
-    @Nullable
-    TimeValue getSocketTimeout() {
-        return socketTimeout;
     }
 
     /**

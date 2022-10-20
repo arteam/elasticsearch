@@ -1628,7 +1628,7 @@ public class Security extends Plugin
                 if (indexPermissions == null) {
                     return MapperPlugin.NOOP_FIELD_PREDICATE;
                 }
-                FieldPermissions fieldPermissions = indexPermissions.getFieldPermissions();
+                FieldPermissions fieldPermissions = indexPermissions.fieldPermissions();
                 if (fieldPermissions.hasFieldLevelSecurity() == false) {
                     return MapperPlugin.NOOP_FIELD_PREDICATE;
                 }

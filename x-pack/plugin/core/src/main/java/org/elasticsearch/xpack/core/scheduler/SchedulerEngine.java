@@ -32,52 +32,9 @@ import java.util.concurrent.TimeUnit;
 
 public class SchedulerEngine {
 
-    public static class Job {
-        private final String id;
-        private final Schedule schedule;
+    public record Job(String id, Schedule schedule) {}
 
-        public Job(String id, Schedule schedule) {
-            this.id = id;
-            this.schedule = schedule;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public Schedule getSchedule() {
-            return schedule;
-        }
-    }
-
-    public static class Event {
-        private final String jobName;
-        private final long triggeredTime;
-        private final long scheduledTime;
-
-        public Event(String jobName, long triggeredTime, long scheduledTime) {
-            this.jobName = jobName;
-            this.triggeredTime = triggeredTime;
-            this.scheduledTime = scheduledTime;
-        }
-
-        public String getJobName() {
-            return jobName;
-        }
-
-        public long getTriggeredTime() {
-            return triggeredTime;
-        }
-
-        public long getScheduledTime() {
-            return scheduledTime;
-        }
-
-        @Override
-        public String toString() {
-            return "Event[jobName=" + jobName + "," + "triggeredTime=" + triggeredTime + "," + "scheduledTime=" + scheduledTime + "]";
-        }
-    }
+    public record Event(String jobName, long triggeredTime, long scheduledTime) {}
 
     public interface Listener {
         void triggered(Event event);
@@ -152,12 +109,12 @@ public class SchedulerEngine {
     }
 
     public void add(Job job) {
-        ActiveSchedule schedule = new ActiveSchedule(job.getId(), job.getSchedule(), clock.millis());
+        ActiveSchedule schedule = new ActiveSchedule(job.id(), job.schedule(), clock.millis());
         schedules.compute(schedule.name, (name, previousSchedule) -> {
             if (previousSchedule != null) {
                 previousSchedule.cancel();
             }
-            logger.debug(() -> "added job [" + job.getId() + "]");
+            logger.debug(() -> "added job [" + job.id() + "]");
             return schedule;
         });
     }

@@ -104,8 +104,8 @@ public class MeanSquaredLogarithmicError implements EvaluationMetric {
         if (result != null) {
             return Tuple.tuple(Collections.emptyList(), Collections.emptyList());
         }
-        String actualField = fields.getActualField();
-        String predictedField = fields.getPredictedField();
+        String actualField = fields.actualField();
+        String predictedField = fields.predictedField();
         return Tuple.tuple(
             Arrays.asList(AggregationBuilders.avg(AGG_NAME).script(new Script(buildScript(actualField, predictedField, offset)))),
             Collections.emptyList()

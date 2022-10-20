@@ -17,17 +17,14 @@ import java.util.concurrent.TimeUnit;
 
 import static org.elasticsearch.xpack.core.watcher.support.Exceptions.illegalArgument;
 
-public class IntervalSchedule implements Schedule {
+public record IntervalSchedule(Interval interval) implements Schedule {
 
     public static final String TYPE = "interval";
 
-    private final Interval interval;
-
-    public IntervalSchedule(Interval interval) {
+    public IntervalSchedule {
         if (interval.millis < 1000) {
             throw illegalArgument("interval can't be lower than 1000 ms, but [{}] was specified", interval);
         }
-        this.interval = interval;
     }
 
     @Override
@@ -45,10 +42,6 @@ public class IntervalSchedule implements Schedule {
         return startTime + (delta / interval.millis + 1) * interval.millis;
     }
 
-    public Interval interval() {
-        return interval;
-    }
-
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         return interval.toXContent(builder, params);
@@ -59,22 +52,6 @@ public class IntervalSchedule implements Schedule {
         return interval.toString();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        IntervalSchedule schedule = (IntervalSchedule) o;
-
-        if (interval.equals(schedule.interval) == false) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return interval.hashCode();
-    }
 
     public static class Parser implements Schedule.Parser<IntervalSchedule> {
 
@@ -111,7 +88,7 @@ public class IntervalSchedule implements Schedule {
      * 1. We should limit the time values that the user can configure (we don't want to support nanos &amp; millis
      * 2. TimeValue formatting &amp; parsing is inconsistent (it doesn't format to a value that it can parse)
      * 3. The equals of TimeValue is odd - it will only equate two time values that have the exact same unit &amp; duration,
-     *    this interval on the other hand, equates based on the millis value.
+     * this interval on the other hand, equates based on the millis value.
      * 4. We have the advantage of making this interval construct a ToXContent
      */
     public static class Interval implements ToXContent {

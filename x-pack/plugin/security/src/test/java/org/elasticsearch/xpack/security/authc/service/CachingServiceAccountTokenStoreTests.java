@@ -83,8 +83,8 @@ public class CachingServiceAccountTokenStoreTests extends ESTestCase {
         // 1st auth with the right token1
         final PlainActionFuture<StoreAuthenticationResult> future1 = new PlainActionFuture<>();
         store.authenticate(token1Valid, future1);
-        assertThat(future1.get().isSuccess(), is(true));
-        assertThat(future1.get().getTokenSource(), is(tokenSource));
+        assertThat(future1.get().success(), is(true));
+        assertThat(future1.get().tokenSource(), is(tokenSource));
         assertThat(doAuthenticateInvoked.get(), is(true));
         assertThat(cache.count(), equalTo(1));
         doAuthenticateInvoked.set(false); // reset
@@ -92,22 +92,22 @@ public class CachingServiceAccountTokenStoreTests extends ESTestCase {
         // 2nd auth with the right token1 should use cache
         final PlainActionFuture<StoreAuthenticationResult> future2 = new PlainActionFuture<>();
         store.authenticate(token1Valid, future2);
-        assertThat(future2.get().isSuccess(), is(true));
-        assertThat(future2.get().getTokenSource(), is(tokenSource));
+        assertThat(future2.get().success(), is(true));
+        assertThat(future2.get().tokenSource(), is(tokenSource));
         assertThat(doAuthenticateInvoked.get(), is(false));
 
         // 3rd auth with the wrong token1 that has the same qualified name should use cache
         final PlainActionFuture<StoreAuthenticationResult> future3 = new PlainActionFuture<>();
         store.authenticate(token1Invalid, future3);
-        assertThat(future3.get().isSuccess(), is(false));
-        assertThat(future3.get().getTokenSource(), is(tokenSource));
+        assertThat(future3.get().success(), is(false));
+        assertThat(future3.get().tokenSource(), is(tokenSource));
         assertThat(doAuthenticateInvoked.get(), is(false));
 
         // 4th auth with the wrong token2
         final PlainActionFuture<StoreAuthenticationResult> future4 = new PlainActionFuture<>();
         store.authenticate(token2Invalid, future4);
-        assertThat(future4.get().isSuccess(), is(false));
-        assertThat(future4.get().getTokenSource(), is(tokenSource));
+        assertThat(future4.get().success(), is(false));
+        assertThat(future4.get().tokenSource(), is(tokenSource));
         assertThat(doAuthenticateInvoked.get(), is(true));
         assertThat(cache.count(), equalTo(1));  // invalid token not cached
         doAuthenticateInvoked.set(false); // reset
@@ -115,8 +115,8 @@ public class CachingServiceAccountTokenStoreTests extends ESTestCase {
         // 5th auth with the wrong token2 again does not use cache
         final PlainActionFuture<StoreAuthenticationResult> future5 = new PlainActionFuture<>();
         store.authenticate(token2Invalid, future5);
-        assertThat(future5.get().isSuccess(), is(false));
-        assertThat(future5.get().getTokenSource(), is(tokenSource));
+        assertThat(future5.get().success(), is(false));
+        assertThat(future5.get().tokenSource(), is(tokenSource));
         assertThat(doAuthenticateInvoked.get(), is(true));
         assertThat(cache.count(), equalTo(1));  // invalid token not cached
         doAuthenticateInvoked.set(false); // reset
@@ -124,8 +124,8 @@ public class CachingServiceAccountTokenStoreTests extends ESTestCase {
         // 6th auth with the right token2
         final PlainActionFuture<StoreAuthenticationResult> future6 = new PlainActionFuture<>();
         store.authenticate(token2Valid, future6);
-        assertThat(future6.get().isSuccess(), is(true));
-        assertThat(future6.get().getTokenSource(), is(tokenSource));
+        assertThat(future6.get().success(), is(true));
+        assertThat(future6.get().tokenSource(), is(tokenSource));
         assertThat(doAuthenticateInvoked.get(), is(true));
         assertThat(cache.count(), equalTo(2));
         doAuthenticateInvoked.set(false); // reset
@@ -137,8 +137,8 @@ public class CachingServiceAccountTokenStoreTests extends ESTestCase {
         // 7th auth with the right token1
         final PlainActionFuture<StoreAuthenticationResult> future7 = new PlainActionFuture<>();
         store.authenticate(token1Valid, future7);
-        assertThat(future7.get().isSuccess(), is(true));
-        assertThat(future7.get().getTokenSource(), is(tokenSource));
+        assertThat(future7.get().success(), is(true));
+        assertThat(future7.get().tokenSource(), is(tokenSource));
         assertThat(doAuthenticateInvoked.get(), is(true));
         assertThat(cache.count(), equalTo(2));
         doAuthenticateInvoked.set(false); // reset
@@ -172,8 +172,8 @@ public class CachingServiceAccountTokenStoreTests extends ESTestCase {
         // authenticate should still work
         final PlainActionFuture<StoreAuthenticationResult> future = new PlainActionFuture<>();
         store.authenticate(mock(ServiceAccountToken.class), future);
-        assertThat(future.get().isSuccess(), is(success));
-        assertThat(future.get().getTokenSource(), is(tokenSource));
+        assertThat(future.get().success(), is(success));
+        assertThat(future.get().tokenSource(), is(tokenSource));
     }
 
     @SuppressWarnings("unchecked")

@@ -51,7 +51,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
 
             ESTestCase.TestAnalysis analysis = createTestAnalysisFromSettings(settings);
             {
-                TokenFilterFactory tokenFilter = analysis.tokenFilter.get("common_grams_default");
+                TokenFilterFactory tokenFilter = analysis.tokenFilter().get("common_grams_default");
                 String source = "the quick brown is a fox Or noT";
                 String[] expected = new String[] { "the", "quick", "brown", "is", "a", "fox", "Or", "noT" };
                 Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -69,7 +69,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .build();
             ESTestCase.TestAnalysis analysis = createTestAnalysisFromSettings(settings);
             {
-                TokenFilterFactory tokenFilter = analysis.tokenFilter.get("common_grams_default");
+                TokenFilterFactory tokenFilter = analysis.tokenFilter().get("common_grams_default");
                 String source = "the quick brown is a fox Or noT";
                 String[] expected = new String[] { "the", "quick", "brown", "is", "a", "fox", "Or", "noT" };
                 Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -88,7 +88,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .putList("index.analysis.filter.common_grams_1.common_words", "the", "Or", "Not", "a", "is", "an", "they", "are")
                 .build();
             ESTestCase.TestAnalysis analysis = createTestAnalysisFromSettings(settings);
-            TokenFilterFactory tokenFilter = analysis.tokenFilter.get("common_grams_1");
+            TokenFilterFactory tokenFilter = analysis.tokenFilter().get("common_grams_1");
             String source = "the quick brown is a fox or noT";
             String[] expected = new String[] {
                 "the",
@@ -117,7 +117,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .putList("index.analysis.filter.common_grams_2.common_words", "the", "Or", "noT", "a", "is", "an", "they", "are")
                 .build();
             ESTestCase.TestAnalysis analysis = createTestAnalysisFromSettings(settings);
-            TokenFilterFactory tokenFilter = analysis.tokenFilter.get("common_grams_2");
+            TokenFilterFactory tokenFilter = analysis.tokenFilter().get("common_grams_2");
             String source = "the quick brown is a fox or why noT";
             String[] expected = new String[] {
                 "the",
@@ -145,7 +145,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
                 .build();
             ESTestCase.TestAnalysis analysis = createTestAnalysisFromSettings(settings);
-            TokenFilterFactory tokenFilter = analysis.tokenFilter.get("common_grams_3");
+            TokenFilterFactory tokenFilter = analysis.tokenFilter().get("common_grams_3");
             String source = "the quick brown is a fox Or noT";
             String[] expected = new String[] {
                 "the",
@@ -173,7 +173,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createHome())
             .build();
         {
-            IndexAnalyzers indexAnalyzers = createTestAnalysisFromSettings(settings).indexAnalyzers;
+            IndexAnalyzers indexAnalyzers = createTestAnalysisFromSettings(settings).indexAnalyzers();
             Analyzer analyzer = indexAnalyzers.get("commongramsAnalyzer").analyzer();
             String source = "the quick brown is a fox or not";
             String[] expected = new String[] {
@@ -192,7 +192,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
             assertTokenStreamContents(analyzer.tokenStream("test", source), expected);
         }
         {
-            IndexAnalyzers indexAnalyzers = createTestAnalysisFromSettings(settings).indexAnalyzers;
+            IndexAnalyzers indexAnalyzers = createTestAnalysisFromSettings(settings).indexAnalyzers();
             Analyzer analyzer = indexAnalyzers.get("commongramsAnalyzer_file").analyzer();
             String source = "the quick brown is a fox or not";
             String[] expected = new String[] {
@@ -222,7 +222,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
                 .build();
             ESTestCase.TestAnalysis analysis = createTestAnalysisFromSettings(settings);
-            TokenFilterFactory tokenFilter = analysis.tokenFilter.get("common_grams_1");
+            TokenFilterFactory tokenFilter = analysis.tokenFilter().get("common_grams_1");
             String source = "the quick brown is a fox or noT";
             String[] expected = new String[] { "the_quick", "quick", "brown_is", "is_a", "a_fox", "fox_or", "or_noT" };
             Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -238,7 +238,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
                 .build();
             ESTestCase.TestAnalysis analysis = createTestAnalysisFromSettings(settings);
-            TokenFilterFactory tokenFilter = analysis.tokenFilter.get("common_grams_2");
+            TokenFilterFactory tokenFilter = analysis.tokenFilter().get("common_grams_2");
             String source = "the quick brown is a fox or why noT";
             String[] expected = new String[] { "the_quick", "quick", "brown_is", "is_a", "a_fox", "fox", "or", "why_noT" };
             Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -253,7 +253,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
                 .build();
             ESTestCase.TestAnalysis analysis = createTestAnalysisFromSettings(settings);
-            TokenFilterFactory tokenFilter = analysis.tokenFilter.get("common_grams_3");
+            TokenFilterFactory tokenFilter = analysis.tokenFilter().get("common_grams_3");
             String source = "the quick brown is a fox or why noT";
             String[] expected = new String[] { "the_quick", "quick", "brown_is", "is_a", "a_fox", "fox", "or", "why_noT" };
             Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -268,7 +268,7 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
                 .build();
             ESTestCase.TestAnalysis analysis = createTestAnalysisFromSettings(settings);
-            TokenFilterFactory tokenFilter = analysis.tokenFilter.get("common_grams_4");
+            TokenFilterFactory tokenFilter = analysis.tokenFilter().get("common_grams_4");
             String source = "the quick brown is a fox Or noT";
             String[] expected = new String[] { "the_quick", "quick", "brown_is", "is_a", "a_fox", "fox", "Or", "noT" };
             Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -284,14 +284,14 @@ public class CommonGramsTokenFilterFactoryTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createHome())
             .build();
         {
-            IndexAnalyzers indexAnalyzers = createTestAnalysisFromSettings(settings).indexAnalyzers;
+            IndexAnalyzers indexAnalyzers = createTestAnalysisFromSettings(settings).indexAnalyzers();
             Analyzer analyzer = indexAnalyzers.get("commongramsAnalyzer").analyzer();
             String source = "the quick brown is a fox or not";
             String[] expected = new String[] { "the", "quick_brown", "brown_is", "is", "a_fox", "fox_or", "or", "not" };
             assertTokenStreamContents(analyzer.tokenStream("test", source), expected);
         }
         {
-            IndexAnalyzers indexAnalyzers = createTestAnalysisFromSettings(settings).indexAnalyzers;
+            IndexAnalyzers indexAnalyzers = createTestAnalysisFromSettings(settings).indexAnalyzers();
             Analyzer analyzer = indexAnalyzers.get("commongramsAnalyzer_file").analyzer();
             String source = "the quick brown is a fox or not";
             String[] expected = new String[] { "the", "quick_brown", "brown_is", "is", "a_fox", "fox_or", "or", "not" };

@@ -18,7 +18,7 @@ import java.util.Objects;
 /**
  * Represents a setup section. Holds a skip section and multiple do sections.
  */
-public class SetupSection {
+public record SetupSection(SkipSection skipSection, List<ExecutableSection> executableSections) {
     /**
      * Parse a {@link SetupSection} if the next field is {@code skip}, otherwise returns {@link SetupSection#EMPTY}.
      */
@@ -56,20 +56,9 @@ public class SetupSection {
 
     public static final SetupSection EMPTY = new SetupSection(SkipSection.EMPTY, Collections.emptyList());
 
-    private final SkipSection skipSection;
-    private final List<ExecutableSection> executableSections;
-
     public SetupSection(SkipSection skipSection, List<ExecutableSection> executableSections) {
         this.skipSection = Objects.requireNonNull(skipSection, "skip section cannot be null");
         this.executableSections = Collections.unmodifiableList(executableSections);
-    }
-
-    public SkipSection getSkipSection() {
-        return skipSection;
-    }
-
-    public List<ExecutableSection> getExecutableSections() {
-        return executableSections;
     }
 
     public boolean isEmpty() {

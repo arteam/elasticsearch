@@ -173,11 +173,11 @@ class HttpCertificateCommand extends EnvironmentAwareCommand {
                 caInfo = createNewCA(terminal);
             }
             terminal.println(Terminal.Verbosity.VERBOSE, "Using the following CA:");
-            terminal.println(Terminal.Verbosity.VERBOSE, "\tSubject: " + caInfo.certAndKey.cert.getSubjectX500Principal());
-            terminal.println(Terminal.Verbosity.VERBOSE, "\tIssuer: " + caInfo.certAndKey.cert.getIssuerX500Principal());
-            terminal.println(Terminal.Verbosity.VERBOSE, "\tSerial: " + caInfo.certAndKey.cert.getSerialNumber());
-            terminal.println(Terminal.Verbosity.VERBOSE, "\tExpiry: " + caInfo.certAndKey.cert.getNotAfter());
-            terminal.println(Terminal.Verbosity.VERBOSE, "\tSignature Algorithm: " + caInfo.certAndKey.cert.getSigAlgName());
+            terminal.println(Terminal.Verbosity.VERBOSE, "\tSubject: " + caInfo.certAndKey.cert().getSubjectX500Principal());
+            terminal.println(Terminal.Verbosity.VERBOSE, "\tIssuer: " + caInfo.certAndKey.cert().getIssuerX500Principal());
+            terminal.println(Terminal.Verbosity.VERBOSE, "\tSerial: " + caInfo.certAndKey.cert().getSerialNumber());
+            terminal.println(Terminal.Verbosity.VERBOSE, "\tExpiry: " + caInfo.certAndKey.cert().getNotAfter());
+            terminal.println(Terminal.Verbosity.VERBOSE, "\tSignature Algorithm: " + caInfo.certAndKey.cert().getSigAlgName());
 
             validity = getCertificateValidityPeriod(terminal);
         }
@@ -366,8 +366,8 @@ class HttpCertificateCommand extends EnvironmentAwareCommand {
                     cert.subject,
                     sanList,
                     keyPair,
-                    ca.certAndKey.cert,
-                    ca.certAndKey.key,
+                        ca.certAndKey.cert(),
+                        ca.certAndKey.key(),
                     false,
                     notBefore,
                     notAfter,
@@ -382,7 +382,7 @@ class HttpCertificateCommand extends EnvironmentAwareCommand {
                     Map.ofEntries(Map.entry("P12", p12Name), Map.entry("YML", ymlFile), Map.entry("PASSWORD", hasPassword ? "*" : ""))
                 );
                 writeTextFile(zip, dirName + "/README.txt", ES_README_P12, substitutions);
-                writeKeyStore(zip, dirName + "/" + p12Name, certificate, keyPair.getPrivate(), password, ca.certAndKey.cert);
+                writeKeyStore(zip, dirName + "/" + p12Name, certificate, keyPair.getPrivate(), password, ca.certAndKey.cert());
                 writeTextFile(zip, dirName + "/" + ymlFile, ES_YML_P12, substitutions);
             }
         } catch (OperatorException | IOException | GeneralSecurityException e) {
@@ -405,7 +405,7 @@ class HttpCertificateCommand extends EnvironmentAwareCommand {
                         "P12",
                         "ca.p12",
                         "DN",
-                        ca.certAndKey.cert.getSubjectX500Principal().getName(),
+                        ca.certAndKey.cert().getSubjectX500Principal().getName(),
                         "PASSWORD",
                         ca.password == null || ca.password.length == 0 ? "" : "*"
                     )
@@ -413,7 +413,7 @@ class HttpCertificateCommand extends EnvironmentAwareCommand {
             );
             final KeyStore pkcs12 = KeyStore.getInstance("PKCS12");
             pkcs12.load(null);
-            pkcs12.setKeyEntry("ca", ca.certAndKey.key, ca.password, new Certificate[] { ca.certAndKey.cert });
+            pkcs12.setKeyEntry("ca", ca.certAndKey.key(), ca.password, new Certificate[] {ca.certAndKey.cert()});
             try (ZipEntryStream entry = new ZipEntryStream(zip, dirName + "/ca.p12")) {
                 pkcs12.store(entry, ca.password);
             }
@@ -437,7 +437,7 @@ class HttpCertificateCommand extends EnvironmentAwareCommand {
         try {
             writeTextFile(zip, dirName + "/README.txt", KIBANA_README, substitutions);
             if (ca != null) {
-                writePemEntry(zip, dirName + "/" + caCert, new JcaMiscPEMGenerator(ca.certAndKey.cert));
+                writePemEntry(zip, dirName + "/" + caCert, new JcaMiscPEMGenerator(ca.certAndKey.cert()));
             }
             writeTextFile(zip, dirName + "/" + ymlFile, KIBANA_YML, substitutions);
         } catch (IOException e) {

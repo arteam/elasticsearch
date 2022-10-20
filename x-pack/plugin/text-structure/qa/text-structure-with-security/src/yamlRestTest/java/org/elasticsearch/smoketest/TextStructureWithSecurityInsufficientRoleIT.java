@@ -34,7 +34,7 @@ public class TextStructureWithSecurityInsufficientRoleIT extends TextStructureWi
             super.test();
 
             // We should have got here if and only if no text structure endpoints were called
-            for (ExecutableSection section : testCandidate.getTestSection().getExecutableSections()) {
+            for (ExecutableSection section : testCandidate.getTestSection().executableSections()) {
                 if (section instanceof DoSection) {
                     String apiName = ((DoSection) section).getApiCallSection().getApi();
 

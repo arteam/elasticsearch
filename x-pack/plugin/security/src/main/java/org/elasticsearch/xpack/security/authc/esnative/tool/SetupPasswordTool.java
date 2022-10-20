@@ -56,7 +56,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-
 import javax.net.ssl.SSLException;
 
 import static java.util.Arrays.asList;
@@ -345,7 +344,7 @@ class SetupPasswordTool extends MultiCommand {
                     () -> null,
                     is -> responseBuilder(is, terminal)
                 );
-                final int httpCode = httpResponse.getHttpStatus();
+                final int httpCode = httpResponse.httpStatus();
 
                 // keystore password is not valid
                 if (httpCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
@@ -427,12 +426,10 @@ class SetupPasswordTool extends MultiCommand {
                 () -> null,
                 is -> responseBuilder(is, terminal)
             );
-            if (httpResponse.getHttpStatus() != HttpURLConnection.HTTP_OK) {
+            if (httpResponse.httpStatus() != HttpURLConnection.HTTP_OK) {
                 terminal.errorPrintln("");
-                terminal.errorPrintln(
-                    "Unexpected response code [" + httpResponse.getHttpStatus() + "] from calling GET " + route.toString()
-                );
-                if (httpResponse.getHttpStatus() == HttpURLConnection.HTTP_BAD_REQUEST) {
+                terminal.errorPrintln("Unexpected response code [" + httpResponse.httpStatus() + "] from calling GET " + route.toString());
+                if (httpResponse.httpStatus() == HttpURLConnection.HTTP_BAD_REQUEST) {
                     terminal.errorPrintln("It doesn't look like the X-Pack is available on this Elasticsearch node.");
                     terminal.errorPrintln("Please check that you have followed all installation instructions and that this tool");
                     terminal.errorPrintln("   is pointing to the correct Elasticsearch server.");
@@ -447,8 +444,8 @@ class SetupPasswordTool extends MultiCommand {
                 }
             }
             final XPackSecurityFeatureConfig xPackSecurityFeatureConfig;
-            if (httpResponse.getHttpStatus() == HttpURLConnection.HTTP_OK && httpResponse.getResponseBody() != null) {
-                Map<String, Object> features = (Map<String, Object>) httpResponse.getResponseBody().get("features");
+            if (httpResponse.httpStatus() == HttpURLConnection.HTTP_OK && httpResponse.responseBody() != null) {
+                Map<String, Object> features = (Map<String, Object>) httpResponse.responseBody().get("features");
                 if (features != null) {
                     Map<String, Object> featureInfo = (Map<String, Object>) features.get("security");
                     if (featureInfo != null) {
@@ -481,18 +478,16 @@ class SetupPasswordTool extends MultiCommand {
                 () -> null,
                 is -> responseBuilder(is, terminal)
             );
-            if (httpResponse.getHttpStatus() != HttpURLConnection.HTTP_OK) {
+            if (httpResponse.httpStatus() != HttpURLConnection.HTTP_OK) {
                 terminal.errorPrintln("");
                 terminal.errorPrintln("Failed to determine the health of the cluster running at " + url);
-                terminal.errorPrintln(
-                    "Unexpected response code [" + httpResponse.getHttpStatus() + "] from calling GET " + route.toString()
-                );
+                terminal.errorPrintln("Unexpected response code [" + httpResponse.httpStatus() + "] from calling GET " + route.toString());
                 final String cause = CommandLineHttpClient.getErrorCause(httpResponse);
                 if (cause != null) {
                     terminal.errorPrintln("Cause: " + cause);
                 }
             } else {
-                final String clusterStatus = Objects.toString(httpResponse.getResponseBody().get("status"), "");
+                final String clusterStatus = Objects.toString(httpResponse.responseBody().get("status"), "");
                 if (clusterStatus.isEmpty()) {
                     terminal.errorPrintln("");
                     terminal.errorPrintln("Failed to determine the health of the cluster running at " + url);
@@ -543,10 +538,10 @@ class SetupPasswordTool extends MultiCommand {
                         supplierPassword.close();
                     }
                 }, is -> responseBuilder(is, terminal));
-                if (httpResponse.getHttpStatus() != HttpURLConnection.HTTP_OK) {
+                if (httpResponse.httpStatus() != HttpURLConnection.HTTP_OK) {
                     terminal.errorPrintln("");
                     terminal.errorPrintln(
-                        "Unexpected response code [" + httpResponse.getHttpStatus() + "] from calling PUT " + route.toString()
+                        "Unexpected response code [" + httpResponse.httpStatus() + "] from calling PUT " + route.toString()
                     );
                     String cause = CommandLineHttpClient.getErrorCause(httpResponse);
                     if (cause != null) {
@@ -652,14 +647,6 @@ class SetupPasswordTool extends MultiCommand {
     /**
      * This class is used to capture x-pack security feature configuration.
      */
-    static class XPackSecurityFeatureConfig {
-        final boolean isAvailable;
-        final boolean isEnabled;
-
-        XPackSecurityFeatureConfig(boolean isAvailable, boolean isEnabled) {
-            this.isAvailable = isAvailable;
-            this.isEnabled = isEnabled;
-        }
-    }
+    record XPackSecurityFeatureConfig(boolean isAvailable, boolean isEnabled) {}
 
 }

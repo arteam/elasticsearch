@@ -45,6 +45,6 @@ public class HealthNode extends AllocatedPersistentTask {
         if (task == null || task.isAssigned() == false) {
             return null;
         }
-        return clusterState.nodes().get(task.getAssignment().getExecutorNode());
+        return clusterState.nodes().get(task.getAssignment().executorNode());
     }
 }

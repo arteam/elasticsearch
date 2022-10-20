@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
-
 import javax.naming.directory.SearchResult;
 
 import static org.elasticsearch.index.rankeval.EvaluationMetric.joinHitsWithRatings;
@@ -227,21 +226,13 @@ public class PrecisionAtK implements EvaluationMetric {
         return Objects.hash(relevantRatingThreshold, ignoreUnlabeled, k);
     }
 
-    public static final class Detail implements MetricDetail {
+    public record Detail(int relevantRetrieved, int retrieved) implements MetricDetail {
 
         private static final ParseField RELEVANT_DOCS_RETRIEVED_FIELD = new ParseField("relevant_docs_retrieved");
         private static final ParseField DOCS_RETRIEVED_FIELD = new ParseField("docs_retrieved");
 
-        private int relevantRetrieved;
-        private int retrieved;
-
-        Detail(int relevantRetrieved, int retrieved) {
-            this.relevantRetrieved = relevantRetrieved;
-            this.retrieved = retrieved;
-        }
-
-        Detail(StreamInput in) throws IOException {
-            this(in.readVInt(), in.readVInt());
+        static Detail from(StreamInput in) throws IOException {
+            return new Detail(in.readVInt(), in.readVInt());
         }
 
         private static final ConstructingObjectParser<Detail, Void> PARSER = new ConstructingObjectParser<>(
@@ -277,14 +268,6 @@ public class PrecisionAtK implements EvaluationMetric {
             return NAME;
         }
 
-        public int getRelevantRetrieved() {
-            return relevantRetrieved;
-        }
-
-        public int getRetrieved() {
-            return retrieved;
-        }
-
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -297,9 +280,5 @@ public class PrecisionAtK implements EvaluationMetric {
             return Objects.equals(relevantRetrieved, other.relevantRetrieved) && Objects.equals(retrieved, other.retrieved);
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(relevantRetrieved, retrieved);
-        }
     }
 }

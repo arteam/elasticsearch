@@ -40,50 +40,7 @@ import java.util.Objects;
  */
 public final class IpPrefixAggregator extends BucketsAggregator {
 
-    public static class IpPrefix {
-        final boolean isIpv6;
-        final int prefixLength;
-        final boolean appendPrefixLength;
-        final BytesRef netmask;
-
-        public IpPrefix(boolean isIpv6, int prefixLength, boolean appendPrefixLength, BytesRef netmask) {
-            this.isIpv6 = isIpv6;
-            this.prefixLength = prefixLength;
-            this.appendPrefixLength = appendPrefixLength;
-            this.netmask = netmask;
-        }
-
-        public boolean isIpv6() {
-            return isIpv6;
-        }
-
-        public int getPrefixLength() {
-            return prefixLength;
-        }
-
-        public boolean appendPrefixLength() {
-            return appendPrefixLength;
-        }
-
-        public BytesRef getNetmask() {
-            return netmask;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            IpPrefix ipPrefix = (IpPrefix) o;
-            return isIpv6 == ipPrefix.isIpv6
-                && prefixLength == ipPrefix.prefixLength
-                && appendPrefixLength == ipPrefix.appendPrefixLength
-                && Objects.equals(netmask, ipPrefix.netmask);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(isIpv6, prefixLength, appendPrefixLength, netmask);
-        }
+    public record IpPrefix(boolean isIpv6, int prefixLength, boolean appendPrefixLength, BytesRef netmask) {
     }
 
     final ValuesSourceConfig config;

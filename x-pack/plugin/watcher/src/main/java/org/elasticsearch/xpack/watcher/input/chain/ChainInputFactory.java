@@ -38,7 +38,7 @@ public class ChainInputFactory extends InputFactory<ChainInput, ChainInput.Resul
     @Override
     public ExecutableChainInput createExecutable(ChainInput input) {
         List<Tuple<String, ExecutableInput<?, ?>>> executableInputs = new ArrayList<>();
-        for (Tuple<String, Input> tuple : input.getInputs()) {
+        for (Tuple<String, Input> tuple : input.inputs()) {
             @SuppressWarnings("unchecked")
             ExecutableInput<?, ?> executableInput = ((InputFactory<Input, ?, ?>) inputRegistry.factories().get(tuple.v2().type()))
                 .createExecutable(tuple.v2());

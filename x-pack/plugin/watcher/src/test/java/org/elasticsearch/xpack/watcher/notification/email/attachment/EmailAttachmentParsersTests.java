@@ -148,41 +148,19 @@ public class EmailAttachmentParsersTests extends ESTestCase {
 
         @Override
         public Attachment toAttachment(WatchExecutionContext ctx, Payload payload, TestEmailAttachment attachment) {
-            return new Attachment.Bytes(
-                attachment.id(),
-                attachment.getValue().getBytes(StandardCharsets.UTF_8),
-                "personalContentType",
-                false
-            );
+            return new Attachment.Bytes(attachment.id(), attachment.value().getBytes(StandardCharsets.UTF_8), "personalContentType", false);
         }
     }
 
-    public static class TestEmailAttachment implements EmailAttachment {
-
-        private final String value;
-        private final String id;
+    public record TestEmailAttachment(String id, String value) implements EmailAttachment {
 
         interface Fields {
             ParseField FOO = new ParseField("foo");
         }
 
-        public TestEmailAttachment(String id, String value) {
-            this.id = id;
-            this.value = value;
-        }
-
         @Override
         public String type() {
             return "test";
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String id() {
-            return id;
         }
 
         @Override

@@ -123,16 +123,16 @@ public class OutlierDetection implements Evaluation {
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
-        out.writeString(fields.getActualField());
-        out.writeString(fields.getPredictedProbabilityField());
+        out.writeString(fields.actualField());
+        out.writeString(fields.predictedProbabilityField());
         out.writeNamedWriteableList(metrics);
     }
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
-        builder.field(ACTUAL_FIELD.getPreferredName(), fields.getActualField());
-        builder.field(PREDICTED_PROBABILITY_FIELD.getPreferredName(), fields.getPredictedProbabilityField());
+        builder.field(ACTUAL_FIELD.getPreferredName(), fields.actualField());
+        builder.field(PREDICTED_PROBABILITY_FIELD.getPreferredName(), fields.predictedProbabilityField());
 
         builder.startObject(METRICS.getPreferredName());
         for (EvaluationMetric metric : metrics) {

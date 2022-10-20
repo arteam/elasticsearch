@@ -167,7 +167,7 @@ public class TransportSamlInitiateSingleSignOnAction extends HandledTransportAct
         User user = secondaryAuthentication.getUser();
         secondaryAuthentication.execute(ignore -> {
             ActionListener<UserPrivilegeResolver.UserPrivileges> wrapped = ActionListener.wrap(userPrivileges -> {
-                if (userPrivileges.hasAccess == false) {
+                if (userPrivileges.hasAccess() == false) {
                     listener.onResponse(null);
                 } else {
                     logger.debug("Resolved [{}] for [{}]", userPrivileges, user);
@@ -176,7 +176,7 @@ public class TransportSamlInitiateSingleSignOnAction extends HandledTransportAct
                             user.principal(),
                             user.fullName(),
                             user.email(),
-                            userPrivileges.roles,
+                                userPrivileges.roles(),
                             serviceProvider
                         )
                     );

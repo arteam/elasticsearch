@@ -13,7 +13,7 @@ import org.elasticsearch.xcontent.ParseField;
  * A wrapper for concrete result objects plus meta information.
  * Also contains common attributes for results.
  */
-public class Result<T> {
+public record Result<T> (@Nullable String index, @Nullable T result) {
 
     /**
      * Serialisation fields
@@ -22,14 +22,4 @@ public class Result<T> {
     public static final ParseField RESULT_TYPE = new ParseField("result_type");
     public static final ParseField TIMESTAMP = new ParseField("timestamp");
     public static final ParseField IS_INTERIM = new ParseField("is_interim");
-
-    @Nullable
-    public final String index;
-    @Nullable
-    public final T result;
-
-    public Result(String index, T result) {
-        this.index = index;
-        this.result = result;
-    }
 }

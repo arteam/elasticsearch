@@ -308,7 +308,7 @@ public class JobNodeSelector {
         long maxNodeSize
     ) {
 
-        assert currentAssignment.getExecutorNode() == null;
+        assert currentAssignment.executorNode() == null;
 
         int numMlNodes = 0;
         for (DiscoveryNode node : candidateNodes) {

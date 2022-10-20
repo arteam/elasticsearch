@@ -92,7 +92,7 @@ public class KnnSearchRequestParserTests extends ESTestCase {
             query.addFilterQueries(filterQueries);
         }
         assertEquals(query, searchRequest.source().query());
-        assertEquals(knnSearch.k, searchRequest.source().size());
+        assertEquals(knnSearch.k(), searchRequest.source().size());
 
         assertEquals(searchSource.fetchSource(), searchRequest.source().fetchSource());
         assertEquals(searchSource.fetchFields(), searchRequest.source().fetchFields());
@@ -108,10 +108,10 @@ public class KnnSearchRequestParserTests extends ESTestCase {
         KnnSearch knnSearch = randomKnnSearch();
         builder.startObject()
             .startObject(KnnSearchRequestParser.KNN_SECTION_FIELD.getPreferredName())
-            .field(KnnSearch.FIELD_FIELD.getPreferredName(), knnSearch.field)
-            .field(KnnSearch.K_FIELD.getPreferredName(), knnSearch.k)
-            .field(KnnSearch.NUM_CANDS_FIELD.getPreferredName(), knnSearch.numCands)
-            .field(KnnSearch.QUERY_VECTOR_FIELD.getPreferredName(), knnSearch.queryVector)
+            .field(KnnSearch.FIELD_FIELD.getPreferredName(), knnSearch.field())
+            .field(KnnSearch.K_FIELD.getPreferredName(), knnSearch.k())
+            .field(KnnSearch.NUM_CANDS_FIELD.getPreferredName(), knnSearch.numCands())
+            .field(KnnSearch.QUERY_VECTOR_FIELD.getPreferredName(), knnSearch.queryVector())
             .endObject();
 
         builder.field(SearchSourceBuilder._SOURCE_FIELD.getPreferredName(), "some-field");
@@ -134,10 +134,10 @@ public class KnnSearchRequestParserTests extends ESTestCase {
         KnnSearch knnSearch = randomKnnSearch();
         builder.startObject()
             .startObject(KnnSearchRequestParser.KNN_SECTION_FIELD.getPreferredName())
-            .field(KnnSearch.FIELD_FIELD.getPreferredName(), knnSearch.field)
-            .field(KnnSearch.K_FIELD.getPreferredName(), knnSearch.k)
-            .field(KnnSearch.NUM_CANDS_FIELD.getPreferredName(), knnSearch.numCands)
-            .field(KnnSearch.QUERY_VECTOR_FIELD.getPreferredName(), knnSearch.queryVector)
+            .field(KnnSearch.FIELD_FIELD.getPreferredName(), knnSearch.field())
+            .field(KnnSearch.K_FIELD.getPreferredName(), knnSearch.k())
+            .field(KnnSearch.NUM_CANDS_FIELD.getPreferredName(), knnSearch.numCands())
+            .field(KnnSearch.QUERY_VECTOR_FIELD.getPreferredName(), knnSearch.queryVector())
             .endObject();
 
         builder.array(SearchSourceBuilder._SOURCE_FIELD.getPreferredName(), "field1", "field2", "field3");
@@ -258,10 +258,10 @@ public class KnnSearchRequestParserTests extends ESTestCase {
         builder.startObject();
 
         builder.startObject(KnnSearchRequestParser.KNN_SECTION_FIELD.getPreferredName())
-            .field(KnnSearch.FIELD_FIELD.getPreferredName(), knnSearch.field)
-            .field(KnnSearch.K_FIELD.getPreferredName(), knnSearch.k)
-            .field(KnnSearch.NUM_CANDS_FIELD.getPreferredName(), knnSearch.numCands)
-            .field(KnnSearch.QUERY_VECTOR_FIELD.getPreferredName(), knnSearch.queryVector)
+            .field(KnnSearch.FIELD_FIELD.getPreferredName(), knnSearch.field())
+            .field(KnnSearch.K_FIELD.getPreferredName(), knnSearch.k())
+            .field(KnnSearch.NUM_CANDS_FIELD.getPreferredName(), knnSearch.numCands())
+            .field(KnnSearch.QUERY_VECTOR_FIELD.getPreferredName(), knnSearch.queryVector())
             .endObject();
 
         if (filters.isEmpty() == false) {

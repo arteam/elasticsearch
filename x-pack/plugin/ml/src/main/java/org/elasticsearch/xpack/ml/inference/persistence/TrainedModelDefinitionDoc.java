@@ -25,11 +25,21 @@ import java.util.Objects;
 
 /**
  * Used to store and retrieve the model definition from the stored index.
- *
+ * <p>
  * As such, this does not support serialization between nodes as it is used to build a new TrainedModelDefinition object
  * That object is then used in the TrainedModelConfiguration and is serialized between nodes for inference.
+ *
+ * @param totalDefinitionLength for bwc
  */
-public class TrainedModelDefinitionDoc implements ToXContentObject {
+public record TrainedModelDefinitionDoc(
+    BytesReference binaryData,
+    String modelId,
+    int docNum,
+    Long totalDefinitionLength,
+    long definitionLength,
+    int compressionVersion,
+    boolean eos
+) implements ToXContentObject {
 
     public static final String NAME = "trained_model_definition_doc";
 
@@ -42,15 +52,11 @@ public class TrainedModelDefinitionDoc implements ToXContentObject {
     public static final ParseField EOS = new ParseField("eos");
 
     // These parsers follow the pattern that metadata is parsed leniently (to allow for enhancements), whilst config is parsed strictly
-    public static final ObjectParser<TrainedModelDefinitionDoc.Builder, Void> LENIENT_PARSER = createParser(true);
-    public static final ObjectParser<TrainedModelDefinitionDoc.Builder, Void> STRICT_PARSER = createParser(false);
+    public static final ObjectParser<Builder, Void> LENIENT_PARSER = createParser(true);
+    public static final ObjectParser<Builder, Void> STRICT_PARSER = createParser(false);
 
-    private static ObjectParser<TrainedModelDefinitionDoc.Builder, Void> createParser(boolean ignoreUnknownFields) {
-        ObjectParser<TrainedModelDefinitionDoc.Builder, Void> parser = new ObjectParser<>(
-            NAME,
-            ignoreUnknownFields,
-            TrainedModelDefinitionDoc.Builder::new
-        );
+    private static ObjectParser<Builder, Void> createParser(boolean ignoreUnknownFields) {
+        ObjectParser<Builder, Void> parser = new ObjectParser<>(NAME, ignoreUnknownFields, TrainedModelDefinitionDoc.Builder::new);
         parser.declareString((a, b) -> {}, InferenceIndexConstants.DOC_TYPE);  // type is hard coded but must be parsed
         parser.declareString(TrainedModelDefinitionDoc.Builder::setModelId, TrainedModelConfig.MODEL_ID);
         parser.declareString(TrainedModelDefinitionDoc.Builder::setCompressedString, DEFINITION);
@@ -79,8 +85,9 @@ public class TrainedModelDefinitionDoc implements ToXContentObject {
 
     /**
      * Return the document number as represented in the docId
+     *
      * @param modelId The model Id
-     * @param docId the document ID
+     * @param docId   the document ID
      * @return the document number or -1 if not found (invalid)
      */
     public static int docNum(String modelId, String docId) {
@@ -95,15 +102,6 @@ public class TrainedModelDefinitionDoc implements ToXContentObject {
             return -1;
         }
     }
-
-    private final BytesReference binaryData;
-    private final String modelId;
-    private final int docNum;
-    // for bwc
-    private final Long totalDefinitionLength;
-    private final long definitionLength;
-    private final int compressionVersion;
-    private final boolean eos;
 
     public TrainedModelDefinitionDoc(
         BytesReference binaryData,
@@ -132,34 +130,6 @@ public class TrainedModelDefinitionDoc implements ToXContentObject {
         this.eos = eos;
     }
 
-    public BytesReference getBinaryData() {
-        return binaryData;
-    }
-
-    public String getModelId() {
-        return modelId;
-    }
-
-    public int getDocNum() {
-        return docNum;
-    }
-
-    public Long getTotalDefinitionLength() {
-        return totalDefinitionLength;
-    }
-
-    public long getDefinitionLength() {
-        return definitionLength;
-    }
-
-    public int getCompressionVersion() {
-        return compressionVersion;
-    }
-
-    public boolean isEos() {
-        return eos;
-    }
-
     public String getDocId() {
         return docId(modelId, docNum);
     }
@@ -184,25 +154,6 @@ public class TrainedModelDefinitionDoc implements ToXContentObject {
     @Override
     public String toString() {
         return Strings.toString(this);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TrainedModelDefinitionDoc that = (TrainedModelDefinitionDoc) o;
-        return Objects.equals(modelId, that.modelId)
-            && Objects.equals(docNum, that.docNum)
-            && Objects.equals(definitionLength, that.definitionLength)
-            && Objects.equals(totalDefinitionLength, that.totalDefinitionLength)
-            && Objects.equals(compressionVersion, that.compressionVersion)
-            && Objects.equals(eos, that.eos)
-            && Objects.equals(binaryData, that.binaryData);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(modelId, docNum, definitionLength, totalDefinitionLength, compressionVersion, binaryData, eos);
     }
 
     public static class Builder {

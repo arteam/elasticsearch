@@ -139,8 +139,8 @@ public class AucRoc extends AbstractAucRoc {
         // Store given {@code fields} for the purpose of generating error messages in {@code process}.
         this.fields.trySet(evaluationFields);
 
-        String actualField = evaluationFields.getActualField();
-        String predictedProbabilityField = evaluationFields.getPredictedProbabilityField();
+        String actualField = evaluationFields.actualField();
+        String predictedProbabilityField = evaluationFields.predictedProbabilityField();
         double[] percentiles = IntStream.range(1, 100).mapToDouble(v -> (double) v).toArray();
         AggregationBuilder percentilesAgg = AggregationBuilders.percentiles(PERCENTILES_AGG_NAME)
             .field(predictedProbabilityField)
@@ -164,7 +164,7 @@ public class AucRoc extends AbstractAucRoc {
             throw ExceptionsHelper.badRequestException(
                 "[{}] requires at least one [{}] to have the value [{}]",
                 getName(),
-                fields.get().getActualField(),
+                fields.get().actualField(),
                 "true"
             );
         }
@@ -174,7 +174,7 @@ public class AucRoc extends AbstractAucRoc {
             throw ExceptionsHelper.badRequestException(
                 "[{}] requires at least one [{}] to have a different value than [{}]",
                 getName(),
-                fields.get().getActualField(),
+                fields.get().actualField(),
                 "true"
             );
         }

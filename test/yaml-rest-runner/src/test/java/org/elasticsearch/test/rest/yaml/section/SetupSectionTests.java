@@ -38,12 +38,12 @@ public class SetupSectionTests extends AbstractClientYamlTestFragmentParserTestC
         SetupSection setupSection = SetupSection.parse(parser);
 
         assertThat(setupSection, notNullValue());
-        assertThat(setupSection.getSkipSection().isEmpty(), equalTo(true));
-        assertThat(setupSection.getExecutableSections().size(), equalTo(2));
-        assertThat(setupSection.getExecutableSections().get(0), instanceOf(DoSection.class));
-        assertThat(((DoSection) setupSection.getExecutableSections().get(0)).getApiCallSection().getApi(), equalTo("index1"));
-        assertThat(setupSection.getExecutableSections().get(1), instanceOf(DoSection.class));
-        assertThat(((DoSection) setupSection.getExecutableSections().get(1)).getApiCallSection().getApi(), equalTo("index2"));
+        assertThat(setupSection.skipSection().isEmpty(), equalTo(true));
+        assertThat(setupSection.executableSections().size(), equalTo(2));
+        assertThat(setupSection.executableSections().get(0), instanceOf(DoSection.class));
+        assertThat(((DoSection) setupSection.executableSections().get(0)).getApiCallSection().getApi(), equalTo("index1"));
+        assertThat(setupSection.executableSections().get(1), instanceOf(DoSection.class));
+        assertThat(((DoSection) setupSection.executableSections().get(1)).getApiCallSection().getApi(), equalTo("index2"));
     }
 
     public void testParseSetSectionInSetupSection() throws IOException {
@@ -61,24 +61,24 @@ public class SetupSectionTests extends AbstractClientYamlTestFragmentParserTestC
         final SetupSection setupSection = SetupSection.parse(parser);
 
         assertNotNull(setupSection);
-        assertTrue(setupSection.getSkipSection().isEmpty());
-        assertThat(setupSection.getExecutableSections().size(), equalTo(5));
-        assertThat(setupSection.getExecutableSections().get(0), instanceOf(DoSection.class));
-        assertThat(((DoSection) setupSection.getExecutableSections().get(0)).getApiCallSection().getApi(), equalTo("cluster.state"));
-        assertThat(setupSection.getExecutableSections().get(1), instanceOf(SetSection.class));
-        final SetSection firstSetSection = (SetSection) setupSection.getExecutableSections().get(1);
+        assertTrue(setupSection.skipSection().isEmpty());
+        assertThat(setupSection.executableSections().size(), equalTo(5));
+        assertThat(setupSection.executableSections().get(0), instanceOf(DoSection.class));
+        assertThat(((DoSection) setupSection.executableSections().get(0)).getApiCallSection().getApi(), equalTo("cluster.state"));
+        assertThat(setupSection.executableSections().get(1), instanceOf(SetSection.class));
+        final SetSection firstSetSection = (SetSection) setupSection.executableSections().get(1);
         assertThat(firstSetSection.getStash().entrySet(), hasSize(1));
         assertThat(firstSetSection.getStash(), hasKey("master_node"));
         assertThat(firstSetSection.getStash().get("master_node"), equalTo("master"));
-        assertThat(setupSection.getExecutableSections().get(2), instanceOf(DoSection.class));
-        assertThat(((DoSection) setupSection.getExecutableSections().get(2)).getApiCallSection().getApi(), equalTo("nodes.info"));
-        assertThat(setupSection.getExecutableSections().get(3), instanceOf(SetSection.class));
-        final SetSection secondSetSection = (SetSection) setupSection.getExecutableSections().get(3);
+        assertThat(setupSection.executableSections().get(2), instanceOf(DoSection.class));
+        assertThat(((DoSection) setupSection.executableSections().get(2)).getApiCallSection().getApi(), equalTo("nodes.info"));
+        assertThat(setupSection.executableSections().get(3), instanceOf(SetSection.class));
+        final SetSection secondSetSection = (SetSection) setupSection.executableSections().get(3);
         assertThat(secondSetSection.getStash().entrySet(), hasSize(1));
         assertThat(secondSetSection.getStash(), hasKey("nodes.$master.http.publish_address"));
         assertThat(secondSetSection.getStash().get("nodes.$master.http.publish_address"), equalTo("host"));
-        assertThat(setupSection.getExecutableSections().get(4), instanceOf(SetSection.class));
-        final SetSection thirdSetSection = (SetSection) setupSection.getExecutableSections().get(4);
+        assertThat(setupSection.executableSections().get(4), instanceOf(SetSection.class));
+        final SetSection thirdSetSection = (SetSection) setupSection.executableSections().get(4);
         assertThat(thirdSetSection.getStash().entrySet(), hasSize(1));
         assertThat(thirdSetSection.getStash(), hasKey("nodes.$master.transport.publish_address"));
         assertThat(thirdSetSection.getStash().get("nodes.$master.transport.publish_address"), equalTo("transport_host"));
@@ -106,15 +106,15 @@ public class SetupSectionTests extends AbstractClientYamlTestFragmentParserTestC
         SetupSection setupSection = SetupSection.parse(parser);
 
         assertThat(setupSection, notNullValue());
-        assertThat(setupSection.getSkipSection().isEmpty(), equalTo(false));
-        assertThat(setupSection.getSkipSection(), notNullValue());
-        assertThat(setupSection.getSkipSection().getLowerVersion(), equalTo(Version.fromString("6.0.0")));
-        assertThat(setupSection.getSkipSection().getUpperVersion(), equalTo(Version.fromString("6.3.0")));
-        assertThat(setupSection.getSkipSection().getReason(), equalTo("Update doesn't return metadata fields, waiting for #3259"));
-        assertThat(setupSection.getExecutableSections().size(), equalTo(2));
-        assertThat(setupSection.getExecutableSections().get(0), instanceOf(DoSection.class));
-        assertThat(((DoSection) setupSection.getExecutableSections().get(0)).getApiCallSection().getApi(), equalTo("index1"));
-        assertThat(setupSection.getExecutableSections().get(1), instanceOf(DoSection.class));
-        assertThat(((DoSection) setupSection.getExecutableSections().get(1)).getApiCallSection().getApi(), equalTo("index2"));
+        assertThat(setupSection.skipSection().isEmpty(), equalTo(false));
+        assertThat(setupSection.skipSection(), notNullValue());
+        assertThat(setupSection.skipSection().getLowerVersion(), equalTo(Version.fromString("6.0.0")));
+        assertThat(setupSection.skipSection().getUpperVersion(), equalTo(Version.fromString("6.3.0")));
+        assertThat(setupSection.skipSection().getReason(), equalTo("Update doesn't return metadata fields, waiting for #3259"));
+        assertThat(setupSection.executableSections().size(), equalTo(2));
+        assertThat(setupSection.executableSections().get(0), instanceOf(DoSection.class));
+        assertThat(((DoSection) setupSection.executableSections().get(0)).getApiCallSection().getApi(), equalTo("index1"));
+        assertThat(setupSection.executableSections().get(1), instanceOf(DoSection.class));
+        assertThat(((DoSection) setupSection.executableSections().get(1)).getApiCallSection().getApi(), equalTo("index2"));
     }
 }

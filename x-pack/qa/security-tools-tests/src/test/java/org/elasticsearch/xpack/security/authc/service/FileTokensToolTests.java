@@ -141,8 +141,8 @@ public class FileTokensToolTests extends CommandTestCase {
             List.of("elastic/fleet-server", tokenName1),
             Settings.EMPTY
         );
-        assertEquals("elastic/fleet-server", accountTokenId.getAccountId().asPrincipal());
-        assertEquals(tokenName1, accountTokenId.getTokenName());
+        assertEquals("elastic/fleet-server", accountTokenId.accountId().asPrincipal());
+        assertEquals(tokenName1, accountTokenId.tokenName());
 
         final UserException e2 = expectThrows(
             UserException.class,

@@ -16,14 +16,14 @@ import java.util.Objects;
 /**
  * A Class that contains all the OpenID Connect Provider configuration
  */
-public class OpenIdConnectProviderConfiguration {
-    private final URI authorizationEndpoint;
-    private final URI tokenEndpoint;
-    private final URI userinfoEndpoint;
-    private final URI endsessionEndpoint;
-    private final Issuer issuer;
-    private final String jwkSetPath;
-
+public record OpenIdConnectProviderConfiguration(
+    Issuer issuer,
+    String jwkSetPath,
+    URI authorizationEndpoint,
+    URI tokenEndpoint,
+    URI userinfoEndpoint,
+    URI endsessionEndpoint
+) {
     public OpenIdConnectProviderConfiguration(
         Issuer issuer,
         String jwkSetPath,
@@ -38,29 +38,5 @@ public class OpenIdConnectProviderConfiguration {
         this.endsessionEndpoint = endsessionEndpoint;
         this.issuer = Objects.requireNonNull(issuer, "OP Issuer must be provided");
         this.jwkSetPath = Objects.requireNonNull(jwkSetPath, "jwkSetUrl must be provided");
-    }
-
-    public URI getAuthorizationEndpoint() {
-        return authorizationEndpoint;
-    }
-
-    public URI getTokenEndpoint() {
-        return tokenEndpoint;
-    }
-
-    public URI getUserinfoEndpoint() {
-        return userinfoEndpoint;
-    }
-
-    public URI getEndsessionEndpoint() {
-        return endsessionEndpoint;
-    }
-
-    public Issuer getIssuer() {
-        return issuer;
-    }
-
-    public String getJwkSetPath() {
-        return jwkSetPath;
     }
 }

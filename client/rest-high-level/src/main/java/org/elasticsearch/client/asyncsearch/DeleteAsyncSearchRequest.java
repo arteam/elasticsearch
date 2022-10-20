@@ -10,34 +10,4 @@ package org.elasticsearch.client.asyncsearch;
 
 import org.elasticsearch.client.Validatable;
 
-import java.util.Objects;
-
-public class DeleteAsyncSearchRequest implements Validatable {
-
-    private final String id;
-
-    public DeleteAsyncSearchRequest(String id) {
-        this.id = id;
-    }
-
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        DeleteAsyncSearchRequest request = (DeleteAsyncSearchRequest) o;
-        return Objects.equals(getId(), request.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-}
+public record DeleteAsyncSearchRequest(String id) implements Validatable {}

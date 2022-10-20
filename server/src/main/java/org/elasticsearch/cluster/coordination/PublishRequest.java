@@ -15,17 +15,7 @@ import java.util.Objects;
  * Request which is used by the master node to publish cluster state changes.
  * Actual serialization of this request is done by {@link PublicationTransportHandler}
  */
-public class PublishRequest {
-
-    private final ClusterState acceptedState;
-
-    public PublishRequest(ClusterState acceptedState) {
-        this.acceptedState = acceptedState;
-    }
-
-    public ClusterState getAcceptedState() {
-        return acceptedState;
-    }
+public record PublishRequest(ClusterState acceptedState) {
 
     @Override
     public boolean equals(Object o) {

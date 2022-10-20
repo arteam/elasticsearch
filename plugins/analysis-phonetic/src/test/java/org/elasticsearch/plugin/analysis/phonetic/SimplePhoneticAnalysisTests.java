@@ -41,12 +41,12 @@ public class SimplePhoneticAnalysisTests extends ESTestCase {
     }
 
     public void testPhoneticTokenFilterFactory() throws IOException {
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("phonetic");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("phonetic");
         MatcherAssert.assertThat(filterFactory, instanceOf(PhoneticTokenFilterFactory.class));
     }
 
     public void testPhoneticTokenFilterBeiderMorseNoLanguage() throws IOException {
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("beidermorsefilter");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("beidermorsefilter");
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader("ABADIAS"));
         String[] expected = new String[] {
@@ -82,7 +82,7 @@ public class SimplePhoneticAnalysisTests extends ESTestCase {
     }
 
     public void testPhoneticTokenFilterBeiderMorseWithLanguage() throws IOException {
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("beidermorsefilterfrench");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("beidermorsefilterfrench");
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader("Rimbault"));
         String[] expected = new String[] {
@@ -106,7 +106,7 @@ public class SimplePhoneticAnalysisTests extends ESTestCase {
     }
 
     public void testPhoneticTokenFilterDaitchMotokoff() throws IOException {
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("daitch_mokotoff");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("daitch_mokotoff");
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader("chauptman"));
         String[] expected = new String[] { "473660", "573660" };

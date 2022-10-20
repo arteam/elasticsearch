@@ -46,11 +46,11 @@ public class TokenListSimilarityTester {
 
         // Rule out boundary cases.
         if (firstLen == 0) {
-            return second.stream().mapToInt(TokenAndWeight::getWeight).sum();
+            return second.stream().mapToInt(TokenAndWeight::weight).sum();
         }
 
         if (secondLen == 0) {
-            return first.stream().mapToInt(TokenAndWeight::getWeight).sum();
+            return first.stream().mapToInt(TokenAndWeight::weight).sum();
         }
 
         // We need to store just two columns of the matrix; the current and
@@ -62,7 +62,7 @@ public class TokenListSimilarityTester {
         // Populate the left column.
         currentCol[0] = 0;
         for (int downMinusOne = 0; downMinusOne < secondLen; ++downMinusOne) {
-            currentCol[downMinusOne + 1] = currentCol[downMinusOne] + second.get(downMinusOne).getWeight();
+            currentCol[downMinusOne + 1] = currentCol[downMinusOne] + second.get(downMinusOne).weight();
         }
 
         // Calculate the other entries in the matrix.
@@ -72,12 +72,12 @@ public class TokenListSimilarityTester {
                 prevCol = currentCol;
                 currentCol = temp;
             }
-            int firstCost = firstTokenAndWeight.getWeight();
+            int firstCost = firstTokenAndWeight.weight();
             currentCol[0] = prevCol[0] + firstCost;
 
             for (int downMinusOne = 0; downMinusOne < secondLen; ++downMinusOne) {
                 TokenAndWeight secondTokenAndWeight = second.get(downMinusOne);
-                int secondCost = secondTokenAndWeight.getWeight();
+                int secondCost = secondTokenAndWeight.weight();
 
                 // There are 3 options, and due to the possible differences
                 // in the weightings, we must always evaluate all 3:
@@ -95,7 +95,7 @@ public class TokenListSimilarityTester {
                 // OR
                 // No extra cost in the case where the corresponding
                 // elements are equal.
-                int option3 = prevCol[downMinusOne] + ((firstTokenAndWeight.getTokenId() == secondTokenAndWeight.getTokenId())
+                int option3 = prevCol[downMinusOne] + ((firstTokenAndWeight.tokenId() == secondTokenAndWeight.tokenId())
                     ? 0
                     : Math.max(firstCost, secondCost));
 

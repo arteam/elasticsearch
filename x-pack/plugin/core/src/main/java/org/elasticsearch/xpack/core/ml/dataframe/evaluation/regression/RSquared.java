@@ -88,8 +88,8 @@ public class RSquared implements EvaluationMetric {
         if (result != null) {
             return Tuple.tuple(Collections.emptyList(), Collections.emptyList());
         }
-        String actualField = fields.getActualField();
-        String predictedField = fields.getPredictedField();
+        String actualField = fields.actualField();
+        String predictedField = fields.predictedField();
         return Tuple.tuple(
             Arrays.asList(
                 AggregationBuilders.sum(SS_RES).script(new Script(buildScript(actualField, predictedField))),

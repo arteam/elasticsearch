@@ -359,13 +359,9 @@ public class CombinedFieldsQueryBuilder extends AbstractQueryBuilder<CombinedFie
         }
     }
 
-    private static final class FieldAndBoost {
-        final MappedFieldType fieldType;
-        final float boost;
-
-        FieldAndBoost(MappedFieldType fieldType, float boost) {
-            this.fieldType = Objects.requireNonNull(fieldType);
-            this.boost = boost;
+    private record FieldAndBoost(MappedFieldType fieldType, float boost) {
+        private FieldAndBoost {
+            Objects.requireNonNull(fieldType);
         }
     }
 

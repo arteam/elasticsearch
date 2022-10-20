@@ -93,7 +93,7 @@ public class TransportGetTrainedModelsStatsActionTests extends ESTestCase {
             when(licenseState.isAllowed(MachineLearningField.ML_API_FEATURE)).thenReturn(true);
             factoryMap.put(
                 InferenceProcessor.TYPE,
-                new InferenceProcessor.Factory(parameters.client, parameters.ingestService.getClusterService(), Settings.EMPTY)
+                new InferenceProcessor.Factory(parameters.client(), parameters.ingestService().getClusterService(), Settings.EMPTY)
             );
 
             factoryMap.put("not_inference", new NotInferenceProcessor.Factory());
@@ -239,7 +239,7 @@ public class TransportGetTrainedModelsStatsActionTests extends ESTestCase {
         List<IngestStats.PipelineStat> pipelineNames,
         List<List<IngestStats.ProcessorStat>> processorStats
     ) {
-        List<String> pipelineids = pipelineNames.stream().map(IngestStats.PipelineStat::getPipelineId).collect(Collectors.toList());
+        List<String> pipelineids = pipelineNames.stream().map(IngestStats.PipelineStat::pipelineId).collect(Collectors.toList());
         IngestStats ingestStats = new IngestStats(
             overallStats,
             pipelineNames,

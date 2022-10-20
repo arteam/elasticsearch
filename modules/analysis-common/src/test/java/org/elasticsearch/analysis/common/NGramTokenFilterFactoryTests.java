@@ -30,7 +30,7 @@ public class NGramTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_ngram");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_ngram");
         String source = "foo";
         String[] expected = new String[] { "f", "fo", "o", "oo", "o" };
         Tokenizer tokenizer = new StandardTokenizer();
@@ -47,7 +47,7 @@ public class NGramTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_ngram");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_ngram");
         String source = "foo";
         String[] expected = new String[] { "f", "fo", "o", "oo", "o", "foo" };
         Tokenizer tokenizer = new StandardTokenizer();

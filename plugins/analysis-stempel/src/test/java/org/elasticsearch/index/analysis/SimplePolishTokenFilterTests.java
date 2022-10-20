@@ -38,7 +38,7 @@ public class SimplePolishTokenFilterTests extends ESTestCase {
         Settings settings = Settings.builder().put("index.analysis.filter.myStemmer.type", "polish_stem").build();
         TestAnalysis analysis = createTestAnalysis(index, settings, new AnalysisStempelPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myStemmer");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myStemmer");
 
         Tokenizer tokenizer = new KeywordTokenizer();
         tokenizer.setReader(new StringReader(source));
@@ -54,7 +54,7 @@ public class SimplePolishTokenFilterTests extends ESTestCase {
     private void testAnalyzer(String source, String... expected_terms) throws IOException {
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), Settings.EMPTY, new AnalysisStempelPlugin());
 
-        Analyzer analyzer = analysis.indexAnalyzers.get("polish").analyzer();
+        Analyzer analyzer = analysis.indexAnalyzers().get("polish").analyzer();
 
         TokenStream ts = analyzer.tokenStream("test", source);
 

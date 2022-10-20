@@ -31,17 +31,7 @@ public class TokenServiceMock {
     public final TokenService tokenService;
     public final Client client;
 
-    public final class MockToken {
-        public final String baseToken;
-        public final SecureString encodedToken;
-        public final String hashedToken;
-
-        public MockToken(String baseToken, SecureString encodedToken, String hashedToken) {
-            this.baseToken = baseToken;
-            this.encodedToken = encodedToken;
-            this.hashedToken = hashedToken;
-        }
-    }
+    public record MockToken(String baseToken, SecureString encodedToken, String hashedToken) {}
 
     public TokenServiceMock(TokenService tokenService, Client client) {
         this.tokenService = tokenService;

@@ -44,7 +44,7 @@ public class SearchRequestInterceptor extends FieldAndDocumentLevelSecurityReque
 
         final SearchSourceBuilder source = request.source();
 
-        if (indexAccessControlByIndex.values().stream().anyMatch(iac -> iac.getDocumentPermissions().hasDocumentLevelPermissions())) {
+        if (indexAccessControlByIndex.values().stream().anyMatch(iac -> iac.documentPermissions().hasDocumentLevelPermissions())) {
             if (source != null && source.suggest() != null) {
                 listener.onFailure(
                     new ElasticsearchSecurityException(

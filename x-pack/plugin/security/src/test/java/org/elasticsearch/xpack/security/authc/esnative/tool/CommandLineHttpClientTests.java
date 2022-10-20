@@ -76,8 +76,8 @@ public class CommandLineHttpClientTests extends ESTestCase {
         );
 
         assertNotNull("Should have http response", httpResponse);
-        assertEquals("Http status code does not match", 200, httpResponse.getHttpStatus());
-        assertEquals("Http response body does not match", "complete", httpResponse.getResponseBody().get("test"));
+        assertEquals("Http status code does not match", 200, httpResponse.httpStatus());
+        assertEquals("Http response body does not match", "complete", httpResponse.responseBody().get("test"));
     }
 
     public void testCommandLineClientCanTrustPinnedCaCertificateFingerprint() throws Exception {
@@ -96,8 +96,8 @@ public class CommandLineHttpClientTests extends ESTestCase {
         );
 
         assertNotNull("Should have http response", httpResponse);
-        assertEquals("Http status code does not match", 200, httpResponse.getHttpStatus());
-        assertEquals("Http response body does not match", "complete", httpResponse.getResponseBody().get("test"));
+        assertEquals("Http status code does not match", 200, httpResponse.httpStatus());
+        assertEquals("Http response body does not match", "complete", httpResponse.responseBody().get("test"));
     }
 
     public void testGetDefaultURLFailsWithHelpfulMessage() {

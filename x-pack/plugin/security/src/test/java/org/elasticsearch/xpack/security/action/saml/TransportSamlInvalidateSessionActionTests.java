@@ -318,15 +318,15 @@ public class TransportSamlInvalidateSessionActionTests extends SamlTestCase {
         final String refreshToken1 = UUIDs.randomBase64UUID();
         final String userTokenId2 = UUIDs.randomBase64UUID();
         final String refreshToken2 = UUIDs.randomBase64UUID();
-        storeToken(logoutRequest.getNameId(), randomAlphaOfLength(10));
+        storeToken(logoutRequest.nameId(), randomAlphaOfLength(10));
         final TokenService.CreateTokenResult tokenToInvalidate1 = storeToken(
             userTokenId1,
             refreshToken1,
-            logoutRequest.getNameId(),
-            logoutRequest.getSession()
+            logoutRequest.nameId(),
+            logoutRequest.session()
         );
-        storeToken(userTokenId2, refreshToken2, logoutRequest.getNameId(), logoutRequest.getSession());
-        storeToken(new SamlNameId(NameID.PERSISTENT, randomAlphaOfLength(16), null, null, null), logoutRequest.getSession());
+        storeToken(userTokenId2, refreshToken2, logoutRequest.nameId(), logoutRequest.session());
+        storeToken(new SamlNameId(NameID.PERSISTENT, randomAlphaOfLength(16), null, null, null), logoutRequest.session());
 
         assertThat(indexRequests, hasSize(4));
 
@@ -388,11 +388,11 @@ public class TransportSamlInvalidateSessionActionTests extends SamlTestCase {
         assertThat(((TermQueryBuilder) filter1.get(1)).fieldName(), equalTo("refresh_token.token"));
         assertThat(
             ((TermQueryBuilder) filter1.get(1)).value(),
-            equalTo(TokenService.hashTokenString(TokenService.unpackVersionAndPayload(tokenToInvalidate1.getRefreshToken()).v2()))
+            equalTo(TokenService.hashTokenString(TokenService.unpackVersionAndPayload(tokenToInvalidate1.refreshToken()).v2()))
         );
 
         assertThat(
-            tokenToInvalidate1.getAuthentication(),
+            tokenToInvalidate1.authentication(),
             equalTo(
                 AuthenticationTestHelper.builder()
                     .realm()

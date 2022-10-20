@@ -332,15 +332,7 @@ public class SourceOnlySnapshot {
         return true;
     }
 
-    private static class LiveDocs {
-        final int numDeletes;
-        final Bits bits;
-
-        LiveDocs(int numDeletes, Bits bits) {
-            this.numDeletes = numDeletes;
-            this.bits = bits;
-        }
-    }
+    private record LiveDocs(int numDeletes, Bits bits) {}
 
     public static class LinkedFilesDirectory extends Directory {
 

@@ -111,13 +111,10 @@ public final class MappingsMerger {
         return mergedMappings;
     }
 
-    private static class IndexAndMapping {
-        private final String index;
-        private final Object mapping;
-
-        private IndexAndMapping(String index, Object mapping) {
-            this.index = Objects.requireNonNull(index);
-            this.mapping = Objects.requireNonNull(mapping);
+    private record IndexAndMapping(String index, Object mapping) {
+        private IndexAndMapping {
+            Objects.requireNonNull(index);
+            Objects.requireNonNull(mapping);
         }
     }
 

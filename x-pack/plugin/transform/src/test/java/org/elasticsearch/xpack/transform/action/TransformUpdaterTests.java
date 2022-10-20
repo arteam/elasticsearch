@@ -246,7 +246,7 @@ public class TransformUpdaterTests extends ESTestCase {
         assertCheckpoint(
             listener -> transformConfigManager.getTransformCheckpointForUpdate(oldConfig.getId(), 42L, listener),
             checkpointAndVersion -> {
-                assertEquals(InMemoryTransformConfigManager.CURRENT_INDEX, checkpointAndVersion.v2().getIndex());
+                assertEquals(InMemoryTransformConfigManager.CURRENT_INDEX, checkpointAndVersion.v2().index());
                 assertEquals(42L, checkpointAndVersion.v1().getCheckpoint());
                 assertEquals(checkpoint.getIndicesCheckpoints(), checkpointAndVersion.v1().getIndicesCheckpoints());
             }
@@ -255,7 +255,7 @@ public class TransformUpdaterTests extends ESTestCase {
         assertStoredState(
             listener -> transformConfigManager.getTransformStoredDoc(oldConfig.getId(), false, listener),
             storedDocAndVersion -> {
-                assertEquals(InMemoryTransformConfigManager.CURRENT_INDEX, storedDocAndVersion.v2().getIndex());
+                assertEquals(InMemoryTransformConfigManager.CURRENT_INDEX, storedDocAndVersion.v2().index());
                 assertEquals(stateDoc.getTransformState(), storedDocAndVersion.v1().getTransformState());
                 assertEquals(stateDoc.getTransformStats(), storedDocAndVersion.v1().getTransformStats());
             }

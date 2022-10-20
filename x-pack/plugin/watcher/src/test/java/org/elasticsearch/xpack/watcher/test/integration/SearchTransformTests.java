@@ -76,20 +76,20 @@ public class SearchTransformTests extends ESTestCase {
 
         assertThat(executable, notNullValue());
         assertThat(executable.type(), is(SearchTransform.TYPE));
-        assertThat(executable.transform().getRequest(), notNullValue());
+        assertThat(executable.transform().request(), notNullValue());
         if (indices != null) {
-            assertThat(executable.transform().getRequest().getIndices(), arrayContainingInAnyOrder(indices));
+            assertThat(executable.transform().request().getIndices(), arrayContainingInAnyOrder(indices));
         }
         if (searchType != null) {
-            assertThat(executable.transform().getRequest().getSearchType(), is(searchType));
+            assertThat(executable.transform().request().getSearchType(), is(searchType));
         }
         if (templateName != null) {
             assertThat(
-                executable.transform().getRequest().getTemplate(),
+                executable.transform().request().getTemplate(),
                 equalTo(new Script(ScriptType.INLINE, "mustache", "template1", Collections.emptyMap()))
             );
         }
-        assertThat(executable.transform().getRequest().getSearchSource().utf8ToString(), equalTo("{\"query\":{\"match_all\":{}}}"));
-        assertThat(executable.transform().getTimeout(), equalTo(readTimeout));
+        assertThat(executable.transform().request().getSearchSource().utf8ToString(), equalTo("{\"query\":{\"match_all\":{}}}"));
+        assertThat(executable.transform().timeout(), equalTo(readTimeout));
     }
 }

@@ -39,23 +39,7 @@ public interface DeprecationChecker {
      */
     String getName();
 
-    class CheckResult {
-        private final String checkerName;
-        private final List<DeprecationIssue> issues;
-
-        public CheckResult(String checkerName, List<DeprecationIssue> issues) {
-            this.checkerName = checkerName;
-            this.issues = issues;
-        }
-
-        public String getCheckerName() {
-            return checkerName;
-        }
-
-        public List<DeprecationIssue> getIssues() {
-            return issues;
-        }
-    }
+    record CheckResult(String checkerName, List<DeprecationIssue> issues) {}
 
     class Components {
 

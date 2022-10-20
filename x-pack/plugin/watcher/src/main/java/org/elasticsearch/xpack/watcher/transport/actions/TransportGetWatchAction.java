@@ -53,7 +53,7 @@ public class TransportGetWatchAction extends WatcherTransportAction<GetWatchRequ
     ) {
         super(GetWatchAction.NAME, transportService, actionFilters, licenseState, GetWatchRequest::new);
         this.parser = parser;
-        this.clock = clockHolder.clock;
+        this.clock = clockHolder.clock();
         this.client = client;
     }
 
@@ -87,8 +87,8 @@ public class TransportGetWatchAction extends WatcherTransportAction<GetWatchRequ
                             new GetWatchResponse(
                                 watch.id(),
                                 getResponse.getVersion(),
-                                watch.getSourceSeqNo(),
-                                watch.getSourcePrimaryTerm(),
+                                watch.sourceSeqNo(),
+                                watch.sourcePrimaryTerm(),
                                 watch.status(),
                                 new XContentSource(BytesReference.bytes(builder), XContentType.JSON)
                             )

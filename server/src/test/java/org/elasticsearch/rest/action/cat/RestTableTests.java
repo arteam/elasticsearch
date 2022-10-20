@@ -283,7 +283,7 @@ public class RestTableTests extends ESTestCase {
     private List<String> getHeaderNames(List<RestTable.DisplayHeader> headers) {
         List<String> headerNames = new ArrayList<>();
         for (RestTable.DisplayHeader header : headers) {
-            headerNames.add(header.name);
+            headerNames.add(header.name());
         }
 
         return headerNames;

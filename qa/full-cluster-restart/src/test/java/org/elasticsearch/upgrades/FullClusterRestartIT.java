@@ -1849,7 +1849,7 @@ public class FullClusterRestartIT extends AbstractFullClusterRestartTestCase {
             final Request getSettingsRequest = new Request("GET", "/_cluster/settings");
             final Response getSettingsResponse = client().performRequest(getSettingsRequest);
             try (XContentParser parser = createParser(JsonXContent.jsonXContent, getSettingsResponse.getEntity().getContent())) {
-                final Settings settings = RestClusterGetSettingsResponse.fromXContent(parser).getPersistentSettings();
+                final Settings settings = RestClusterGetSettingsResponse.fromXContent(parser).persistentSettings();
                 assertThat(REMOTE_CLUSTER_COMPRESS.getConcreteSettingForNamespace("foo").get(settings), equalTo(Compression.Enabled.TRUE));
             }
         }

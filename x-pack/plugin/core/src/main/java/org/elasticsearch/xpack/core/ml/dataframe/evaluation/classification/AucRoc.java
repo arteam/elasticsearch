@@ -155,16 +155,16 @@ public class AucRoc extends AbstractAucRoc {
 
         double[] percentiles = IntStream.range(1, 100).mapToDouble(v -> (double) v).toArray();
         AggregationBuilder percentilesAgg = AggregationBuilders.percentiles(PERCENTILES_AGG_NAME)
-            .field(evaluationFields.getPredictedProbabilityField())
+            .field(evaluationFields.predictedProbabilityField())
             .percentiles(percentiles);
-        AggregationBuilder nestedAgg = AggregationBuilders.nested(NESTED_AGG_NAME, evaluationFields.getTopClassesField())
+        AggregationBuilder nestedAgg = AggregationBuilders.nested(NESTED_AGG_NAME, evaluationFields.topClassesField())
             .subAggregation(
                 AggregationBuilders.filter(
                     NESTED_FILTER_AGG_NAME,
-                    QueryBuilders.termQuery(evaluationFields.getPredictedClassField(), className)
+                    QueryBuilders.termQuery(evaluationFields.predictedClassField(), className)
                 ).subAggregation(percentilesAgg)
             );
-        QueryBuilder actualIsTrueQuery = QueryBuilders.termQuery(evaluationFields.getActualField(), className);
+        QueryBuilder actualIsTrueQuery = QueryBuilders.termQuery(evaluationFields.actualField(), className);
         AggregationBuilder percentilesForClassValueAgg = AggregationBuilders.filter(TRUE_AGG_NAME, actualIsTrueQuery)
             .subAggregation(nestedAgg);
         AggregationBuilder percentilesForRestAgg = AggregationBuilders.filter(
@@ -191,7 +191,7 @@ public class AucRoc extends AbstractAucRoc {
             throw ExceptionsHelper.badRequestException(
                 "[{}] requires at least one [{}] to have the value [{}]",
                 getName(),
-                fields.get().getActualField(),
+                fields.get().actualField(),
                 className
             );
         }
@@ -199,7 +199,7 @@ public class AucRoc extends AbstractAucRoc {
             throw ExceptionsHelper.badRequestException(
                 "[{}] requires at least one [{}] to have a different value than [{}]",
                 getName(),
-                fields.get().getActualField(),
+                fields.get().actualField(),
                 className
             );
         }
@@ -211,7 +211,7 @@ public class AucRoc extends AbstractAucRoc {
                     + "This is probably caused by the {} value being less than the total number of actual classes in the dataset.",
                 getName(),
                 className,
-                fields.get().getPredictedClassField(),
+                fields.get().predictedClassField(),
                 filteredDocCount,
                 totalDocCount,
                 org.elasticsearch.xpack.core.ml.dataframe.analyses.Classification.NUM_TOP_CLASSES.getPreferredName()

@@ -131,7 +131,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -2233,29 +2232,7 @@ public final class TokenService {
         return expiredTokenRemover.isExpirationInProgress();
     }
 
-    public static final class CreateTokenResult {
-        private final String accessToken;
-        private final String refreshToken;
-        private final Authentication authentication;
-
-        public CreateTokenResult(String accessToken, String refreshToken, Authentication authentication) {
-            this.accessToken = accessToken;
-            this.refreshToken = refreshToken;
-            this.authentication = authentication;
-        }
-
-        public String getAccessToken() {
-            return accessToken;
-        }
-
-        public String getRefreshToken() {
-            return refreshToken;
-        }
-
-        public Authentication getAuthentication() {
-            return authentication;
-        }
-    }
+    public record CreateTokenResult(String accessToken, String refreshToken, Authentication authentication) {}
 
     private static class KeyComputingRunnable extends AbstractRunnable {
 

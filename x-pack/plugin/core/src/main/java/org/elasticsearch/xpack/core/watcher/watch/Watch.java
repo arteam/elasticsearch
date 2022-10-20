@@ -25,94 +25,29 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
-public class Watch implements ToXContentObject {
+public record Watch(
+    String id,
+    Trigger trigger,
+    ExecutableInput<? extends Input, ? extends Input.Result> input,
+    ExecutableCondition condition,
+    @Nullable ExecutableTransform<? extends Transform, ? extends Transform.Result> transform,
+    @Nullable TimeValue throttlePeriod,
+    List<ActionWrapper> actions,
+    @Nullable Map<String, Object> metadata,
+    WatchStatus status,
+    long sourceSeqNo,
+    long sourcePrimaryTerm
+) implements ToXContentObject {
 
     public static final String INCLUDE_STATUS_KEY = "include_status";
     public static final String INDEX = ".watches";
-
-    private final String id;
-    private final Trigger trigger;
-    private final ExecutableInput<? extends Input, ? extends Input.Result> input;
-    private final ExecutableCondition condition;
-    @Nullable
-    private final ExecutableTransform<? extends Transform, ? extends Transform.Result> transform;
-    private final List<ActionWrapper> actions;
-    @Nullable
-    private final TimeValue throttlePeriod;
-    @Nullable
-    private final Map<String, Object> metadata;
-    private final WatchStatus status;
-
-    private final long sourceSeqNo;
-    private final long sourcePrimaryTerm;
-
-    public Watch(
-        String id,
-        Trigger trigger,
-        ExecutableInput<? extends Input, ? extends Input.Result> input,
-        ExecutableCondition condition,
-        @Nullable ExecutableTransform<? extends Transform, ? extends Transform.Result> transform,
-        @Nullable TimeValue throttlePeriod,
-        List<ActionWrapper> actions,
-        @Nullable Map<String, Object> metadata,
-        WatchStatus status,
-        long sourceSeqNo,
-        long sourcePrimaryTerm
-    ) {
-        this.id = id;
-        this.trigger = trigger;
-        this.input = input;
-        this.condition = condition;
-        this.transform = transform;
-        this.actions = actions;
-        this.throttlePeriod = throttlePeriod;
-        this.metadata = metadata;
-        this.status = status;
-        this.sourceSeqNo = sourceSeqNo;
-        this.sourcePrimaryTerm = sourcePrimaryTerm;
-    }
-
-    public String id() {
-        return id;
-    }
-
-    public Trigger trigger() {
-        return trigger;
-    }
-
-    public ExecutableInput<? extends Input, ? extends Input.Result> input() {
-        return input;
-    }
-
-    public ExecutableCondition condition() {
-        return condition;
-    }
-
-    public ExecutableTransform<? extends Transform, ? extends Transform.Result> transform() {
-        return transform;
-    }
-
-    public TimeValue throttlePeriod() {
-        return throttlePeriod;
-    }
-
-    public List<ActionWrapper> actions() {
-        return actions;
-    }
-
-    public Map<String, Object> metadata() {
-        return metadata;
-    }
-
-    public WatchStatus status() {
-        return status;
-    }
 
     /**
      * The sequence number of the document that was used to create this watch, {@link SequenceNumbers#UNASSIGNED_SEQ_NO}
      * if the watch wasn't read from a document
      ***/
-    public long getSourceSeqNo() {
+    @Override
+    public long sourceSeqNo() {
         return sourceSeqNo;
     }
 
@@ -120,14 +55,15 @@ public class Watch implements ToXContentObject {
      * The primary term of the document that was used to create this watch, {@link SequenceNumbers#UNASSIGNED_PRIMARY_TERM}
      * if the watch wasn't read from a document
      ***/
-    public long getSourcePrimaryTerm() {
+    @Override
+    public long sourcePrimaryTerm() {
         return sourcePrimaryTerm;
     }
 
     /**
      * Sets the state of this watch to in/active
      *
-     * @return  {@code true} if the status of this watch changed, {@code false} otherwise.
+     * @return {@code true} if the status of this watch changed, {@code false} otherwise.
      */
     public boolean setState(boolean active, ZonedDateTime now) {
         return status.setActive(active, now);
@@ -136,7 +72,7 @@ public class Watch implements ToXContentObject {
     /**
      * Acks this watch.
      *
-     * @return  {@code true} if the status of this watch changed, {@code false} otherwise.
+     * @return {@code true} if the status of this watch changed, {@code false} otherwise.
      */
     public boolean ack(ZonedDateTime now, String... actionIds) {
         return status.onAck(now, actionIds);

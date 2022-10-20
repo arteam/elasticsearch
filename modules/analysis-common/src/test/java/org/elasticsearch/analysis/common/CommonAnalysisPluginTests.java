@@ -229,10 +229,10 @@ public class CommonAnalysisPluginTests extends ESTestCase {
 
         try (CommonAnalysisPlugin commonAnalysisPlugin = new CommonAnalysisPlugin()) {
             Map<String, TokenizerFactory> tokenizers = createTestAnalysis(
-                IndexSettingsModule.newIndexSettings("index", settings),
-                settings,
-                commonAnalysisPlugin
-            ).tokenizer;
+                    IndexSettingsModule.newIndexSettings("index", settings),
+                    settings,
+                    commonAnalysisPlugin
+            ).tokenizer();
             TokenizerFactory tokenizerFactory = tokenizers.get(deprecatedName);
 
             Tokenizer tokenizer = tokenizerFactory.create();

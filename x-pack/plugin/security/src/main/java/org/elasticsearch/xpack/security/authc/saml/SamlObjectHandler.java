@@ -68,7 +68,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-
 import javax.xml.parsers.DocumentBuilder;
 
 import static org.elasticsearch.core.Strings.format;
@@ -432,15 +431,5 @@ public class SamlObjectHandler {
         }
     }
 
-    static class ParsedQueryString {
-        final String samlMessage;
-        final boolean hasSignature;
-        final String relayState;
-
-        ParsedQueryString(String samlMessage, boolean hasSignature, String relayState) {
-            this.samlMessage = samlMessage;
-            this.hasSignature = hasSignature;
-            this.relayState = relayState;
-        }
-    }
+    record ParsedQueryString(String samlMessage, boolean hasSignature, String relayState) {}
 }

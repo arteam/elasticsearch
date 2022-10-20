@@ -120,7 +120,7 @@ public class EqlSearchIT extends ESRestTestCase {
         try (
             RestClient client = buildClient(
                 restClientSettings(),
-                newNodes.stream().map(TestNode::getPublishAddress).toArray(HttpHost[]::new)
+                newNodes.stream().map(TestNode::publishAddress).toArray(HttpHost[]::new)
             )
         ) {
             // filter only the relevant bits of the response
@@ -284,7 +284,7 @@ public class EqlSearchIT extends ESRestTestCase {
         try (
             RestClient client = buildClient(
                 restClientSettings(),
-                nodesList.stream().map(TestNode::getPublishAddress).toArray(HttpHost[]::new)
+                nodesList.stream().map(TestNode::publishAddress).toArray(HttpHost[]::new)
             )
         ) {
             // filter only the relevant bits of the response
@@ -301,7 +301,7 @@ public class EqlSearchIT extends ESRestTestCase {
         try (
             RestClient client = buildClient(
                 restClientSettings(),
-                nodesList.stream().map(TestNode::getPublishAddress).toArray(HttpHost[]::new)
+                nodesList.stream().map(TestNode::publishAddress).toArray(HttpHost[]::new)
             )
         ) {
             String filterPath = "filter_path=hits.sequences.join_keys,hits.sequences.events._id,hits.sequences.events._source";

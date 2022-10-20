@@ -29,73 +29,18 @@ import java.util.Set;
 import static java.util.Collections.unmodifiableSet;
 import static org.elasticsearch.core.TimeValue.timeValueMillis;
 
-public class SearchInput implements Input {
+public record SearchInput(
+    WatcherSearchTemplateRequest request,
+    @Nullable Set<String> extractKeys,
+    @Nullable TimeValue timeout,
+    @Nullable ZoneId dynamicNameTimeZone
+) implements Input {
 
     public static final String TYPE = "search";
-
-    private final WatcherSearchTemplateRequest request;
-    @Nullable
-    private final Set<String> extractKeys;
-    @Nullable
-    private final TimeValue timeout;
-    @Nullable
-    private final ZoneId dynamicNameTimeZone;
-
-    public SearchInput(
-        WatcherSearchTemplateRequest request,
-        @Nullable Set<String> extractKeys,
-        @Nullable TimeValue timeout,
-        @Nullable ZoneId dynamicNameTimeZone
-    ) {
-        this.request = request;
-        this.extractKeys = extractKeys;
-        this.timeout = timeout;
-        this.dynamicNameTimeZone = dynamicNameTimeZone;
-    }
 
     @Override
     public String type() {
         return TYPE;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        SearchInput that = (SearchInput) o;
-        return Objects.equals(request, that.request)
-            && Objects.equals(extractKeys, that.extractKeys)
-            && Objects.equals(timeout, that.timeout)
-            && Objects.equals(dynamicNameTimeZone, that.dynamicNameTimeZone);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = request != null ? request.hashCode() : 0;
-        result = 31 * result + (extractKeys != null ? extractKeys.hashCode() : 0);
-        result = 31 * result + (timeout != null ? timeout.hashCode() : 0);
-        result = 31 * result + (dynamicNameTimeZone != null ? dynamicNameTimeZone.hashCode() : 0);
-        return result;
-    }
-
-    public WatcherSearchTemplateRequest getRequest() {
-        return request;
-    }
-
-    public Set<String> getExtractKeys() {
-        return extractKeys;
-    }
-
-    public TimeValue getTimeout() {
-        return timeout;
-    }
-
-    public ZoneId getDynamicNameTimeZone() {
-        return dynamicNameTimeZone;
     }
 
     @Override

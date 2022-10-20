@@ -275,22 +275,7 @@ public class TaskBatcherTests extends TaskExecutorTests {
         latch.await();
     }
 
-    private static class SimpleTask {
-        private final int id;
-
-        private SimpleTask(int id) {
-            this.id = id;
-        }
-
-        @Override
-        public int hashCode() {
-            return super.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return super.equals(obj);
-        }
+    private record SimpleTask(int id) {
 
         @Override
         public String toString() {

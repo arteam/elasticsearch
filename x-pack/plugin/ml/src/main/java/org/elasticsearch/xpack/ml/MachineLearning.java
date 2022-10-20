@@ -548,11 +548,11 @@ public class MachineLearning extends Plugin
         }
 
         InferenceProcessor.Factory inferenceFactory = new InferenceProcessor.Factory(
-            parameters.client,
-            parameters.ingestService.getClusterService(),
+                parameters.client(),
+            parameters.ingestService().getClusterService(),
             this.settings
         );
-        parameters.ingestService.addIngestClusterStateListener(inferenceFactory);
+        parameters.ingestService().addIngestClusterStateListener(inferenceFactory);
         return Collections.singletonMap(InferenceProcessor.TYPE, inferenceFactory);
     }
 

@@ -512,7 +512,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
     public Pipeline getPipeline(String id) {
         PipelineHolder holder = pipelines.get(id);
         if (holder != null) {
-            return holder.pipeline;
+            return holder.pipeline();
         } else {
             return null;
         }
@@ -759,7 +759,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
             if (holder == null) {
                 throw new IllegalArgumentException("pipeline with id [" + pipelineId + "] does not exist");
             }
-            Pipeline pipeline = holder.pipeline;
+            Pipeline pipeline = holder.pipeline();
             String originalIndex = indexRequest.indices()[0];
             innerExecute(slot, indexRequest, pipeline, onDropped, e -> {
                 if (e != null) {
@@ -834,7 +834,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
         IngestStats.Builder statsBuilder = new IngestStats.Builder();
         statsBuilder.addTotalMetrics(totalMetrics);
         pipelines.forEach((id, holder) -> {
-            Pipeline pipeline = holder.pipeline;
+            Pipeline pipeline = holder.pipeline();
             CompoundProcessor rootProcessor = pipeline.getCompoundProcessor();
             statsBuilder.addPipelineMetrics(id, pipeline.getMetrics());
             List<Tuple<Processor, IngestMetric>> processorMetrics = new ArrayList<>();
@@ -1017,7 +1017,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
         // or the pipeline configuration has been modified
         for (PipelineConfiguration newConfiguration : newIngestMetadata.getPipelines().values()) {
             PipelineHolder previous = existingPipelines.get(newConfiguration.getId());
-            if (previous != null && previous.configuration.equals(newConfiguration)) {
+            if (previous != null && previous.configuration().equals(newConfiguration)) {
                 continue;
             }
 
@@ -1036,7 +1036,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
                 if (previous == null) {
                     continue;
                 }
-                Pipeline oldPipeline = previous.pipeline;
+                Pipeline oldPipeline = previous.pipeline();
                 newPipeline.getMetrics().add(oldPipeline.getMetrics());
                 List<Tuple<Processor, IngestMetric>> oldPerProcessMetrics = new ArrayList<>();
                 List<Tuple<Processor, IngestMetric>> newPerProcessMetrics = new ArrayList<>();
@@ -1140,7 +1140,7 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
     public <P extends Processor> Collection<String> getPipelineWithProcessorType(Class<P> clazz, Predicate<P> predicate) {
         List<String> matchedPipelines = new LinkedList<>();
         for (PipelineHolder holder : pipelines.values()) {
-            String pipelineId = holder.pipeline.getId();
+            String pipelineId = holder.pipeline().getId();
             List<P> processors = getProcessorsInPipeline(pipelineId, clazz);
             if (processors.isEmpty() == false && processors.stream().anyMatch(predicate)) {
                 matchedPipelines.add(pipelineId);
@@ -1151,9 +1151,9 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
 
     public synchronized void reloadPipeline(String id) throws Exception {
         PipelineHolder holder = pipelines.get(id);
-        Pipeline updatedPipeline = Pipeline.create(id, holder.configuration.getConfigAsMap(), processorFactories, scriptService);
+        Pipeline updatedPipeline = Pipeline.create(id, holder.configuration().getConfigAsMap(), processorFactories, scriptService);
         Map<String, PipelineHolder> updatedPipelines = new HashMap<>(this.pipelines);
-        updatedPipelines.put(id, new PipelineHolder(holder.configuration, updatedPipeline));
+        updatedPipelines.put(id, new PipelineHolder(holder.configuration(), updatedPipeline));
         this.pipelines = Map.copyOf(updatedPipelines);
     }
 
@@ -1176,14 +1176,11 @@ public class IngestService implements ClusterStateApplier, ReportingService<Inge
         return new Pipeline(id, description, null, null, new CompoundProcessor(failureProcessor));
     }
 
-    static class PipelineHolder {
+    record PipelineHolder(PipelineConfiguration configuration, Pipeline pipeline) {
 
-        final PipelineConfiguration configuration;
-        final Pipeline pipeline;
-
-        PipelineHolder(PipelineConfiguration configuration, Pipeline pipeline) {
-            this.configuration = Objects.requireNonNull(configuration);
-            this.pipeline = Objects.requireNonNull(pipeline);
+        PipelineHolder {
+            Objects.requireNonNull(configuration);
+            Objects.requireNonNull(pipeline);
         }
     }
 

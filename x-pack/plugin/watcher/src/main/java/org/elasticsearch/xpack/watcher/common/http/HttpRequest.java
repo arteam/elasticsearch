@@ -34,32 +34,25 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
-public class HttpRequest implements ToXContentObject {
-
-    final String host;
-    final int port;
-    final Scheme scheme;
-    final HttpMethod method;
-    @Nullable
-    final String path;
-    final Map<String, String> params;
-    final Map<String, String> headers;
-    @Nullable
-    final BasicAuth auth;
-    @Nullable
-    final String body;
-    @Nullable
-    final TimeValue connectionTimeout;
-    @Nullable
-    final TimeValue readTimeout;
-    @Nullable
-    final HttpProxy proxy;
+public record HttpRequest(
+    String host,
+    int port,
+    Scheme scheme,
+    HttpMethod method,
+    @Nullable String path,
+    Map<String, String> params,
+    Map<String, String> headers,
+    @Nullable BasicAuth auth,
+    @Nullable String body,
+    @Nullable TimeValue connectionTimeout,
+    @Nullable TimeValue readTimeout,
+    @Nullable HttpProxy proxy
+) implements ToXContentObject {
 
     public HttpRequest(
         String host,
@@ -89,56 +82,8 @@ public class HttpRequest implements ToXContentObject {
         this.proxy = proxy;
     }
 
-    public Scheme scheme() {
-        return scheme;
-    }
-
-    public String host() {
-        return host;
-    }
-
-    public int port() {
-        return port;
-    }
-
-    public HttpMethod method() {
-        return method;
-    }
-
-    public String path() {
-        return path;
-    }
-
-    public Map<String, String> params() {
-        return params;
-    }
-
-    public Map<String, String> headers() {
-        return headers;
-    }
-
-    public BasicAuth auth() {
-        return auth;
-    }
-
     public boolean hasBody() {
-        return body != null;
-    }
-
-    public String body() {
-        return body;
-    }
-
-    public TimeValue connectionTimeout() {
-        return connectionTimeout;
-    }
-
-    public TimeValue readTimeout() {
-        return readTimeout;
-    }
-
-    public HttpProxy proxy() {
-        return proxy;
+        return body() != null;
     }
 
     public static String encodeUrl(String text) {
@@ -150,47 +95,47 @@ public class HttpRequest implements ToXContentObject {
     }
 
     @Override
-    public XContentBuilder toXContent(XContentBuilder builder, ToXContent.Params toXContentParams) throws IOException {
+    public XContentBuilder toXContent(XContentBuilder builder, Params toXContentParams) throws IOException {
         builder.startObject();
-        builder.field(Field.HOST.getPreferredName(), host);
-        builder.field(Field.PORT.getPreferredName(), port);
-        builder.field(Field.SCHEME.getPreferredName(), scheme.value());
-        builder.field(Field.METHOD.getPreferredName(), method.value());
-        if (path != null) {
-            builder.field(Field.PATH.getPreferredName(), path);
+        builder.field(Field.HOST.getPreferredName(), host());
+        builder.field(Field.PORT.getPreferredName(), port());
+        builder.field(Field.SCHEME.getPreferredName(), scheme().value());
+        builder.field(Field.METHOD.getPreferredName(), method().value());
+        if (path() != null) {
+            builder.field(Field.PATH.getPreferredName(), path());
         }
-        if (this.params.isEmpty() == false) {
-            builder.field(Field.PARAMS.getPreferredName(), this.params);
+        if (this.params().isEmpty() == false) {
+            builder.field(Field.PARAMS.getPreferredName(), this.params());
         }
-        if (headers.isEmpty() == false) {
+        if (headers().isEmpty() == false) {
             if (WatcherParams.hideSecrets(toXContentParams)) {
-                builder.field(Field.HEADERS.getPreferredName(), sanitizeHeaders(headers));
+                builder.field(Field.HEADERS.getPreferredName(), sanitizeHeaders(headers()));
             } else {
-                builder.field(Field.HEADERS.getPreferredName(), headers);
+                builder.field(Field.HEADERS.getPreferredName(), headers());
             }
         }
-        if (auth != null) {
-            builder.startObject(Field.AUTH.getPreferredName()).field(BasicAuth.TYPE, auth, toXContentParams).endObject();
+        if (auth() != null) {
+            builder.startObject(Field.AUTH.getPreferredName()).field(BasicAuth.TYPE, auth(), toXContentParams).endObject();
         }
-        if (body != null) {
-            builder.field(Field.BODY.getPreferredName(), body);
+        if (body() != null) {
+            builder.field(Field.BODY.getPreferredName(), body());
         }
-        if (connectionTimeout != null) {
+        if (connectionTimeout() != null) {
             builder.humanReadableField(
                 HttpRequest.Field.CONNECTION_TIMEOUT.getPreferredName(),
                 HttpRequest.Field.CONNECTION_TIMEOUT_HUMAN.getPreferredName(),
-                connectionTimeout
+                connectionTimeout()
             );
         }
-        if (readTimeout != null) {
+        if (readTimeout() != null) {
             builder.humanReadableField(
                 HttpRequest.Field.READ_TIMEOUT.getPreferredName(),
                 HttpRequest.Field.READ_TIMEOUT_HUMAN.getPreferredName(),
-                readTimeout
+                readTimeout()
             );
         }
-        if (proxy != null) {
-            proxy.toXContent(builder, toXContentParams);
+        if (proxy() != null) {
+            proxy().toXContent(builder, toXContentParams);
         }
         return builder.endObject();
     }
@@ -205,58 +150,30 @@ public class HttpRequest implements ToXContentObject {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        HttpRequest that = (HttpRequest) o;
-        return port == that.port
-            && Objects.equals(host, that.host)
-            && scheme == that.scheme
-            && method == that.method
-            && Objects.equals(path, that.path)
-            && Objects.equals(params, that.params)
-            && Objects.equals(headers, that.headers)
-            && Objects.equals(auth, that.auth)
-            && Objects.equals(connectionTimeout, that.connectionTimeout)
-            && Objects.equals(readTimeout, that.readTimeout)
-            && Objects.equals(proxy, that.proxy)
-            && Objects.equals(body, that.body);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(host, port, scheme, method, path, params, headers, auth, connectionTimeout, readTimeout, body, proxy);
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("method=[").append(method).append("], ");
-        sb.append("scheme=[").append(scheme).append("], ");
-        sb.append("host=[").append(host).append("], ");
-        sb.append("port=[").append(port).append("], ");
-        sb.append("path=[").append(path).append("], ");
-        if (headers.isEmpty() == false) {
+        sb.append("method=[").append(method()).append("], ");
+        sb.append("scheme=[").append(scheme()).append("], ");
+        sb.append("host=[").append(host()).append("], ");
+        sb.append("port=[").append(port()).append("], ");
+        sb.append("path=[").append(path()).append("], ");
+        if (headers().isEmpty() == false) {
             sb.append(
-                sanitizeHeaders(headers).entrySet()
+                sanitizeHeaders(headers()).entrySet()
                     .stream()
                     .map(header -> header.getKey() + ": " + header.getValue())
                     .collect(Collectors.joining(", ", "headers=[", "], "))
             );
         }
-        if (auth != null) {
+        if (auth() != null) {
             sb.append("auth=[").append(BasicAuth.TYPE).append("], ");
         }
-        sb.append("connection_timeout=[").append(connectionTimeout).append("], ");
-        sb.append("read_timeout=[").append(readTimeout).append("], ");
-        if (proxy != null) {
-            sb.append("proxy=[").append(proxy).append("], ");
+        sb.append("connection_timeout=[").append(connectionTimeout()).append("], ");
+        sb.append("read_timeout=[").append(readTimeout()).append("], ");
+        if (proxy() != null) {
+            sb.append("proxy=[").append(proxy()).append("], ");
         }
-        sb.append("body=[").append(body).append("], ");
+        sb.append("body=[").append(body()).append("], ");
         return sb.toString();
     }
 
@@ -544,12 +461,12 @@ public class HttpRequest implements ToXContentObject {
     /**
      * Write a request via toXContent, but filter certain parts of it - this is needed to not expose secrets
      *
-     * @param request        The HttpRequest object to serialize
-     * @param xContentType   The XContentType from the parent outputstream builder
-     * @param params         The ToXContentParams from the parent write
-     * @param excludeField   The field to exclude
-     * @return               A bytearrayinputstream that contains the serialized request
-     * @throws IOException   if an IOException is triggered in the underlying toXContent method
+     * @param request      The HttpRequest object to serialize
+     * @param xContentType The XContentType from the parent outputstream builder
+     * @param params       The ToXContentParams from the parent write
+     * @param excludeField The field to exclude
+     * @return A bytearrayinputstream that contains the serialized request
+     * @throws IOException if an IOException is triggered in the underlying toXContent method
      */
     public static InputStream filterToXContent(HttpRequest request, XContentType xContentType, Params params, String excludeField)
         throws IOException {

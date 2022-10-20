@@ -78,13 +78,6 @@ public final class FetchDocValuesPhase implements FetchSubPhase {
         };
     }
 
-    private static class DocValueField {
-        private final String field;
-        private final ValueFetcher fetcher;
-
-        DocValueField(String field, ValueFetcher fetcher) {
-            this.field = field;
-            this.fetcher = fetcher;
-        }
+    private record DocValueField(String field, ValueFetcher fetcher) {
     }
 }

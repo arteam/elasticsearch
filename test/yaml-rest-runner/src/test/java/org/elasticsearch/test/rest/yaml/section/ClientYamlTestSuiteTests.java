@@ -85,83 +85,83 @@ public class ClientYamlTestSuiteTests extends AbstractClientYamlTestFragmentPars
         ClientYamlTestSuite restTestSuite = ClientYamlTestSuite.parse(getTestClass().getName(), getTestName(), parser);
 
         assertThat(restTestSuite, notNullValue());
-        assertThat(restTestSuite.getName(), equalTo(getTestName()));
-        assertThat(restTestSuite.getSetupSection(), notNullValue());
+        assertThat(restTestSuite.name(), equalTo(getTestName()));
+        assertThat(restTestSuite.setupSection(), notNullValue());
         if (includeSetup) {
-            assertThat(restTestSuite.getSetupSection().isEmpty(), equalTo(false));
-            assertThat(restTestSuite.getSetupSection().getSkipSection().isEmpty(), equalTo(true));
-            assertThat(restTestSuite.getSetupSection().getExecutableSections().size(), equalTo(1));
-            final ExecutableSection maybeDoSection = restTestSuite.getSetupSection().getExecutableSections().get(0);
+            assertThat(restTestSuite.setupSection().isEmpty(), equalTo(false));
+            assertThat(restTestSuite.setupSection().skipSection().isEmpty(), equalTo(true));
+            assertThat(restTestSuite.setupSection().executableSections().size(), equalTo(1));
+            final ExecutableSection maybeDoSection = restTestSuite.setupSection().executableSections().get(0);
             assertThat(maybeDoSection, instanceOf(DoSection.class));
             final DoSection doSection = (DoSection) maybeDoSection;
             assertThat(doSection.getApiCallSection().getApi(), equalTo("indices.create"));
             assertThat(doSection.getApiCallSection().getParams().size(), equalTo(1));
             assertThat(doSection.getApiCallSection().getParams().get("index"), equalTo("test_index"));
         } else {
-            assertThat(restTestSuite.getSetupSection().isEmpty(), equalTo(true));
+            assertThat(restTestSuite.setupSection().isEmpty(), equalTo(true));
         }
 
-        assertThat(restTestSuite.getTeardownSection(), notNullValue());
+        assertThat(restTestSuite.teardownSection(), notNullValue());
         if (includeTeardown) {
-            assertThat(restTestSuite.getTeardownSection().isEmpty(), equalTo(false));
-            assertThat(restTestSuite.getTeardownSection().getSkipSection().isEmpty(), equalTo(true));
-            assertThat(restTestSuite.getTeardownSection().getDoSections().size(), equalTo(1));
+            assertThat(restTestSuite.teardownSection().isEmpty(), equalTo(false));
+            assertThat(restTestSuite.teardownSection().getSkipSection().isEmpty(), equalTo(true));
+            assertThat(restTestSuite.teardownSection().getDoSections().size(), equalTo(1));
             assertThat(
-                ((DoSection) restTestSuite.getTeardownSection().getDoSections().get(0)).getApiCallSection().getApi(),
+                ((DoSection) restTestSuite.teardownSection().getDoSections().get(0)).getApiCallSection().getApi(),
                 equalTo("indices.delete")
             );
             assertThat(
-                ((DoSection) restTestSuite.getTeardownSection().getDoSections().get(0)).getApiCallSection().getParams().size(),
+                ((DoSection) restTestSuite.teardownSection().getDoSections().get(0)).getApiCallSection().getParams().size(),
                 equalTo(1)
             );
             assertThat(
-                ((DoSection) restTestSuite.getTeardownSection().getDoSections().get(0)).getApiCallSection().getParams().get("index"),
+                ((DoSection) restTestSuite.teardownSection().getDoSections().get(0)).getApiCallSection().getParams().get("index"),
                 equalTo("test_index")
             );
         } else {
-            assertThat(restTestSuite.getTeardownSection().isEmpty(), equalTo(true));
+            assertThat(restTestSuite.teardownSection().isEmpty(), equalTo(true));
         }
 
-        assertThat(restTestSuite.getTestSections().size(), equalTo(2));
+        assertThat(restTestSuite.testSections().size(), equalTo(2));
 
-        assertThat(restTestSuite.getTestSections().get(0).getName(), equalTo("Get index mapping"));
-        assertThat(restTestSuite.getTestSections().get(0).getSkipSection().isEmpty(), equalTo(true));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().size(), equalTo(3));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(0), instanceOf(DoSection.class));
-        DoSection doSection = (DoSection) restTestSuite.getTestSections().get(0).getExecutableSections().get(0);
+        assertThat(restTestSuite.testSections().get(0).name(), equalTo("Get index mapping"));
+        assertThat(restTestSuite.testSections().get(0).skipSection().isEmpty(), equalTo(true));
+        assertThat(restTestSuite.testSections().get(0).executableSections().size(), equalTo(3));
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(0), instanceOf(DoSection.class));
+        DoSection doSection = (DoSection) restTestSuite.testSections().get(0).executableSections().get(0);
         assertThat(doSection.getApiCallSection().getApi(), equalTo("indices.get_mapping"));
         assertThat(doSection.getApiCallSection().getParams().size(), equalTo(1));
         assertThat(doSection.getApiCallSection().getParams().get("index"), equalTo("test_index"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(1), instanceOf(MatchAssertion.class));
-        MatchAssertion matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(1);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(1), instanceOf(MatchAssertion.class));
+        MatchAssertion matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(1);
         assertThat(matchAssertion.getField(), equalTo("test_index.test_type.properties.text.type"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("string"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(2), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(2);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(2), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(2);
         assertThat(matchAssertion.getField(), equalTo("test_index.test_type.properties.text.analyzer"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("whitespace"));
 
-        assertThat(restTestSuite.getTestSections().get(1).getName(), equalTo("Get type mapping - pre 6.0"));
-        assertThat(restTestSuite.getTestSections().get(1).getSkipSection().isEmpty(), equalTo(false));
+        assertThat(restTestSuite.testSections().get(1).name(), equalTo("Get type mapping - pre 6.0"));
+        assertThat(restTestSuite.testSections().get(1).skipSection().isEmpty(), equalTo(false));
         assertThat(
-            restTestSuite.getTestSections().get(1).getSkipSection().getReason(),
+            restTestSuite.testSections().get(1).skipSection().getReason(),
             equalTo("for newer versions the index name is always returned")
         );
-        assertThat(restTestSuite.getTestSections().get(1).getSkipSection().getLowerVersion(), equalTo(Version.fromString("6.0.0")));
-        assertThat(restTestSuite.getTestSections().get(1).getSkipSection().getUpperVersion(), equalTo(Version.CURRENT));
-        assertThat(restTestSuite.getTestSections().get(1).getExecutableSections().size(), equalTo(3));
-        assertThat(restTestSuite.getTestSections().get(1).getExecutableSections().get(0), instanceOf(DoSection.class));
-        doSection = (DoSection) restTestSuite.getTestSections().get(1).getExecutableSections().get(0);
+        assertThat(restTestSuite.testSections().get(1).skipSection().getLowerVersion(), equalTo(Version.fromString("6.0.0")));
+        assertThat(restTestSuite.testSections().get(1).skipSection().getUpperVersion(), equalTo(Version.CURRENT));
+        assertThat(restTestSuite.testSections().get(1).executableSections().size(), equalTo(3));
+        assertThat(restTestSuite.testSections().get(1).executableSections().get(0), instanceOf(DoSection.class));
+        doSection = (DoSection) restTestSuite.testSections().get(1).executableSections().get(0);
         assertThat(doSection.getApiCallSection().getApi(), equalTo("indices.get_mapping"));
         assertThat(doSection.getApiCallSection().getParams().size(), equalTo(2));
         assertThat(doSection.getApiCallSection().getParams().get("index"), equalTo("test_index"));
         assertThat(doSection.getApiCallSection().getParams().get("type"), equalTo("test_type"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(1), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(1).getExecutableSections().get(1);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(1), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(1).executableSections().get(1);
         assertThat(matchAssertion.getField(), equalTo("test_type.properties.text.type"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("string"));
-        assertThat(restTestSuite.getTestSections().get(1).getExecutableSections().get(2), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(1).getExecutableSections().get(2);
+        assertThat(restTestSuite.testSections().get(1).executableSections().get(2), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(1).executableSections().get(2);
         assertThat(matchAssertion.getField(), equalTo("test_type.properties.text.analyzer"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("whitespace"));
     }
@@ -199,64 +199,64 @@ public class ClientYamlTestSuiteTests extends AbstractClientYamlTestFragmentPars
         ClientYamlTestSuite restTestSuite = ClientYamlTestSuite.parse(getTestClass().getName(), getTestName(), parser);
 
         assertThat(restTestSuite, notNullValue());
-        assertThat(restTestSuite.getName(), equalTo(getTestName()));
+        assertThat(restTestSuite.name(), equalTo(getTestName()));
 
-        assertThat(restTestSuite.getSetupSection().isEmpty(), equalTo(true));
+        assertThat(restTestSuite.setupSection().isEmpty(), equalTo(true));
 
-        assertThat(restTestSuite.getTestSections().size(), equalTo(1));
+        assertThat(restTestSuite.testSections().size(), equalTo(1));
 
-        assertThat(restTestSuite.getTestSections().get(0).getName(), equalTo("Index with ID"));
-        assertThat(restTestSuite.getTestSections().get(0).getSkipSection().isEmpty(), equalTo(true));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().size(), equalTo(12));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(0), instanceOf(DoSection.class));
-        DoSection doSection = (DoSection) restTestSuite.getTestSections().get(0).getExecutableSections().get(0);
+        assertThat(restTestSuite.testSections().get(0).name(), equalTo("Index with ID"));
+        assertThat(restTestSuite.testSections().get(0).skipSection().isEmpty(), equalTo(true));
+        assertThat(restTestSuite.testSections().get(0).executableSections().size(), equalTo(12));
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(0), instanceOf(DoSection.class));
+        DoSection doSection = (DoSection) restTestSuite.testSections().get(0).executableSections().get(0);
         assertThat(doSection.getCatch(), nullValue());
         assertThat(doSection.getApiCallSection().getApi(), equalTo("index"));
         assertThat(doSection.getApiCallSection().getParams().size(), equalTo(3));
         assertThat(doSection.getApiCallSection().hasBody(), equalTo(true));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(1), instanceOf(IsTrueAssertion.class));
-        IsTrueAssertion trueAssertion = (IsTrueAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(1);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(1), instanceOf(IsTrueAssertion.class));
+        IsTrueAssertion trueAssertion = (IsTrueAssertion) restTestSuite.testSections().get(0).executableSections().get(1);
         assertThat(trueAssertion.getField(), equalTo("ok"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(2), instanceOf(MatchAssertion.class));
-        MatchAssertion matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(2);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(2), instanceOf(MatchAssertion.class));
+        MatchAssertion matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(2);
         assertThat(matchAssertion.getField(), equalTo("_index"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("test-weird-index-中文"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(3), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(3);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(3), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(3);
         assertThat(matchAssertion.getField(), equalTo("_type"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("weird.type"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(4), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(4);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(4), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(4);
         assertThat(matchAssertion.getField(), equalTo("_id"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("1"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(5), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(5);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(5), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(5);
         assertThat(matchAssertion.getField(), equalTo("_version"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("1"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(6), instanceOf(DoSection.class));
-        doSection = (DoSection) restTestSuite.getTestSections().get(0).getExecutableSections().get(6);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(6), instanceOf(DoSection.class));
+        doSection = (DoSection) restTestSuite.testSections().get(0).executableSections().get(6);
         assertThat(doSection.getCatch(), nullValue());
         assertThat(doSection.getApiCallSection().getApi(), equalTo("get"));
         assertThat(doSection.getApiCallSection().getParams().size(), equalTo(3));
         assertThat(doSection.getApiCallSection().hasBody(), equalTo(false));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(7), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(7);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(7), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(7);
         assertThat(matchAssertion.getField(), equalTo("_index"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("test-weird-index-中文"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(8), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(8);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(8), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(8);
         assertThat(matchAssertion.getField(), equalTo("_type"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("weird.type"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(9), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(9);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(9), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(9);
         assertThat(matchAssertion.getField(), equalTo("_id"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("1"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(10), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(10);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(10), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(10);
         assertThat(matchAssertion.getField(), equalTo("_version"));
         assertThat(matchAssertion.getExpectedValue().toString(), equalTo("1"));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(11), instanceOf(MatchAssertion.class));
-        matchAssertion = (MatchAssertion) restTestSuite.getTestSections().get(0).getExecutableSections().get(11);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(11), instanceOf(MatchAssertion.class));
+        matchAssertion = (MatchAssertion) restTestSuite.testSections().get(0).executableSections().get(11);
         assertThat(matchAssertion.getField(), equalTo("_source"));
         assertThat(matchAssertion.getExpectedValue(), instanceOf(Map.class));
         assertThat(((Map) matchAssertion.getExpectedValue()).get("foo").toString(), equalTo("bar"));
@@ -311,41 +311,41 @@ public class ClientYamlTestSuiteTests extends AbstractClientYamlTestFragmentPars
         ClientYamlTestSuite restTestSuite = ClientYamlTestSuite.parse(getTestClass().getName(), getTestName(), parser);
 
         assertThat(restTestSuite, notNullValue());
-        assertThat(restTestSuite.getName(), equalTo(getTestName()));
+        assertThat(restTestSuite.name(), equalTo(getTestName()));
 
-        assertThat(restTestSuite.getSetupSection().isEmpty(), equalTo(true));
+        assertThat(restTestSuite.setupSection().isEmpty(), equalTo(true));
 
-        assertThat(restTestSuite.getTestSections().size(), equalTo(2));
+        assertThat(restTestSuite.testSections().size(), equalTo(2));
 
-        assertThat(restTestSuite.getTestSections().get(0).getName(), equalTo("Missing document (partial doc)"));
-        assertThat(restTestSuite.getTestSections().get(0).getSkipSection().isEmpty(), equalTo(true));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().size(), equalTo(2));
+        assertThat(restTestSuite.testSections().get(0).name(), equalTo("Missing document (partial doc)"));
+        assertThat(restTestSuite.testSections().get(0).skipSection().isEmpty(), equalTo(true));
+        assertThat(restTestSuite.testSections().get(0).executableSections().size(), equalTo(2));
 
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(0), instanceOf(DoSection.class));
-        DoSection doSection = (DoSection) restTestSuite.getTestSections().get(0).getExecutableSections().get(0);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(0), instanceOf(DoSection.class));
+        DoSection doSection = (DoSection) restTestSuite.testSections().get(0).executableSections().get(0);
         assertThat(doSection.getCatch(), equalTo("missing"));
         assertThat(doSection.getApiCallSection().getApi(), equalTo("update"));
         assertThat(doSection.getApiCallSection().getParams().size(), equalTo(3));
         assertThat(doSection.getApiCallSection().hasBody(), equalTo(true));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(1), instanceOf(DoSection.class));
-        doSection = (DoSection) restTestSuite.getTestSections().get(0).getExecutableSections().get(1);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(1), instanceOf(DoSection.class));
+        doSection = (DoSection) restTestSuite.testSections().get(0).executableSections().get(1);
         assertThat(doSection.getCatch(), nullValue());
         assertThat(doSection.getApiCallSection().getApi(), equalTo("update"));
         assertThat(doSection.getApiCallSection().getParams().size(), equalTo(4));
         assertThat(doSection.getApiCallSection().hasBody(), equalTo(true));
 
-        assertThat(restTestSuite.getTestSections().get(1).getName(), equalTo("Missing document (script)"));
-        assertThat(restTestSuite.getTestSections().get(1).getSkipSection().isEmpty(), equalTo(true));
-        assertThat(restTestSuite.getTestSections().get(1).getExecutableSections().size(), equalTo(2));
-        assertThat(restTestSuite.getTestSections().get(1).getExecutableSections().get(0), instanceOf(DoSection.class));
-        assertThat(restTestSuite.getTestSections().get(1).getExecutableSections().get(1), instanceOf(DoSection.class));
-        doSection = (DoSection) restTestSuite.getTestSections().get(1).getExecutableSections().get(0);
+        assertThat(restTestSuite.testSections().get(1).name(), equalTo("Missing document (script)"));
+        assertThat(restTestSuite.testSections().get(1).skipSection().isEmpty(), equalTo(true));
+        assertThat(restTestSuite.testSections().get(1).executableSections().size(), equalTo(2));
+        assertThat(restTestSuite.testSections().get(1).executableSections().get(0), instanceOf(DoSection.class));
+        assertThat(restTestSuite.testSections().get(1).executableSections().get(1), instanceOf(DoSection.class));
+        doSection = (DoSection) restTestSuite.testSections().get(1).executableSections().get(0);
         assertThat(doSection.getCatch(), equalTo("missing"));
         assertThat(doSection.getApiCallSection().getApi(), equalTo("update"));
         assertThat(doSection.getApiCallSection().getParams().size(), equalTo(3));
         assertThat(doSection.getApiCallSection().hasBody(), equalTo(true));
-        assertThat(restTestSuite.getTestSections().get(0).getExecutableSections().get(1), instanceOf(DoSection.class));
-        doSection = (DoSection) restTestSuite.getTestSections().get(1).getExecutableSections().get(1);
+        assertThat(restTestSuite.testSections().get(0).executableSections().get(1), instanceOf(DoSection.class));
+        doSection = (DoSection) restTestSuite.testSections().get(1).executableSections().get(1);
         assertThat(doSection.getCatch(), nullValue());
         assertThat(doSection.getApiCallSection().getApi(), equalTo("update"));
         assertThat(doSection.getApiCallSection().getParams().size(), equalTo(4));
@@ -409,17 +409,17 @@ public class ClientYamlTestSuiteTests extends AbstractClientYamlTestFragmentPars
         ClientYamlTestSuite restTestSuite = ClientYamlTestSuite.parse(getTestClass().getName(), getTestName(), parser);
 
         assertThat(restTestSuite, notNullValue());
-        assertThat(restTestSuite.getName(), equalTo(getTestName()));
-        assertThat(restTestSuite.getTestSections().size(), equalTo(1));
+        assertThat(restTestSuite.name(), equalTo(getTestName()));
+        assertThat(restTestSuite.testSections().size(), equalTo(1));
 
-        assertThat(restTestSuite.getTestSections().get(0).getName(), equalTo("Broken on some os"));
-        assertThat(restTestSuite.getTestSections().get(0).getSkipSection().isEmpty(), equalTo(false));
-        assertThat(restTestSuite.getTestSections().get(0).getSkipSection().getReason(), equalTo("not supported"));
+        assertThat(restTestSuite.testSections().get(0).name(), equalTo("Broken on some os"));
+        assertThat(restTestSuite.testSections().get(0).skipSection().isEmpty(), equalTo(false));
+        assertThat(restTestSuite.testSections().get(0).skipSection().getReason(), equalTo("not supported"));
         assertThat(
-            restTestSuite.getTestSections().get(0).getSkipSection().getOperatingSystems(),
+            restTestSuite.testSections().get(0).skipSection().getOperatingSystems(),
             containsInAnyOrder("windows95", "debian-5")
         );
-        assertThat(restTestSuite.getTestSections().get(0).getSkipSection().getFeatures(), containsInAnyOrder("skip_os"));
+        assertThat(restTestSuite.testSections().get(0).skipSection().getFeatures(), containsInAnyOrder("skip_os"));
     }
 
     public void testAddingDoWithoutSkips() {

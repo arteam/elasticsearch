@@ -20,16 +20,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ChainInput implements Input {
+public record ChainInput(List<Tuple<String, Input>> inputs) implements Input {
 
     public static final String TYPE = "chain";
     public static final ParseField INPUTS = new ParseField("inputs");
-
-    private final List<Tuple<String, Input>> inputs;
-
-    public ChainInput(List<Tuple<String, Input>> inputs) {
-        this.inputs = inputs;
-    }
 
     @Override
     public String type() {
@@ -49,10 +43,6 @@ public class ChainInput implements Input {
         builder.endObject();
 
         return builder;
-    }
-
-    public List<Tuple<String, Input>> getInputs() {
-        return inputs;
     }
 
     public static ChainInput parse(String watchId, XContentParser parser, InputRegistry inputRegistry) throws IOException {

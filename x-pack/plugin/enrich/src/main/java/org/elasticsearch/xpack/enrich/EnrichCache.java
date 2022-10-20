@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * A simple cache for enrich that uses {@link Cache}. There is one instance of this cache and
@@ -79,9 +78,9 @@ public final class EnrichCache {
         return new EnrichStatsAction.Response.CacheStats(
             localNodeId,
             cache.count(),
-            cacheStats.getHits(),
-            cacheStats.getMisses(),
-            cacheStats.getEvictions()
+            cacheStats.hits(),
+            cacheStats.misses(),
+            cacheStats.evictions()
         );
     }
 
@@ -126,28 +125,7 @@ public final class EnrichCache {
         }
     }
 
-    private static class CacheKey {
-
-        final String enrichIndex;
-        final SearchRequest searchRequest;
-
-        private CacheKey(String enrichIndex, SearchRequest searchRequest) {
-            this.enrichIndex = enrichIndex;
-            this.searchRequest = searchRequest;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            CacheKey cacheKey = (CacheKey) o;
-            return enrichIndex.equals(cacheKey.enrichIndex) && searchRequest.equals(cacheKey.searchRequest);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(enrichIndex, searchRequest);
-        }
+    private record CacheKey(String enrichIndex, SearchRequest searchRequest) {
     }
 
 }

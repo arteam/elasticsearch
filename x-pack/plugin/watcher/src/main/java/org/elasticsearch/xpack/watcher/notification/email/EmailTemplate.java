@@ -22,78 +22,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.mail.internet.AddressException;
 
-public class EmailTemplate implements ToXContentObject {
-
-    final TextTemplate from;
-    final TextTemplate[] replyTo;
-    final TextTemplate priority;
-    final TextTemplate[] to;
-    final TextTemplate[] cc;
-    final TextTemplate[] bcc;
-    final TextTemplate subject;
-    final TextTemplate textBody;
-    final TextTemplate htmlBody;
-
-    public EmailTemplate(
-        TextTemplate from,
-        TextTemplate[] replyTo,
-        TextTemplate priority,
-        TextTemplate[] to,
-        TextTemplate[] cc,
-        TextTemplate[] bcc,
-        TextTemplate subject,
-        TextTemplate textBody,
-        TextTemplate htmlBody
-    ) {
-        this.from = from;
-        this.replyTo = replyTo;
-        this.priority = priority;
-        this.to = to;
-        this.cc = cc;
-        this.bcc = bcc;
-        this.subject = subject;
-        this.textBody = textBody;
-        this.htmlBody = htmlBody;
-    }
-
-    public TextTemplate from() {
-        return from;
-    }
-
-    public TextTemplate[] replyTo() {
-        return replyTo;
-    }
-
-    public TextTemplate priority() {
-        return priority;
-    }
-
-    public TextTemplate[] to() {
-        return to;
-    }
-
-    public TextTemplate[] cc() {
-        return cc;
-    }
-
-    public TextTemplate[] bcc() {
-        return bcc;
-    }
-
-    public TextTemplate subject() {
-        return subject;
-    }
-
-    public TextTemplate textBody() {
-        return textBody;
-    }
-
-    public TextTemplate htmlBody() {
-        return htmlBody;
-    }
+public record EmailTemplate(
+    TextTemplate from,
+    TextTemplate[] replyTo,
+    TextTemplate priority,
+    TextTemplate[] to,
+    TextTemplate[] cc,
+    TextTemplate[] bcc,
+    TextTemplate subject,
+    TextTemplate textBody,
+    TextTemplate htmlBody
+) implements ToXContentObject {
 
     public Email.Builder render(
         TextTemplateEngine engine,
@@ -102,30 +43,30 @@ public class EmailTemplate implements ToXContentObject {
         Map<String, Attachment> attachments
     ) throws AddressException {
         Email.Builder builder = Email.builder();
-        if (from != null) {
-            builder.from(engine.render(from, model));
+        if (from() != null) {
+            builder.from(engine.render(from(), model));
         }
-        if (replyTo != null) {
-            Email.AddressList addresses = templatesToAddressList(engine, replyTo, model);
+        if (replyTo() != null) {
+            Email.AddressList addresses = templatesToAddressList(engine, replyTo(), model);
             builder.replyTo(addresses);
         }
-        if (priority != null) {
-            builder.priority(Email.Priority.resolve(engine.render(priority, model)));
+        if (priority() != null) {
+            builder.priority(Email.Priority.resolve(engine.render(priority(), model)));
         }
-        if (to != null) {
-            Email.AddressList addresses = templatesToAddressList(engine, to, model);
+        if (to() != null) {
+            Email.AddressList addresses = templatesToAddressList(engine, to(), model);
             builder.to(addresses);
         }
-        if (cc != null) {
-            Email.AddressList addresses = templatesToAddressList(engine, cc, model);
+        if (cc() != null) {
+            Email.AddressList addresses = templatesToAddressList(engine, cc(), model);
             builder.cc(addresses);
         }
-        if (bcc != null) {
-            Email.AddressList addresses = templatesToAddressList(engine, bcc, model);
+        if (bcc() != null) {
+            Email.AddressList addresses = templatesToAddressList(engine, bcc(), model);
             builder.bcc(addresses);
         }
-        if (subject != null) {
-            builder.subject(engine.render(subject, model));
+        if (subject() != null) {
+            builder.subject(engine.render(subject(), model));
         }
 
         Set<String> warnings = Sets.newHashSetWithExpectedSize(1);
@@ -152,17 +93,17 @@ public class EmailTemplate implements ToXContentObject {
             htmlWarnings = htmlWarningBuilder.toString();
             textWarnings = textWarningBuilder.toString();
         }
-        if (textBody != null) {
-            builder.textBody(textWarnings + engine.render(textBody, model));
+        if (textBody() != null) {
+            builder.textBody(textWarnings + engine.render(textBody(), model));
         }
 
-        if (htmlBody != null) {
-            String renderedHtml = htmlWarnings + engine.render(htmlBody, model);
+        if (htmlBody() != null) {
+            String renderedHtml = htmlWarnings + engine.render(htmlBody(), model);
             renderedHtml = htmlSanitizer.sanitize(renderedHtml);
             builder.htmlBody(renderedHtml);
         }
 
-        if (htmlBody == null && textBody == null && Strings.isNullOrEmpty(textWarnings) == false) {
+        if (htmlBody() == null && textBody() == null && Strings.isNullOrEmpty(textWarnings) == false) {
             builder.textBody(textWarnings);
         }
 
@@ -179,27 +120,6 @@ public class EmailTemplate implements ToXContentObject {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EmailTemplate that = (EmailTemplate) o;
-        return Objects.equals(from, that.from)
-            && Arrays.equals(replyTo, that.replyTo)
-            && Objects.equals(priority, that.priority)
-            && Arrays.equals(to, that.to)
-            && Arrays.equals(cc, that.cc)
-            && Arrays.equals(bcc, that.bcc)
-            && Objects.equals(subject, that.subject)
-            && Objects.equals(textBody, that.textBody)
-            && Objects.equals(htmlBody, that.htmlBody);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(from, replyTo, priority, to, cc, bcc, subject, textBody, htmlBody);
-    }
-
-    @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
         xContentBody(builder, params);
@@ -207,50 +127,50 @@ public class EmailTemplate implements ToXContentObject {
     }
 
     public XContentBuilder xContentBody(XContentBuilder builder, Params params) throws IOException {
-        if (from != null) {
-            builder.field(Email.Field.FROM.getPreferredName(), from, params);
+        if (from() != null) {
+            builder.field(Email.Field.FROM.getPreferredName(), from(), params);
         }
-        if (replyTo != null) {
+        if (replyTo() != null) {
             builder.startArray(Email.Field.REPLY_TO.getPreferredName());
-            for (TextTemplate template : replyTo) {
+            for (TextTemplate template : replyTo()) {
                 template.toXContent(builder, params);
             }
             builder.endArray();
         }
-        if (priority != null) {
-            builder.field(Email.Field.PRIORITY.getPreferredName(), priority, params);
+        if (priority() != null) {
+            builder.field(Email.Field.PRIORITY.getPreferredName(), priority(), params);
         }
-        if (to != null) {
+        if (to() != null) {
             builder.startArray(Email.Field.TO.getPreferredName());
-            for (TextTemplate template : to) {
+            for (TextTemplate template : to()) {
                 template.toXContent(builder, params);
             }
             builder.endArray();
         }
-        if (cc != null) {
+        if (cc() != null) {
             builder.startArray(Email.Field.CC.getPreferredName());
-            for (TextTemplate template : cc) {
+            for (TextTemplate template : cc()) {
                 template.toXContent(builder, params);
             }
             builder.endArray();
         }
-        if (bcc != null) {
+        if (bcc() != null) {
             builder.startArray(Email.Field.BCC.getPreferredName());
-            for (TextTemplate template : bcc) {
+            for (TextTemplate template : bcc()) {
                 template.toXContent(builder, params);
             }
             builder.endArray();
         }
-        if (subject != null) {
-            builder.field(Email.Field.SUBJECT.getPreferredName(), subject, params);
+        if (subject() != null) {
+            builder.field(Email.Field.SUBJECT.getPreferredName(), subject(), params);
         }
-        if (textBody != null || htmlBody != null) {
+        if (textBody() != null || htmlBody() != null) {
             builder.startObject(Email.Field.BODY.getPreferredName());
-            if (textBody != null) {
-                builder.field(Email.Field.BODY_TEXT.getPreferredName(), textBody, params);
+            if (textBody() != null) {
+                builder.field(Email.Field.BODY_TEXT.getPreferredName(), textBody(), params);
             }
-            if (htmlBody != null) {
-                builder.field(Email.Field.BODY_HTML.getPreferredName(), htmlBody, params);
+            if (htmlBody() != null) {
+                builder.field(Email.Field.BODY_HTML.getPreferredName(), htmlBody(), params);
             }
             builder.endObject();
         }
@@ -465,6 +385,7 @@ public class EmailTemplate implements ToXContentObject {
 
         /**
          * If this is a text template not using mustache
+         *
          * @param emails The list of email addresses to parse
          */
         static void validateEmailAddresses(TextTemplate... emails) {

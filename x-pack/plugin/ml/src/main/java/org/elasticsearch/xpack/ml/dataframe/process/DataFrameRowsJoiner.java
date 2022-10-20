@@ -100,7 +100,7 @@ class DataFrameRowsJoiner implements AutoCloseable {
                 RowResults result = currentResults.pop();
                 DataFrameDataExtractor.Row row = dataFrameRowsIterator.next();
                 checkChecksumsMatch(row, result);
-                bulkIndexer.addAndExecuteIfNeeded(createIndexRequest(result, row.getHit()));
+                bulkIndexer.addAndExecuteIfNeeded(createIndexRequest(result, row.hit()));
             }
         }
 
@@ -119,10 +119,10 @@ class DataFrameRowsJoiner implements AutoCloseable {
     }
 
     private void checkChecksumsMatch(DataFrameDataExtractor.Row row, RowResults result) {
-        if (row.getChecksum() != result.getChecksum()) {
-            String msg = "Detected checksum mismatch for document with id [" + row.getHit().getId() + "]; ";
-            msg += "expected [" + row.getChecksum() + "] but result had [" + result.getChecksum() + "]; ";
-            msg += "this implies the data frame index [" + row.getHit().getIndex() + "] was modified while the analysis was running. ";
+        if (row.getChecksum() != result.checksum()) {
+            String msg = "Detected checksum mismatch for document with id [" + row.hit().getId() + "]; ";
+            msg += "expected [" + row.getChecksum() + "] but result had [" + result.checksum() + "]; ";
+            msg += "this implies the data frame index [" + row.hit().getIndex() + "] was modified while the analysis was running. ";
             msg += "We rely on this index being immutable during a running analysis and so the results will be unreliable.";
             throw ExceptionsHelper.serverError(msg);
         }
@@ -130,7 +130,7 @@ class DataFrameRowsJoiner implements AutoCloseable {
 
     private IndexRequest createIndexRequest(RowResults result, SearchHit hit) {
         Map<String, Object> source = new LinkedHashMap<>(hit.getSourceAsMap());
-        source.putAll(result.getResults());
+        source.putAll(result.results());
         IndexRequest indexRequest = new IndexRequest(hit.getIndex());
         indexRequest.id(hit.getId());
         indexRequest.source(source);

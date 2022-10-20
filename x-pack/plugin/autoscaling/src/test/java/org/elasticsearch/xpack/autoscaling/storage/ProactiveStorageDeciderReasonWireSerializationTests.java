@@ -16,7 +16,7 @@ public class ProactiveStorageDeciderReasonWireSerializationTests extends Abstrac
     ProactiveStorageDeciderService.ProactiveReason> {
     @Override
     protected Writeable.Reader<ProactiveStorageDeciderService.ProactiveReason> instanceReader() {
-        return ProactiveStorageDeciderService.ProactiveReason::new;
+        return ProactiveStorageDeciderService.ProactiveReason::from;
     }
 
     @Override

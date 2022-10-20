@@ -53,7 +53,7 @@ public class StopTokenFilterTests extends ESTokenStreamTestCase {
         }
         builder.put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString());
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(builder.build());
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_stop");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_stop");
         assertThat(tokenFilter, instanceOf(StopTokenFilterFactory.class));
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader("foo bar"));
@@ -68,7 +68,7 @@ public class StopTokenFilterTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
             .build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings);
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_stop");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_stop");
         assertThat(tokenFilter, instanceOf(StopTokenFilterFactory.class));
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader("foo an"));

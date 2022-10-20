@@ -36,13 +36,13 @@ public class HttpRequestTemplateTests extends ESTestCase {
             .body(XContentBuilder.builder(type.xContent()).startObject().endObject())
             .build();
         HttpRequest request = template.render(new MockTextTemplateEngine(), emptyMap());
-        assertThat(request.headers, hasEntry(HttpHeaders.Names.CONTENT_TYPE, type.mediaType()));
+        assertThat(request.headers(), hasEntry(HttpHeaders.Names.CONTENT_TYPE, type.mediaType()));
     }
 
     public void testBody() throws Exception {
         HttpRequestTemplate template = HttpRequestTemplate.builder("_host", 1234).body("_body").build();
         HttpRequest request = template.render(new MockTextTemplateEngine(), emptyMap());
-        assertThat(request.headers.size(), is(0));
+        assertThat(request.headers().size(), is(0));
     }
 
     public void testProxy() throws Exception {

@@ -215,7 +215,7 @@ public abstract class BaseRunAsSuperuserCommand extends KeyStoreAwareCommand {
         } catch (Exception e) {
             throw new UserException(ExitCodes.UNAVAILABLE, "Failed to determine the health of the cluster. ", e);
         }
-        final int responseStatus = response.getHttpStatus();
+        final int responseStatus = response.httpStatus();
         if (responseStatus != HttpURLConnection.HTTP_OK) {
             // We try to write the roles file first and then the users one, but theoretically we could have loaded the users
             // before we have actually loaded the roles so we also retry on 403 ( temp user is found but has no roles )
@@ -239,7 +239,7 @@ public abstract class BaseRunAsSuperuserCommand extends KeyStoreAwareCommand {
                 );
             }
         } else {
-            final String clusterStatus = Objects.toString(response.getResponseBody().get("status"), "");
+            final String clusterStatus = Objects.toString(response.responseBody().get("status"), "");
             if (clusterStatus.isEmpty()) {
                 throw new UserException(
                     ExitCodes.DATA_ERROR,

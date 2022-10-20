@@ -21,6 +21,6 @@ public class ExecutableSimpleInput extends ExecutableInput<SimpleInput, SimpleIn
 
     @Override
     public SimpleInput.Result execute(WatchExecutionContext ctx, Payload payload) {
-        return new SimpleInput.Result(input.getPayload());
+        return new SimpleInput.Result(input.payload());
     }
 }

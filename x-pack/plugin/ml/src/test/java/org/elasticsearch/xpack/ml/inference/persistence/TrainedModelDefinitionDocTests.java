@@ -39,7 +39,7 @@ public class TrainedModelDefinitionDocTests extends AbstractXContentTestCase<Tra
 
         try (XContentParser parser = createParser(JsonXContent.jsonXContent, compressedStringDoc)) {
             TrainedModelDefinitionDoc parsed = doParseInstance(parser);
-            assertArrayEquals(bytes, parsed.getBinaryData().array());
+            assertArrayEquals(bytes, parsed.binaryData().array());
         }
     }
 

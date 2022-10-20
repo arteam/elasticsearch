@@ -274,7 +274,7 @@ public class TransportRevertModelSnapshotAction extends TransportMasterNodeActio
             if (modelSnapshot == null) {
                 throw missingSnapshotException(request);
             }
-            handler.accept(modelSnapshot.result);
+            handler.accept(modelSnapshot.result());
         }, errorHandler);
     }
 

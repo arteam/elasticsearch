@@ -483,11 +483,11 @@ public class JobManager {
                     return;
                 }
                 jobResultsProvider.getModelSnapshot(job.getId(), job.getModelSnapshotId(), oldModelSnapshot -> {
-                    if (oldModelSnapshot != null && newModelSnapshot.result.getTimestamp().before(oldModelSnapshot.result.getTimestamp())) {
+                    if (oldModelSnapshot != null && newModelSnapshot.result().getTimestamp().before(oldModelSnapshot.result().getTimestamp())) {
                         String message = "Job ["
                             + job.getId()
                             + "] has a more recent model snapshot ["
-                            + oldModelSnapshot.result.getSnapshotId()
+                            + oldModelSnapshot.result().getSnapshotId()
                             + "]";
                         listener.onFailure(new IllegalArgumentException(message));
                     }

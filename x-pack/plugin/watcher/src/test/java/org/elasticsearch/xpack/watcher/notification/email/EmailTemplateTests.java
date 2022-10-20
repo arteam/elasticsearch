@@ -93,21 +93,21 @@ public class EmailTemplateTests extends ESTestCase {
 
         Email.Builder emailBuilder = parsedEmailTemplate.render(new MockTextTemplateEngine(), model, htmlSanitizer, new HashMap<>());
 
-        assertThat(emailTemplate.from, equalTo(parsedEmailTemplate.from));
-        assertThat(emailTemplate.replyTo, equalTo(parsedEmailTemplate.replyTo));
-        assertThat(emailTemplate.priority, equalTo(parsedEmailTemplate.priority));
-        assertThat(emailTemplate.to, equalTo(parsedEmailTemplate.to));
-        assertThat(emailTemplate.cc, equalTo(parsedEmailTemplate.cc));
-        assertThat(emailTemplate.bcc, equalTo(parsedEmailTemplate.bcc));
-        assertThat(emailTemplate.subject, equalTo(parsedEmailTemplate.subject));
-        assertThat(emailTemplate.textBody, equalTo(parsedEmailTemplate.textBody));
-        assertThat(emailTemplate.htmlBody, equalTo(parsedEmailTemplate.htmlBody));
+        assertThat(emailTemplate.from(), equalTo(parsedEmailTemplate.from()));
+        assertThat(emailTemplate.replyTo(), equalTo(parsedEmailTemplate.replyTo()));
+        assertThat(emailTemplate.priority(), equalTo(parsedEmailTemplate.priority()));
+        assertThat(emailTemplate.to(), equalTo(parsedEmailTemplate.to()));
+        assertThat(emailTemplate.cc(), equalTo(parsedEmailTemplate.cc()));
+        assertThat(emailTemplate.bcc(), equalTo(parsedEmailTemplate.bcc()));
+        assertThat(emailTemplate.subject(), equalTo(parsedEmailTemplate.subject()));
+        assertThat(emailTemplate.textBody(), equalTo(parsedEmailTemplate.textBody()));
+        assertThat(emailTemplate.htmlBody(), equalTo(parsedEmailTemplate.htmlBody()));
 
         emailBuilder.id("_id");
         Email email = emailBuilder.build();
-        assertThat(email.subject, equalTo(subjectTemplate.getTemplate()));
-        assertThat(email.textBody, equalTo(textBodyTemplate.getTemplate()));
-        assertThat(email.htmlBody, equalTo(sanitizedHtmlBody));
+        assertThat(email.subject(), equalTo(subjectTemplate.getTemplate()));
+        assertThat(email.textBody(), equalTo(textBodyTemplate.getTemplate()));
+        assertThat(email.htmlBody(), equalTo(sanitizedHtmlBody));
     }
 
     public void testParsingMultipleEmailAddresses() throws Exception {
@@ -121,12 +121,12 @@ public class EmailTemplateTests extends ESTestCase {
 
         Email email = template.render(new MockTextTemplateEngine(), emptyMap(), null, emptyMap()).id("foo").build();
 
-        assertThat(email.to.size(), is(2));
-        assertThat(email.to, containsInAnyOrder(new Email.Address("to1@example.org"), new Email.Address("to2@example.org")));
-        assertThat(email.cc.size(), is(2));
-        assertThat(email.cc, containsInAnyOrder(new Email.Address("cc1@example.org"), new Email.Address("cc2@example.org")));
-        assertThat(email.bcc.size(), is(2));
-        assertThat(email.bcc, containsInAnyOrder(new Email.Address("bcc1@example.org"), new Email.Address("bcc2@example.org")));
+        assertThat(email.to().size(), is(2));
+        assertThat(email.to(), containsInAnyOrder(new Email.Address("to1@example.org"), new Email.Address("to2@example.org")));
+        assertThat(email.cc().size(), is(2));
+        assertThat(email.cc(), containsInAnyOrder(new Email.Address("cc1@example.org"), new Email.Address("cc2@example.org")));
+        assertThat(email.bcc().size(), is(2));
+        assertThat(email.bcc(), containsInAnyOrder(new Email.Address("bcc1@example.org"), new Email.Address("bcc2@example.org")));
     }
 
     public void testEmailValidation() {
@@ -221,11 +221,11 @@ public class EmailTemplateTests extends ESTestCase {
 
         emailBuilder.id("_id");
         Email email = emailBuilder.build();
-        assertThat(email.subject, equalTo(subjectTemplate.getTemplate()));
+        assertThat(email.subject(), equalTo(subjectTemplate.getTemplate()));
 
         // text
-        int bodyStart = email.textBody.indexOf(textBodyTemplate.getTemplate());
-        String warnings = email.textBody.substring(0, bodyStart);
+        int bodyStart = email.textBody().indexOf(textBodyTemplate.getTemplate());
+        String warnings = email.textBody().substring(0, bodyStart);
         String[] warningLines = warnings.split("\n");
         assertThat(warningLines.length, is(4));
         for (int i = 0; i <= warningLines.length - 1; i++) {

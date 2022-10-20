@@ -47,8 +47,8 @@ public class MonitoringUsageTransportAction extends XPackUsageFeatureTransportAc
             actionFilters,
             indexNameExpressionResolver
         );
-        this.monitoringService = monitoringServices.monitoringService;
-        this.exporters = monitoringServices.exporters;
+        this.monitoringService = monitoringServices.monitoringService();
+        this.exporters = monitoringServices.exporters();
     }
 
     @Override

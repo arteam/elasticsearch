@@ -196,7 +196,7 @@ public class WatcherIndexingListenerTests extends ESTestCase {
 
     private Watch mockWatch(String id, boolean active, boolean isNewWatch) {
         WatchStatus.State watchState = mock(WatchStatus.State.class);
-        when(watchState.isActive()).thenReturn(active);
+        when(watchState.active()).thenReturn(active);
 
         WatchStatus watchStatus = mock(WatchStatus.class);
         when(watchStatus.state()).thenReturn(watchState);
@@ -402,8 +402,8 @@ public class WatcherIndexingListenerTests extends ESTestCase {
         );
 
         assertThat(allocationIds.size(), is(1));
-        assertThat(allocationIds.get(shardId).index, is(0));
-        assertThat(allocationIds.get(shardId).shardCount, is(1));
+        assertThat(allocationIds.get(shardId).index(), is(0));
+        assertThat(allocationIds.get(shardId).shardCount(), is(1));
     }
 
     public void testCheckAllocationIdsWithoutShards() throws Exception {

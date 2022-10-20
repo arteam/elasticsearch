@@ -7,18 +7,14 @@
 
 package org.elasticsearch.xpack.ml.dataframe.steps;
 
-public final class StepResponse {
-
-    private final boolean isTaskComplete;
-
-    public StepResponse(boolean isTaskComplete) {
-        this.isTaskComplete = isTaskComplete;
-    }
+public record StepResponse(boolean isTaskComplete) {
 
     /**
      * Returns whether the entire task has completed after this step was done
+     *
      * @return whether the entire task has completed after this step was done
      */
+    @Override
     public boolean isTaskComplete() {
         return isTaskComplete;
     }

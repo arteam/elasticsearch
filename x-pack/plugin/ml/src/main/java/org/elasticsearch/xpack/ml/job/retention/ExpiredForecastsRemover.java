@@ -215,14 +215,7 @@ public class ExpiredForecastsRemover implements MlDataRemover {
         return request;
     }
 
-    private static class JobForecastId {
-        private final String jobId;
-        private final String forecastId;
-
-        private JobForecastId(String jobId, String forecastId) {
-            this.jobId = jobId;
-            this.forecastId = forecastId;
-        }
+    private record JobForecastId(String jobId, String forecastId) {
 
         boolean hasNullValue() {
             return jobId == null || forecastId == null;

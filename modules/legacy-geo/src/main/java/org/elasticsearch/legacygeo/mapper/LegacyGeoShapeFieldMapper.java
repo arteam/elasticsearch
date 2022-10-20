@@ -281,7 +281,7 @@ public class LegacyGeoShapeFieldMapper extends AbstractShapeGeometryFieldMapper<
                 ft.setTreeLevels(treeLevels.get());
             }
             if (precision.get() != null) {
-                ft.setPrecisionInMeters(precision.get().value);
+                ft.setPrecisionInMeters(precision.get().value());
             }
             if (pointsOnly.get() != null) {
                 ft.setPointsOnly(pointsOnly.get());

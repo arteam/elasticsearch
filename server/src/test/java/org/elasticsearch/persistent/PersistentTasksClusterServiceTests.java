@@ -232,7 +232,7 @@ public class PersistentTasksClusterServiceTests extends ESTestCase {
         for (PersistentTask<?> task : tasksInProgress.tasks()) {
             assertThat(task.getExecutorNode(), nullValue());
             assertThat(task.isAssigned(), equalTo(false));
-            assertThat(task.getAssignment().getExplanation(), equalTo("non-cluster state condition prevents assignment"));
+            assertThat(task.getAssignment().explanation(), equalTo("non-cluster state condition prevents assignment"));
         }
         assertThat(tasksInProgress.tasks().size(), equalTo(1));
 
@@ -244,7 +244,7 @@ public class PersistentTasksClusterServiceTests extends ESTestCase {
         for (PersistentTask<?> task : tasksInProgress.tasks()) {
             assertThat(task.getExecutorNode(), notNullValue());
             assertThat(task.isAssigned(), equalTo(true));
-            assertThat(task.getAssignment().getExplanation(), equalTo("test assignment"));
+            assertThat(task.getAssignment().explanation(), equalTo("test assignment"));
         }
         assertThat(tasksInProgress.tasks().size(), equalTo(1));
     }
@@ -294,20 +294,20 @@ public class PersistentTasksClusterServiceTests extends ESTestCase {
                         clusterState.nodes().nodeExists(task.getExecutorNode()),
                         equalTo(true)
                     );
-                    assertThat(task.getAssignment().getExplanation(), equalTo("test assignment"));
+                    assertThat(task.getAssignment().explanation(), equalTo("test assignment"));
                     break;
                 case "dont_assign_me":
                     assertThat(task.getExecutorNode(), nullValue());
                     assertThat(task.isAssigned(), equalTo(false));
-                    assertThat(task.getAssignment().getExplanation(), equalTo("no appropriate nodes found for the assignment"));
+                    assertThat(task.getAssignment().explanation(), equalTo("no appropriate nodes found for the assignment"));
                     break;
                 case "assign_one":
                     if (task.isAssigned()) {
                         assignOneCount++;
                         assertThat("more than one assign_one tasks are assigned", assignOneCount, lessThanOrEqualTo(1));
-                        assertThat(task.getAssignment().getExplanation(), equalTo("test assignment"));
+                        assertThat(task.getAssignment().explanation(), equalTo("test assignment"));
                     } else {
-                        assertThat(task.getAssignment().getExplanation(), equalTo("only one task can be assigned at a time"));
+                        assertThat(task.getAssignment().explanation(), equalTo("only one task can be assigned at a time"));
                     }
                     break;
                 default:
@@ -448,7 +448,7 @@ public class PersistentTasksClusterServiceTests extends ESTestCase {
                 assertThat(task.getExecutorNode(), nullValue());
                 assertThat(task.isAssigned(), equalTo(false));
                 assertThat(
-                    task.getAssignment().getExplanation(),
+                    task.getAssignment().explanation(),
                     equalTo(
                         shouldSimulateFailure
                             ? "explanation: assign_based_on_non_cluster_state_condition"
@@ -470,7 +470,7 @@ public class PersistentTasksClusterServiceTests extends ESTestCase {
             for (PersistentTask<?> task : tasksInProgress.tasks()) {
                 assertThat(task.getExecutorNode(), notNullValue());
                 assertThat(task.isAssigned(), equalTo(true));
-                assertThat(task.getAssignment().getExplanation(), equalTo("test assignment"));
+                assertThat(task.getAssignment().explanation(), equalTo("test assignment"));
             }
             assertThat(tasksInProgress.tasks().size(), equalTo(1));
         });
@@ -505,7 +505,7 @@ public class PersistentTasksClusterServiceTests extends ESTestCase {
             for (PersistentTask<?> task : tasksInProgress.tasks()) {
                 assertThat(task.getExecutorNode(), nullValue());
                 assertThat(task.isAssigned(), equalTo(false));
-                assertThat(task.getAssignment().getExplanation(), equalTo("non-cluster state condition prevents assignment"));
+                assertThat(task.getAssignment().explanation(), equalTo("non-cluster state condition prevents assignment"));
             }
             assertThat(tasksInProgress.tasks().size(), equalTo(1));
         }
@@ -546,9 +546,9 @@ public class PersistentTasksClusterServiceTests extends ESTestCase {
         setState(clusterService, clusterState);
         PersistentTasksClusterService service = createService((params, candidateNodes, currentState) -> new Assignment("_node_2", "test"));
         service.unassignPersistentTask(unassignedId, tasks.getLastAllocationId(), "unassignment test", ActionListener.wrap(task -> {
-            assertThat(task.getAssignment().getExecutorNode(), is(nullValue()));
+            assertThat(task.getAssignment().executorNode(), is(nullValue()));
             assertThat(task.getId(), equalTo(unassignedId));
-            assertThat(task.getAssignment().getExplanation(), equalTo("unassignment test"));
+            assertThat(task.getAssignment().explanation(), equalTo("unassignment test"));
         }, e -> fail()));
     }
 
@@ -632,7 +632,7 @@ public class PersistentTasksClusterServiceTests extends ESTestCase {
         Set<String> nodesWithTasks = tasksInProgress.tasks()
             .stream()
             .map(PersistentTask::getAssignment)
-            .map(Assignment::getExecutorNode)
+            .map(Assignment::executorNode)
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
         Set<String> shutdownNodes = shutdownMetadataMap.keySet();
@@ -865,7 +865,7 @@ public class PersistentTasksClusterServiceTests extends ESTestCase {
             for (PersistentTask<?> task : tasks.tasks()) {
                 // Remove all unassigned tasks that cause changing assignments they might trigger a significant change
                 if ("never_assign".equals(((TestParams) task.getParams()).getTestParam())
-                    && "change me".equals(task.getAssignment().getExplanation())) {
+                    && "change me".equals(task.getAssignment().explanation())) {
                     logger.info("removed task with changing assignment {}", task.getId());
                     tasksBuilder.removeTask(task.getId());
                     changed = true;

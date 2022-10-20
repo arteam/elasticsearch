@@ -255,7 +255,7 @@ public class TokenServiceTests extends ESTestCase {
         final String userTokenId = UUIDs.randomBase64UUID();
         final String refreshToken = UUIDs.randomBase64UUID();
         tokenService.createOAuth2Tokens(userTokenId, refreshToken, authentication, authentication, Collections.emptyMap(), tokenFuture);
-        final String accessToken = tokenFuture.get().getAccessToken();
+        final String accessToken = tokenFuture.get().accessToken();
         assertNotNull(accessToken);
         mockGetTokenFromId(tokenService, userTokenId, authentication, false);
 
@@ -312,7 +312,7 @@ public class TokenServiceTests extends ESTestCase {
         final String userTokenId = UUIDs.randomBase64UUID();
         final String refreshToken = UUIDs.randomBase64UUID();
         tokenService.createOAuth2Tokens(userTokenId, refreshToken, authentication, authentication, Collections.emptyMap(), tokenFuture);
-        final String accessToken = tokenFuture.get().getAccessToken();
+        final String accessToken = tokenFuture.get().accessToken();
         assertNotNull(accessToken);
         mockGetTokenFromId(tokenService, userTokenId, authentication, false);
 
@@ -352,13 +352,13 @@ public class TokenServiceTests extends ESTestCase {
         final String userTokenId = UUIDs.randomBase64UUID();
         final String refreshToken = UUIDs.randomBase64UUID();
         tokenService.createOAuth2Tokens(userTokenId, refreshToken, authentication, authentication, Collections.emptyMap(), tokenFuture);
-        String accessToken = tokenFuture.get().getAccessToken();
+        String accessToken = tokenFuture.get().accessToken();
         assertThat(accessToken, notNullValue());
 
         tokenService.clearActiveKeyCache();
 
         tokenService.createOAuth2Tokens(userTokenId, refreshToken, authentication, authentication, Collections.emptyMap(), tokenFuture);
-        accessToken = tokenFuture.get().getAccessToken();
+        accessToken = tokenFuture.get().accessToken();
         assertThat(accessToken, notNullValue());
     }
 
@@ -373,7 +373,7 @@ public class TokenServiceTests extends ESTestCase {
         final String userTokenId = UUIDs.randomBase64UUID();
         final String refreshToken = UUIDs.randomBase64UUID();
         tokenService.createOAuth2Tokens(userTokenId, refreshToken, authentication, authentication, Collections.emptyMap(), tokenFuture);
-        final String accessToken = tokenFuture.get().getAccessToken();
+        final String accessToken = tokenFuture.get().accessToken();
         assertNotNull(accessToken);
         mockGetTokenFromId(tokenService, userTokenId, authentication, true);
 
@@ -402,8 +402,8 @@ public class TokenServiceTests extends ESTestCase {
         final String userTokenId = UUIDs.randomBase64UUID();
         final String rawRefreshToken = UUIDs.randomBase64UUID();
         tokenService.createOAuth2Tokens(userTokenId, rawRefreshToken, authentication, authentication, Collections.emptyMap(), tokenFuture);
-        final String accessToken = tokenFuture.get().getAccessToken();
-        final String clientRefreshToken = tokenFuture.get().getRefreshToken();
+        final String accessToken = tokenFuture.get().accessToken();
+        final String clientRefreshToken = tokenFuture.get().refreshToken();
         assertNotNull(accessToken);
         mockFindTokenFromRefreshToken(rawRefreshToken, buildUserToken(tokenService, userTokenId, authentication, Map.of()), null);
 
@@ -428,8 +428,8 @@ public class TokenServiceTests extends ESTestCase {
         final String userTokenId = UUIDs.randomBase64UUID();
         final String rawRefreshToken = UUIDs.randomBase64UUID();
         tokenService.createOAuth2Tokens(userTokenId, rawRefreshToken, authentication, authentication, Collections.emptyMap(), tokenFuture);
-        final String accessToken = tokenFuture.get().getAccessToken();
-        final String clientRefreshToken = tokenFuture.get().getRefreshToken();
+        final String accessToken = tokenFuture.get().accessToken();
+        final String clientRefreshToken = tokenFuture.get().refreshToken();
         assertNotNull(accessToken);
         mockFindTokenFromRefreshToken(
             rawRefreshToken,
@@ -713,7 +713,7 @@ public class TokenServiceTests extends ESTestCase {
         final String userTokenId = UUIDs.randomBase64UUID();
         final String refreshToken = UUIDs.randomBase64UUID();
         tokenService.createOAuth2Tokens(userTokenId, refreshToken, authentication, authentication, Collections.emptyMap(), tokenFuture);
-        final String accessToken = tokenFuture.get().getAccessToken();
+        final String accessToken = tokenFuture.get().accessToken();
         assertNotNull(accessToken);
 
         ThreadContext requestContext = new ThreadContext(Settings.EMPTY);
@@ -820,12 +820,12 @@ public class TokenServiceTests extends ESTestCase {
             // previous versions serialized the access token encrypted and the cipher text was different each time (due to different IVs)
             assertThat(
                 tokenService.prependVersionAndEncodeAccessToken(version, newAccessToken),
-                equalTo(tokenFuture.get().getAccessToken())
+                equalTo(tokenFuture.get().accessToken())
             );
         }
         assertThat(
             TokenService.prependVersionAndEncodeRefreshToken(version, newRefreshToken),
-            equalTo(tokenFuture.get().getRefreshToken())
+            equalTo(tokenFuture.get().refreshToken())
         );
     }
 

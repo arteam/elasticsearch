@@ -396,15 +396,14 @@ public class ShardFollowNodeTaskRandomTests extends ESTestCase {
         return randomIntBetween(0, 10) == 5;
     }
 
-    private static class TestRun {
-
-        final int maxOperationCount;
-        final long startSeqNo;
-        final long startMappingVersion;
-
-        final long finalMappingVersion;
-        final long finalExpectedGlobalCheckpoint;
-        final Map<Long, List<TestResponse>> responses;
+    private record TestRun(
+        int maxOperationCount,
+        long startSeqNo,
+        long startMappingVersion,
+        long finalMappingVersion,
+        long finalExpectedGlobalCheckpoint,
+        Map<Long, List<TestResponse>> responses
+    ) {
 
         private TestRun(
             int maxOperationCount,
@@ -423,19 +422,8 @@ public class ShardFollowNodeTaskRandomTests extends ESTestCase {
         }
     }
 
-    private static class TestResponse {
+    private record TestResponse(Exception exception, long mappingVersion, long settingsVersion, ShardChangesAction.Response response) {
 
-        final Exception exception;
-        final long mappingVersion;
-        final long settingsVersion;
-        final ShardChangesAction.Response response;
-
-        private TestResponse(Exception exception, long mappingVersion, long settingsVersion, ShardChangesAction.Response response) {
-            this.exception = exception;
-            this.mappingVersion = mappingVersion;
-            this.settingsVersion = settingsVersion;
-            this.response = response;
-        }
     }
 
     private static final Translog.Operation[] EMPTY = new Translog.Operation[0];

@@ -296,19 +296,19 @@ public class AutoConfigureNode extends EnvironmentAwareCommand {
                 throw new UserException(ExitCodes.DATA_ERROR, "Aborting auto configuration. Invalid enrollment token", e);
             }
 
-            final CommandLineHttpClient client = clientFunction.apply(env, enrollmentToken.getFingerprint());
+            final CommandLineHttpClient client = clientFunction.apply(env, enrollmentToken.fingerprint());
 
             // We don't wait for cluster health here. If the user has a token, it means that at least the first node has started
             // successfully so we expect the cluster to be healthy already. If not, this is a sign of a problem and we should bail.
             HttpResponse enrollResponse = null;
             URL enrollNodeUrl = null;
-            for (String address : enrollmentToken.getBoundAddress()) {
+            for (String address : enrollmentToken.boundAddress()) {
                 try {
                     enrollNodeUrl = createURL(new URL("https://" + address), "/_security/enroll/node", "");
                     enrollResponse = client.execute(
                         "GET",
                         enrollNodeUrl,
-                        new SecureString(enrollmentToken.getApiKey().toCharArray()),
+                        new SecureString(enrollmentToken.apiKey().toCharArray()),
                         () -> null,
                         CommandLineHttpClient::responseBuilder
                     );
@@ -320,12 +320,12 @@ public class AutoConfigureNode extends EnvironmentAwareCommand {
                     );
                 }
             }
-            if (enrollResponse == null || enrollResponse.getHttpStatus() != 200) {
+            if (enrollResponse == null || enrollResponse.httpStatus() != 200) {
                 UserException userException = new UserException(
                     ExitCodes.UNAVAILABLE,
                     "Aborting enrolling to cluster. "
                         + "Could not communicate with the node on any of the addresses from the enrollment token. All of "
-                        + enrollmentToken.getBoundAddress()
+                        + enrollmentToken.boundAddress()
                         + " were attempted."
                 );
                 try {
@@ -335,7 +335,7 @@ public class AutoConfigureNode extends EnvironmentAwareCommand {
                 }
                 throw userException;
             }
-            final Map<String, Object> responseMap = enrollResponse.getResponseBody();
+            final Map<String, Object> responseMap = enrollResponse.responseBody();
             if (responseMap == null) {
                 UserException userException = new UserException(
                     ExitCodes.DATA_ERROR,

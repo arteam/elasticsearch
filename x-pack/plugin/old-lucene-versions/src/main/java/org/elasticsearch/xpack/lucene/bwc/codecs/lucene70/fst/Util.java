@@ -406,15 +406,7 @@ public final class Util {
     /**
      * Holds a single input (IntsRef) + output, returned by {@link #shortestPaths shortestPaths()}.
      */
-    public static final class Result<T> {
-        public final IntsRef input;
-        public final T output;
-
-        public Result(IntsRef input, T output) {
-            this.input = input;
-            this.output = output;
-        }
-    }
+    public record Result<T> (IntsRef input, T output) {}
 
     /** Holds the results for a top N search using {@link TopNSearcher} */
     public static final class TopResults<T> implements Iterable<Result<T>> {

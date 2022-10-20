@@ -190,10 +190,10 @@ public class HistoryIntegrationTests extends AbstractWatcherIntegrationTestCase 
         XContentSource source = new XContentSource(hit.getSourceRef(), XContentType.JSON);
 
         Boolean active = source.getValue("status.state.active");
-        assertThat(active, is(status.state().isActive()));
+        assertThat(active, is(status.state().active()));
 
         String timestamp = source.getValue("status.state.timestamp");
-        assertThat(timestamp, WatcherTestUtils.isSameDate(status.state().getTimestamp()));
+        assertThat(timestamp, WatcherTestUtils.isSameDate(status.state().timestamp()));
 
         String lastChecked = source.getValue("status.last_checked");
         assertThat(lastChecked, WatcherTestUtils.isSameDate(status.lastChecked()));

@@ -122,10 +122,7 @@ public class ConsistentFunctionArgHandlingIT extends JdbcIntegrationTestCase {
         }
     }
 
-    private static class Argument {
-        private final Object exampleValue;
-        private final Source[] acceptedSources;
-
+    private record Argument(Object exampleValue, Source... acceptedSources) {
         private Argument(Object exampleValue, Source... acceptedSources) {
             this.exampleValue = exampleValue;
             this.acceptedSources = acceptedSources.length == 0 ? Source.values() : acceptedSources;

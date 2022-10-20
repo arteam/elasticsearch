@@ -64,7 +64,7 @@ public class TransportStartDatafeedActionTests extends ESTestCase {
     public void testValidate_jobOpening() {
         Job job1 = DatafeedRunnerTests.createDatafeedJob().build(new Date());
         PersistentTasksCustomMetadata.Builder tasksBuilder = PersistentTasksCustomMetadata.builder();
-        addJobTask("job_id", INITIAL_ASSIGNMENT.getExecutorNode(), null, tasksBuilder);
+        addJobTask("job_id", INITIAL_ASSIGNMENT.executorNode(), null, tasksBuilder);
         PersistentTasksCustomMetadata tasks = tasksBuilder.build();
         DatafeedConfig datafeedConfig1 = DatafeedRunnerTests.createDatafeedConfig("foo-datafeed", "job_id").build();
 
@@ -74,7 +74,7 @@ public class TransportStartDatafeedActionTests extends ESTestCase {
     public void testValidate_jobOpened() {
         Job job1 = DatafeedRunnerTests.createDatafeedJob().build(new Date());
         PersistentTasksCustomMetadata.Builder tasksBuilder = PersistentTasksCustomMetadata.builder();
-        addJobTask("job_id", INITIAL_ASSIGNMENT.getExecutorNode(), JobState.OPENED, tasksBuilder);
+        addJobTask("job_id", INITIAL_ASSIGNMENT.executorNode(), JobState.OPENED, tasksBuilder);
         PersistentTasksCustomMetadata tasks = tasksBuilder.build();
         DatafeedConfig datafeedConfig1 = DatafeedRunnerTests.createDatafeedConfig("foo-datafeed", "job_id").build();
 

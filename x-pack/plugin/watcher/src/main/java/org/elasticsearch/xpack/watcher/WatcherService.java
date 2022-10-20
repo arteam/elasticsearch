@@ -376,7 +376,7 @@ public class WatcherService {
 
                     try {
                         Watch watch = parser.parse(id, true, hit.getSourceRef(), XContentType.JSON, hit.getSeqNo(), hit.getPrimaryTerm());
-                        if (watch.status().state().isActive()) {
+                        if (watch.status().state().active()) {
                             watches.add(watch);
                         }
                     } catch (Exception e) {

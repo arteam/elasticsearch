@@ -33,7 +33,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.net.ssl.SSLSocketFactory;
@@ -282,23 +281,8 @@ public class EmailService extends NotificationService<Account> {
         return new EmailSent(account.name(), email);
     }
 
-    public static class EmailSent {
+    public record EmailSent(String account, Email email) {
 
-        private final String account;
-        private final Email email;
-
-        public EmailSent(String account, Email email) {
-            this.account = account;
-            this.email = email;
-        }
-
-        public String account() {
-            return account;
-        }
-
-        public Email email() {
-            return email;
-        }
     }
 
     private static List<Setting<?>> getDynamicSettings() {

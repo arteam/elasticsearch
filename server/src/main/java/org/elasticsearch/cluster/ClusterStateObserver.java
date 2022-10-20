@@ -301,20 +301,7 @@ public class ClusterStateObserver {
         void onTimeout(TimeValue timeout);
     }
 
-    static class ObservingContext {
-        public final Listener listener;
-        public final Predicate<ClusterState> statePredicate;
-
-        ObservingContext(Listener listener, Predicate<ClusterState> statePredicate) {
-            this.listener = listener;
-            this.statePredicate = statePredicate;
-        }
-
-        @Override
-        public String toString() {
-            return "ObservingContext[" + listener + "]";
-        }
-    }
+    record ObservingContext(Listener listener, Predicate<ClusterState> statePredicate) {}
 
     private static final class ContextPreservingListener implements Listener {
         private final Listener delegate;

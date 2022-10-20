@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import static org.elasticsearch.xcontent.ConstructingObjectParser.constructorArg;
 
-public class RowResults implements ToXContentObject {
+public record RowResults(int checksum, Map<String, Object> results) implements ToXContentObject {
 
     public static final ParseField TYPE = new ParseField("row_results");
     public static final ParseField CHECKSUM = new ParseField("checksum");
@@ -34,20 +34,9 @@ public class RowResults implements ToXContentObject {
         PARSER.declareObject(constructorArg(), (p, context) -> p.map(), RESULTS);
     }
 
-    private final int checksum;
-    private final Map<String, Object> results;
-
-    public RowResults(int checksum, Map<String, Object> results) {
-        this.checksum = Objects.requireNonNull(checksum);
-        this.results = Objects.requireNonNull(results);
-    }
-
-    public int getChecksum() {
-        return checksum;
-    }
-
-    public Map<String, Object> getResults() {
-        return results;
+    public RowResults {
+        Objects.requireNonNull(checksum);
+        Objects.requireNonNull(results);
     }
 
     @Override
@@ -59,21 +48,4 @@ public class RowResults implements ToXContentObject {
         return builder;
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (other == null || getClass() != other.getClass()) {
-            return false;
-        }
-
-        RowResults that = (RowResults) other;
-        return checksum == that.checksum && Objects.equals(results, that.results);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(checksum, results);
-    }
 }

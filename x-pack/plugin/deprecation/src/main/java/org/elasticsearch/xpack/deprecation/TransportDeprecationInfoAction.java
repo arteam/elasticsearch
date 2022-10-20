@@ -166,7 +166,7 @@ public class TransportDeprecationInfoAction extends TransportMasterNodeReadActio
                 checkResults -> listener.onResponse(
                     checkResults.stream()
                         .collect(
-                            Collectors.toMap(DeprecationChecker.CheckResult::getCheckerName, DeprecationChecker.CheckResult::getIssues)
+                            Collectors.toMap(DeprecationChecker.CheckResult::checkerName, DeprecationChecker.CheckResult::issues)
                         )
                 ),
                 listener::onFailure

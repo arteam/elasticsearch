@@ -537,7 +537,7 @@ public class ActionModule extends AbstractModule {
             }
 
             public void register(ActionHandler<?, ?> handler) {
-                register(handler.getAction().name(), handler);
+                register(handler.action().name(), handler);
             }
 
             public <Request extends ActionRequest, Response extends ActionResponse> void register(
@@ -922,8 +922,8 @@ public class ActionModule extends AbstractModule {
         );
         for (ActionHandler<?, ?> action : actions.values()) {
             // bind the action as eager singleton, so the map binder one will reuse it
-            bind(action.getTransportAction()).asEagerSingleton();
-            transportActionsBinder.addBinding(action.getAction()).to(action.getTransportAction()).asEagerSingleton();
+            bind(action.transportAction()).asEagerSingleton();
+            transportActionsBinder.addBinding(action.action()).to(action.transportAction()).asEagerSingleton();
         }
 
     }

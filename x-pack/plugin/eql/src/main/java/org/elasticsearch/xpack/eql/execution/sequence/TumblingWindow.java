@@ -90,17 +90,7 @@ public class TumblingWindow implements Executable {
 
     private long startTime;
 
-    private static class WindowInfo {
-        private final int baseStage;
-        private final Ordinal begin;
-        private final Ordinal end;
-
-        WindowInfo(int baseStage, Ordinal begin, Ordinal end) {
-            this.baseStage = baseStage;
-            this.begin = begin;
-            this.end = end;
-        }
-    }
+    private record WindowInfo(int baseStage, Ordinal begin, Ordinal end) {}
 
     public TumblingWindow(
         QueryClient client,

@@ -48,12 +48,12 @@ public class StemmerTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .build();
 
             ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, PLUGIN);
-            TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_english");
+            TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_english");
             assertThat(tokenFilter, instanceOf(StemmerTokenFilterFactory.class));
             Tokenizer tokenizer = new WhitespaceTokenizer();
             tokenizer.setReader(new StringReader("foo bar"));
             TokenStream create = tokenFilter.create(tokenizer);
-            IndexAnalyzers indexAnalyzers = analysis.indexAnalyzers;
+            IndexAnalyzers indexAnalyzers = analysis.indexAnalyzers();
             NamedAnalyzer analyzer = indexAnalyzers.get("my_english");
             assertThat(create, instanceOf(PorterStemFilter.class));
             assertAnalyzesTo(analyzer, "consolingly", new String[] { "consolingli" });
@@ -75,12 +75,12 @@ public class StemmerTokenFilterFactoryTests extends ESTokenStreamTestCase {
                 .build();
 
             ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, PLUGIN);
-            TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_porter2");
+            TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_porter2");
             assertThat(tokenFilter, instanceOf(StemmerTokenFilterFactory.class));
             Tokenizer tokenizer = new WhitespaceTokenizer();
             tokenizer.setReader(new StringReader("foo bar"));
             TokenStream create = tokenFilter.create(tokenizer);
-            IndexAnalyzers indexAnalyzers = analysis.indexAnalyzers;
+            IndexAnalyzers indexAnalyzers = analysis.indexAnalyzers();
             NamedAnalyzer analyzer = indexAnalyzers.get("my_porter2");
             assertThat(create, instanceOf(SnowballFilter.class));
             assertAnalyzesTo(analyzer, "possibly", new String[] { "possibl" });

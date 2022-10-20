@@ -158,7 +158,7 @@ public class IndexBasedTransformConfigManager implements TransformConfigManager 
         SeqNoPrimaryTermAndIndex seqNoPrimaryTermAndIndex,
         ActionListener<Boolean> listener
     ) {
-        if (seqNoPrimaryTermAndIndex.getIndex().equals(TransformInternalIndexConstants.LATEST_INDEX_NAME)) {
+        if (seqNoPrimaryTermAndIndex.index().equals(TransformInternalIndexConstants.LATEST_INDEX_NAME)) {
             // update the config in the same, current index using optimistic concurrency control
             putTransformConfiguration(transformConfig, DocWriteRequest.OpType.INDEX, seqNoPrimaryTermAndIndex, listener);
         } else {
@@ -330,7 +330,7 @@ public class IndexBasedTransformConfigManager implements TransformConfigManager 
                 .id(TransformConfig.documentId(transformConfig.getId()))
                 .source(source);
             if (seqNoPrimaryTermAndIndex != null) {
-                indexRequest.setIfSeqNo(seqNoPrimaryTermAndIndex.getSeqNo()).setIfPrimaryTerm(seqNoPrimaryTermAndIndex.getPrimaryTerm());
+                indexRequest.setIfSeqNo(seqNoPrimaryTermAndIndex.seqNo()).setIfPrimaryTerm(seqNoPrimaryTermAndIndex.primaryTerm());
             }
             executeAsyncWithOrigin(
                 client,
@@ -687,9 +687,9 @@ public class IndexBasedTransformConfigManager implements TransformConfigManager 
                 // could have been called, see gh#80073
                 indexRequest.opType(DocWriteRequest.OpType.INDEX);
                 // if on the latest index use optimistic concurrency control in addition
-                if (seqNoPrimaryTermAndIndex.getIndex().equals(TransformInternalIndexConstants.LATEST_INDEX_NAME)) {
-                    indexRequest.setIfSeqNo(seqNoPrimaryTermAndIndex.getSeqNo())
-                        .setIfPrimaryTerm(seqNoPrimaryTermAndIndex.getPrimaryTerm());
+                if (seqNoPrimaryTermAndIndex.index().equals(TransformInternalIndexConstants.LATEST_INDEX_NAME)) {
+                    indexRequest.setIfSeqNo(seqNoPrimaryTermAndIndex.seqNo())
+                        .setIfPrimaryTerm(seqNoPrimaryTermAndIndex.primaryTerm());
                 }
             } else {
                 // we have not created this doc before or we are called from the upgrader

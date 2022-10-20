@@ -135,23 +135,23 @@ public class Classification implements Evaluation {
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
-        out.writeString(fields.getActualField());
-        out.writeOptionalString(fields.getPredictedField());
-        out.writeOptionalString(fields.getTopClassesField());
-        out.writeOptionalString(fields.getPredictedClassField());
-        out.writeOptionalString(fields.getPredictedProbabilityField());
+        out.writeString(fields.actualField());
+        out.writeOptionalString(fields.predictedField());
+        out.writeOptionalString(fields.topClassesField());
+        out.writeOptionalString(fields.predictedClassField());
+        out.writeOptionalString(fields.predictedProbabilityField());
         out.writeNamedWriteableList(metrics);
     }
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject();
-        builder.field(ACTUAL_FIELD.getPreferredName(), fields.getActualField());
-        if (fields.getPredictedField() != null) {
-            builder.field(PREDICTED_FIELD.getPreferredName(), fields.getPredictedField());
+        builder.field(ACTUAL_FIELD.getPreferredName(), fields.actualField());
+        if (fields.predictedField() != null) {
+            builder.field(PREDICTED_FIELD.getPreferredName(), fields.predictedField());
         }
-        if (fields.getTopClassesField() != null) {
-            builder.field(TOP_CLASSES_FIELD.getPreferredName(), fields.getTopClassesField());
+        if (fields.topClassesField() != null) {
+            builder.field(TOP_CLASSES_FIELD.getPreferredName(), fields.topClassesField());
         }
         builder.startObject(METRICS.getPreferredName());
         for (EvaluationMetric metric : metrics) {

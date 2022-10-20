@@ -81,8 +81,8 @@ public final class TransportSamlAuthenticateAction extends HandledTransportActio
                         listener.onResponse(
                             new SamlAuthenticateResponse(
                                 authentication,
-                                tokenResult.getAccessToken(),
-                                tokenResult.getRefreshToken(),
+                                tokenResult.accessToken(),
+                                tokenResult.refreshToken(),
                                 expiresIn
                             )
                         );

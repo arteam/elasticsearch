@@ -238,8 +238,8 @@ public class WatchTests extends ESTestCase {
         }
         assertThat(parsedWatch.metadata(), equalTo(metadata));
         assertThat(parsedWatch.actions(), equalTo(actions));
-        assertThat(parsedWatch.getSourceSeqNo(), equalTo(sourceSeqNo));
-        assertThat(parsedWatch.getSourcePrimaryTerm(), equalTo(sourcePrimaryTerm));
+        assertThat(parsedWatch.sourceSeqNo(), equalTo(sourceSeqNo));
+        assertThat(parsedWatch.sourcePrimaryTerm(), equalTo(sourcePrimaryTerm));
     }
 
     public void testThatBothStatusFieldsCanBeRead() throws Exception {
@@ -272,7 +272,7 @@ public class WatchTests extends ESTestCase {
         WatchParser watchParser = new WatchParser(triggerService, actionRegistry, inputRegistry, null, clock);
         XContentBuilder builder = jsonBuilder().startObject().startObject("trigger").endObject().field("status", watchStatus).endObject();
         Watch watch = watchParser.parse("foo", true, BytesReference.bytes(builder), XContentType.JSON, 1L, 1L);
-        assertThat(watch.status().state().getTimestamp().toInstant().toEpochMilli(), is(clock.millis()));
+        assertThat(watch.status().state().timestamp().toInstant().toEpochMilli(), is(clock.millis()));
         for (ActionWrapper action : actions) {
             assertThat(watch.status().actionStatus(action.id()), is(actionsStatuses.get(action.id())));
         }
@@ -387,7 +387,7 @@ public class WatchTests extends ESTestCase {
         // parse in default mode:
         Watch watch = watchParser.parse("_id", false, BytesReference.bytes(builder), XContentType.JSON, 1L, 1L);
         assertThat(((ScriptCondition) watch.condition()).getScript().getLang(), equalTo(Script.DEFAULT_SCRIPT_LANG));
-        WatcherSearchTemplateRequest request = ((SearchInput) watch.input().input()).getRequest();
+        WatcherSearchTemplateRequest request = ((SearchInput) watch.input().input()).request();
         SearchRequest searchRequest = searchTemplateService.toSearchRequest(request);
         assertThat(((ScriptQueryBuilder) searchRequest.source().query()).script().getLang(), equalTo(Script.DEFAULT_SCRIPT_LANG));
     }

@@ -51,25 +51,25 @@ public class UnifiedHighlighter implements Highlighter {
     @Override
     public HighlightField highlight(FieldHighlightContext fieldContext) throws IOException {
         @SuppressWarnings("unchecked")
-        Map<String, CustomUnifiedHighlighter> cache = (Map<String, CustomUnifiedHighlighter>) fieldContext.cache.computeIfAbsent(
+        Map<String, CustomUnifiedHighlighter> cache = (Map<String, CustomUnifiedHighlighter>) fieldContext.cache().computeIfAbsent(
             UnifiedHighlighter.class.getName(),
             k -> new HashMap<>()
         );
-        if (cache.containsKey(fieldContext.fieldName) == false) {
-            cache.put(fieldContext.fieldName, buildHighlighter(fieldContext));
+        if (cache.containsKey(fieldContext.fieldName()) == false) {
+            cache.put(fieldContext.fieldName(), buildHighlighter(fieldContext));
         }
-        CustomUnifiedHighlighter highlighter = cache.get(fieldContext.fieldName);
-        MappedFieldType fieldType = fieldContext.fieldType;
-        SearchHighlightContext.Field field = fieldContext.field;
-        FetchSubPhase.HitContext hitContext = fieldContext.hitContext;
+        CustomUnifiedHighlighter highlighter = cache.get(fieldContext.fieldName());
+        MappedFieldType fieldType = fieldContext.fieldType();
+        SearchHighlightContext.Field field = fieldContext.field();
+        FetchSubPhase.HitContext hitContext = fieldContext.hitContext();
 
         CheckedSupplier<String, IOException> loadFieldValues = () -> {
             List<Object> fieldValues = loadFieldValues(
                 highlighter,
-                fieldContext.context.getSearchExecutionContext(),
+                fieldContext.context().getSearchExecutionContext(),
                 fieldType,
                 hitContext,
-                fieldContext.forceSource
+                    fieldContext.forceSource()
             );
             if (fieldValues.size() == 0) {
                 return null;
@@ -83,7 +83,7 @@ public class UnifiedHighlighter implements Highlighter {
         }
         List<Snippet> snippets = new ArrayList<>(fieldSnippets.length);
         for (Snippet fieldSnippet : fieldSnippets) {
-            if (Strings.hasText(fieldSnippet.getText())) {
+            if (Strings.hasText(fieldSnippet.text())) {
                 snippets.add(fieldSnippet);
             }
         }
@@ -93,36 +93,36 @@ public class UnifiedHighlighter implements Highlighter {
 
         if (field.fieldOptions().scoreOrdered()) {
             // let's sort the snippets by score if needed
-            CollectionUtil.introSort(snippets, (o1, o2) -> Double.compare(o2.getScore(), o1.getScore()));
+            CollectionUtil.introSort(snippets, (o1, o2) -> Double.compare(o2.score(), o1.score()));
         }
 
         String[] fragments = new String[snippets.size()];
         for (int i = 0; i < fragments.length; i++) {
-            fragments[i] = snippets.get(i).getText();
+            fragments[i] = snippets.get(i).text();
         }
 
-        return new HighlightField(fieldContext.fieldName, Text.convertFromStringArray(fragments));
+        return new HighlightField(fieldContext.fieldName(), Text.convertFromStringArray(fragments));
     }
 
     CustomUnifiedHighlighter buildHighlighter(FieldHighlightContext fieldContext) throws IOException {
-        Encoder encoder = fieldContext.field.fieldOptions().encoder().equals("html")
+        Encoder encoder = fieldContext.field().fieldOptions().encoder().equals("html")
             ? HighlightUtils.Encoders.HTML
             : HighlightUtils.Encoders.DEFAULT;
-        int maxAnalyzedOffset = fieldContext.context.getSearchExecutionContext().getIndexSettings().getHighlightMaxAnalyzedOffset();
-        int numberOfFragments = fieldContext.field.fieldOptions().numberOfFragments();
-        Integer queryMaxAnalyzedOffset = fieldContext.field.fieldOptions().maxAnalyzedOffset();
+        int maxAnalyzedOffset = fieldContext.context().getSearchExecutionContext().getIndexSettings().getHighlightMaxAnalyzedOffset();
+        int numberOfFragments = fieldContext.field().fieldOptions().numberOfFragments();
+        Integer queryMaxAnalyzedOffset = fieldContext.field().fieldOptions().maxAnalyzedOffset();
         Analyzer analyzer = wrapAnalyzer(
-            fieldContext.context.getSearchExecutionContext().getIndexAnalyzer(f -> Lucene.KEYWORD_ANALYZER),
+            fieldContext.context().getSearchExecutionContext().getIndexAnalyzer(f -> Lucene.KEYWORD_ANALYZER),
             queryMaxAnalyzedOffset
         );
-        PassageFormatter passageFormatter = getPassageFormatter(fieldContext.hitContext, fieldContext.field, encoder);
-        IndexSearcher searcher = fieldContext.context.searcher();
-        OffsetSource offsetSource = getOffsetSource(fieldContext.context, fieldContext.fieldType);
+        PassageFormatter passageFormatter = getPassageFormatter(fieldContext.hitContext(), fieldContext.field(), encoder);
+        IndexSearcher searcher = fieldContext.context().searcher();
+        OffsetSource offsetSource = getOffsetSource(fieldContext.context(), fieldContext.fieldType());
         BreakIterator breakIterator;
         int higlighterNumberOfFragments;
         if (numberOfFragments == 0
             // non-tokenized fields should not use any break iterator (ignore boundaryScannerType)
-            || fieldContext.fieldType.getTextSearchInfo().isTokenized() == false) {
+            || fieldContext.fieldType().getTextSearchInfo().isTokenized() == false) {
             /*
              * We use a control char to separate values, which is the
              * only char that the custom break iterator breaks the text
@@ -133,7 +133,7 @@ public class UnifiedHighlighter implements Highlighter {
             higlighterNumberOfFragments = numberOfFragments == 0 ? Integer.MAX_VALUE - 1 : numberOfFragments;
         } else {
             // using paragraph separator we make sure that each field value holds a discrete passage for highlighting
-            breakIterator = getBreakIterator(fieldContext.field);
+            breakIterator = getBreakIterator(fieldContext.field());
             higlighterNumberOfFragments = numberOfFragments;
         }
         return new CustomUnifiedHighlighter(
@@ -141,16 +141,16 @@ public class UnifiedHighlighter implements Highlighter {
             analyzer,
             offsetSource,
             passageFormatter,
-            fieldContext.field.fieldOptions().boundaryScannerLocale(),
+            fieldContext.field().fieldOptions().boundaryScannerLocale(),
             breakIterator,
-            fieldContext.context.getIndexName(),
-            fieldContext.fieldName,
-            fieldContext.query,
-            fieldContext.field.fieldOptions().noMatchSize(),
+            fieldContext.context().getIndexName(),
+                fieldContext.fieldName(),
+                fieldContext.query(),
+            fieldContext.field().fieldOptions().noMatchSize(),
             higlighterNumberOfFragments,
             fieldMatcher(fieldContext),
             maxAnalyzedOffset,
-            fieldContext.field.fieldOptions().maxAnalyzedOffset()
+            fieldContext.field().fieldOptions().maxAnalyzedOffset()
         );
     }
 
@@ -229,8 +229,8 @@ public class UnifiedHighlighter implements Highlighter {
     }
 
     private static Predicate<String> fieldMatcher(FieldHighlightContext fieldContext) {
-        if (fieldContext.field.fieldOptions().requireFieldMatch()) {
-            String fieldName = fieldContext.fieldName;
+        if (fieldContext.field().fieldOptions().requireFieldMatch()) {
+            String fieldName = fieldContext.fieldName();
             return fieldName::equals;
         }
         // ignore terms that targets the _id field since they use a different encoding

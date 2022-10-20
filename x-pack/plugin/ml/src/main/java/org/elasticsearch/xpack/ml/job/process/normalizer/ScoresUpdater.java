@@ -113,8 +113,8 @@ public class ScoresUpdater {
 
             while (buckets.isEmpty() == false && shutdown == false) {
                 Result<Bucket> current = buckets.removeFirst();
-                if (current.result.isNormalizable()) {
-                    bucketsToRenormalize.add(new BucketNormalizable(current.result, current.index));
+                if (current.result().isNormalizable()) {
+                    bucketsToRenormalize.add(new BucketNormalizable(current.result(), current.index()));
                     if (bucketsToRenormalize.size() >= TARGET_BUCKETS_TO_RENORMALIZE) {
                         normalizeBuckets(normalizer, bucketsToRenormalize, quantilesState, counts);
                         bucketsToRenormalize.clear();
@@ -163,7 +163,7 @@ public class ScoresUpdater {
 
             LOGGER.debug("[{}] Will renormalize a batch of {} records", jobId, records.size());
             List<Normalizable> asNormalizables = records.stream()
-                .map(recordResultIndex -> new RecordNormalizable(recordResultIndex.result, recordResultIndex.index))
+                .map(recordResultIndex -> new RecordNormalizable(recordResultIndex.result(), recordResultIndex.index()))
                 .collect(Collectors.toList());
             normalizer.normalize(bucketSpan, asNormalizables, quantilesState);
 
@@ -191,7 +191,7 @@ public class ScoresUpdater {
 
             LOGGER.debug("[{}] Will renormalize a batch of {} influencers", jobId, influencers.size());
             List<Normalizable> asNormalizables = influencers.stream()
-                .map(influencerResultIndex -> new InfluencerNormalizable(influencerResultIndex.result, influencerResultIndex.index))
+                .map(influencerResultIndex -> new InfluencerNormalizable(influencerResultIndex.result(), influencerResultIndex.index()))
                 .collect(Collectors.toList());
             normalizer.normalize(bucketSpan, asNormalizables, quantilesState);
 

@@ -55,9 +55,9 @@ public class SerializableTokenListCategoryTests extends AbstractWireSerializingT
         List<TokenListCategory.TokenAndWeight> uniqueWeightedTokenIds = baseWeightedTokenIds.stream()
             .collect(
                 Collectors.groupingBy(
-                    TokenListCategory.TokenAndWeight::getTokenId,
+                    TokenListCategory.TokenAndWeight::tokenId,
                     TreeMap::new,
-                    Collectors.summingInt(TokenListCategory.TokenAndWeight::getWeight)
+                    Collectors.summingInt(TokenListCategory.TokenAndWeight::weight)
                 )
             )
             .entrySet()

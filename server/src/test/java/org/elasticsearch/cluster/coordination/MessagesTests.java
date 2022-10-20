@@ -92,7 +92,7 @@ public class MessagesTests extends ESTestCase {
         PublishRequest initialPublishRequest = new PublishRequest(randomClusterState());
         EqualsHashCodeTestUtils.checkEqualsAndHashCode(
             initialPublishRequest,
-            publishRequest -> new PublishRequest(publishRequest.getAcceptedState()),
+            publishRequest -> new PublishRequest(publishRequest.acceptedState()),
             in -> new PublishRequest(randomClusterState())
         );
     }

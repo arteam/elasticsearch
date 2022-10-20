@@ -18,23 +18,12 @@ import java.util.Map;
  * Simple http response with status and response body as key value map. To be
  * used with {@link CommandLineHttpClient}.
  */
-public final class HttpResponse {
-    private final int httpStatus;
-    private final Map<String, Object> responseBody;
-
+public record HttpResponse(int httpStatus, Map<String, Object> responseBody) {
     public HttpResponse(final int httpStatus, final Map<String, Object> responseBody) {
         this.httpStatus = httpStatus;
         Map<String, Object> response = new HashMap<>();
         response.putAll(responseBody);
         this.responseBody = Collections.unmodifiableMap(response);
-    }
-
-    public int getHttpStatus() {
-        return httpStatus;
-    }
-
-    public Map<String, Object> getResponseBody() {
-        return responseBody;
     }
 
     public static class HttpResponseBuilder {

@@ -117,15 +117,7 @@ public class LdapSession implements Releasable {
         }, listener::onFailure));
     }
 
-    public static class LdapUserData {
-        public final List<String> groups;
-        public final Map<String, Object> metadata;
-
-        public LdapUserData(List<String> groups, Map<String, Object> metadata) {
-            this.groups = groups;
-            this.metadata = metadata;
-        }
-    }
+    public record LdapUserData(List<String> groups, Map<String, Object> metadata) {}
 
     /**
      * A GroupsResolver is used to resolve the group names of a given LDAP user

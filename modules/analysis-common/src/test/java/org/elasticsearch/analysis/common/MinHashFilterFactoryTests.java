@@ -27,7 +27,7 @@ public class MinHashFilterFactoryTests extends ESTokenStreamTestCase {
         int default_hash_set_size = 1;
         Settings settings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString()).build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("min_hash");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("min_hash");
         String source = "the quick brown fox";
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader(source));
@@ -47,7 +47,7 @@ public class MinHashFilterFactoryTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
             .build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("test_min_hash");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("test_min_hash");
         String source = "sushi";
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader(source));
@@ -67,7 +67,7 @@ public class MinHashFilterFactoryTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
             .build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("test_min_hash");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("test_min_hash");
         String source = "sushi";
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader(source));
@@ -86,7 +86,7 @@ public class MinHashFilterFactoryTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
             .build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("test_min_hash");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("test_min_hash");
         String source = "another, longer test";
         Tokenizer tokenizer = new WhitespaceTokenizer();
         tokenizer.setReader(new StringReader(source));

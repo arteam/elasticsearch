@@ -39,16 +39,7 @@ public interface RoleReference {
     /**
      * Referencing a collection of role descriptors by their names
      */
-    final class NamedRoleReference implements RoleReference {
-        private final String[] roleNames;
-
-        public NamedRoleReference(String[] roleNames) {
-            this.roleNames = roleNames;
-        }
-
-        public String[] getRoleNames() {
-            return roleNames;
-        }
+    record NamedRoleReference(String[] roleNames) implements RoleReference {
 
         @Override
         public RoleKey id() {
@@ -119,16 +110,9 @@ public interface RoleReference {
     /**
      * Same as {@link ApiKeyRoleReference} but for BWC purpose (prior to v7.9.0)
      */
-    final class BwcApiKeyRoleReference implements RoleReference {
-        private final String apiKeyId;
-        private final Map<String, Object> roleDescriptorsMap;
-        private final ApiKeyRoleType roleType;
-
-        public BwcApiKeyRoleReference(String apiKeyId, Map<String, Object> roleDescriptorsMap, ApiKeyRoleType roleType) {
-            this.apiKeyId = apiKeyId;
-            this.roleDescriptorsMap = roleDescriptorsMap;
-            this.roleType = roleType;
-        }
+    record BwcApiKeyRoleReference(String apiKeyId, Map<String, Object> roleDescriptorsMap, ApiKeyRoleType roleType)
+        implements
+            RoleReference {
 
         @Override
         public RoleKey id() {
@@ -140,33 +124,12 @@ public interface RoleReference {
         public void resolve(RoleReferenceResolver resolver, ActionListener<RolesRetrievalResult> listener) {
             resolver.resolveBwcApiKeyRoleReference(this, listener);
         }
-
-        public String getApiKeyId() {
-            return apiKeyId;
-        }
-
-        public Map<String, Object> getRoleDescriptorsMap() {
-            return roleDescriptorsMap;
-        }
-
-        public ApiKeyRoleType getRoleType() {
-            return roleType;
-        }
     }
 
     /**
      * Referencing role descriptors by the service account principal
      */
-    final class ServiceAccountRoleReference implements RoleReference {
-        private final String principal;
-
-        public ServiceAccountRoleReference(String principal) {
-            this.principal = principal;
-        }
-
-        public String getPrincipal() {
-            return principal;
-        }
+    record ServiceAccountRoleReference(String principal) implements RoleReference {
 
         @Override
         public RoleKey id() {

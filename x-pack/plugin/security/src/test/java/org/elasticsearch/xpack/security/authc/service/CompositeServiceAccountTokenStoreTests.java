@@ -81,8 +81,8 @@ public class CompositeServiceAccountTokenStoreTests extends ESTestCase {
         final PlainActionFuture<StoreAuthenticationResult> future = new PlainActionFuture<>();
         compositeStore.authenticate(token, future);
         if (store1Success || store2Success || store3Success) {
-            assertThat(future.get().isSuccess(), is(true));
-            assertThat(future.get().getTokenSource(), is(tokenSource));
+            assertThat(future.get().success(), is(true));
+            assertThat(future.get().tokenSource(), is(tokenSource));
             if (store1Success) {
                 verify(store1).authenticate(eq(token), any());
                 verifyNoMoreInteractions(store2);
@@ -97,8 +97,8 @@ public class CompositeServiceAccountTokenStoreTests extends ESTestCase {
                 verify(store3).authenticate(eq(token), any());
             }
         } else {
-            assertThat(future.get().isSuccess(), is(false));
-            assertThat(future.get().getTokenSource(), is(tokenSource));
+            assertThat(future.get().success(), is(false));
+            assertThat(future.get().tokenSource(), is(tokenSource));
             verify(store1).authenticate(eq(token), any());
             verify(store2).authenticate(eq(token), any());
             verify(store3).authenticate(eq(token), any());

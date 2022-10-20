@@ -47,8 +47,8 @@ public abstract class Publication {
         this.currentTimeSupplier = currentTimeSupplier;
         startTime = currentTimeSupplier.getAsLong();
         applyCommitRequest = Optional.empty();
-        publicationTargets = new ArrayList<>(publishRequest.getAcceptedState().getNodes().getNodes().size());
-        publishRequest.getAcceptedState().getNodes().mastersFirstStream().forEach(n -> publicationTargets.add(new PublicationTarget(n)));
+        publicationTargets = new ArrayList<>(publishRequest.acceptedState().getNodes().getNodes().size());
+        publishRequest.acceptedState().getNodes().mastersFirstStream().forEach(n -> publicationTargets.add(new PublicationTarget(n)));
     }
 
     public void start(Set<DiscoveryNode> faultyNodes) {
@@ -135,7 +135,7 @@ public abstract class Publication {
 
     // For assertions
     ClusterState publishedState() {
-        return publishRequest.getAcceptedState();
+        return publishRequest.acceptedState();
     }
 
     private void onPossibleCommitFailure() {
@@ -194,9 +194,9 @@ public abstract class Publication {
     @Override
     public String toString() {
         return "Publication{term="
-            + publishRequest.getAcceptedState().term()
+            + publishRequest.acceptedState().term()
             + ", version="
-            + publishRequest.getAcceptedState().version()
+            + publishRequest.acceptedState().version()
             + '}';
     }
 
@@ -211,7 +211,7 @@ public abstract class Publication {
                 level,
                 "after [{}] publication of cluster state version [{}] is still waiting for {}",
                 elapsedTime,
-                publishRequest.getAcceptedState().version(),
+                publishRequest.acceptedState().version(),
                 message
             );
         }

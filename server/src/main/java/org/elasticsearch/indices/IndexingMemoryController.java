@@ -230,14 +230,7 @@ public class IndexingMemoryController implements IndexingOperationListener, Clos
         }
     }
 
-    private static final class ShardAndBytesUsed implements Comparable<ShardAndBytesUsed> {
-        final long bytesUsed;
-        final IndexShard shard;
-
-        ShardAndBytesUsed(long bytesUsed, IndexShard shard) {
-            this.bytesUsed = bytesUsed;
-            this.shard = shard;
-        }
+    private record ShardAndBytesUsed(long bytesUsed, IndexShard shard) implements Comparable<ShardAndBytesUsed> {
 
         @Override
         public int compareTo(ShardAndBytesUsed other) {

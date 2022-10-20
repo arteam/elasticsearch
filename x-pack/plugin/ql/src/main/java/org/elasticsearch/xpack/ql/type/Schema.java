@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.Collections.emptyList;
 
-public class Schema implements Iterable<Schema.Entry> {
+public record Schema(List<String> names, List<DataType> types) implements Iterable<Schema.Entry> {
 
     public interface Entry {
         String name();
@@ -26,43 +26,12 @@ public class Schema implements Iterable<Schema.Entry> {
         DataType type();
     }
 
-    static class DefaultEntry implements Entry {
-        private final String name;
-        private final DataType type;
-
-        DefaultEntry(String name, DataType type) {
-            this.name = name;
-            this.type = type;
-        }
-
-        @Override
-        public String name() {
-            return name;
-        }
-
-        @Override
-        public DataType type() {
-            return type;
-        }
-    }
+    record DefaultEntry(String name, DataType type) implements Entry {}
 
     public static final Schema EMPTY = new Schema(emptyList(), emptyList());
 
-    private final List<String> names;
-    private final List<DataType> types;
-
-    public Schema(List<String> names, List<DataType> types) {
+    public Schema {
         Check.isTrue(names.size() == types.size(), "Different # of names {} vs types {}", names, types);
-        this.types = types;
-        this.names = names;
-    }
-
-    public List<String> names() {
-        return names;
-    }
-
-    public List<DataType> types() {
-        return types;
     }
 
     public int size() {

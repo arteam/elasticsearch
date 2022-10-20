@@ -415,10 +415,10 @@ public class Coordinator extends AbstractLifecycleComponent implements ClusterSt
     }
 
     PublishWithJoinResponse handlePublishRequest(PublishRequest publishRequest) {
-        assert publishRequest.getAcceptedState().nodes().getLocalNode().equals(getLocalNode())
-            : publishRequest.getAcceptedState().nodes().getLocalNode() + " != " + getLocalNode();
+        assert publishRequest.acceptedState().nodes().getLocalNode().equals(getLocalNode())
+            : publishRequest.acceptedState().nodes().getLocalNode() + " != " + getLocalNode();
 
-        final ClusterState newClusterState = publishRequest.getAcceptedState();
+        final ClusterState newClusterState = publishRequest.acceptedState();
         if (newClusterState.nodes().isLocalNodeElectedMaster() == false) {
             // background initialization on the current master has been started by the master service already
             newClusterState.initializeAsync(transportService.getThreadPool().generic());
@@ -1471,7 +1471,7 @@ public class Coordinator extends AbstractLifecycleComponent implements ClusterSt
                     );
                     currentPublication = Optional.of(publication);
 
-                    final DiscoveryNodes publishNodes = publishRequest.getAcceptedState().nodes();
+                    final DiscoveryNodes publishNodes = publishRequest.acceptedState().nodes();
                     leaderChecker.setCurrentNodes(publishNodes);
                     followersChecker.setCurrentNodes(publishNodes);
                     lagDetector.setTrackedNodes(publishNodes);
@@ -1716,7 +1716,7 @@ public class Coordinator extends AbstractLifecycleComponent implements ClusterSt
                     } else {
                         ackListener.onNodeAck(node, e);
                         if (e == null) {
-                            lagDetector.setAppliedVersion(node, publishRequest.getAcceptedState().version());
+                            lagDetector.setAppliedVersion(node, publishRequest.acceptedState().version());
                         }
                     }
                 }
@@ -1772,7 +1772,7 @@ public class Coordinator extends AbstractLifecycleComponent implements ClusterSt
 
         boolean isActiveForCurrentLeader() {
             // checks if this publication can still influence the mode of the current publication
-            return mode == Mode.LEADER && publishRequest.getAcceptedState().term() == getCurrentTerm();
+            return mode == Mode.LEADER && publishRequest.acceptedState().term() == getCurrentTerm();
         }
 
         @Override
@@ -1857,7 +1857,7 @@ public class Coordinator extends AbstractLifecycleComponent implements ClusterSt
                                             scheduleReconfigurationIfNeeded();
                                         }
                                     }
-                                    lagDetector.startLagDetector(publishRequest.getAcceptedState().version());
+                                    lagDetector.startLagDetector(publishRequest.acceptedState().version());
                                     logIncompleteNodes(Level.WARN);
                                 }
                                 cancelTimeoutHandlers();
@@ -1927,7 +1927,7 @@ public class Coordinator extends AbstractLifecycleComponent implements ClusterSt
             // node voted for us and then rebooted, or it could be that it voted for a different node in this term. If we don't have a copy
             // of a join from this node then we assume the latter and bump our term to obtain a vote from this node.
             if (missingJoinVoteFrom(discoveryNode)) {
-                final long term = publishRequest.getAcceptedState().term();
+                final long term = publishRequest.acceptedState().term();
                 logger.debug("onMissingJoin: no join vote from {}, bumping term to exceed {}", discoveryNode, term);
                 updateMaxTermSeen(term + 1);
             }

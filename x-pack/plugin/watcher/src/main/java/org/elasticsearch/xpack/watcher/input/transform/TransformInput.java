@@ -18,23 +18,13 @@ import java.util.Objects;
  * The Transform Input allows to configure a transformation, that should be
  * put between two other inputs in a chained input in order to support easy
  * data transformations
- *
+ * <p>
  * This class does not have a builder, as it just consists of a single
  * transform
  */
-public class TransformInput implements Input {
+public record TransformInput(Transform transform) implements Input {
 
     public static final String TYPE = "transform";
-
-    private final Transform transform;
-
-    public TransformInput(Transform transform) {
-        this.transform = transform;
-    }
-
-    public Transform getTransform() {
-        return transform;
-    }
 
     @Override
     public String type() {
@@ -45,21 +35,6 @@ public class TransformInput implements Input {
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
         builder.startObject().field(transform.type(), transform, params).endObject();
         return builder;
-    }
-
-    @Override
-    public int hashCode() {
-        return transform.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TransformInput that = (TransformInput) o;
-
-        return Objects.equals(transform, that.transform);
     }
 
     static class Result extends Input.Result {

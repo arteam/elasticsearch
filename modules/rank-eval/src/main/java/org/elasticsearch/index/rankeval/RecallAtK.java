@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
-
 import javax.naming.directory.SearchResult;
 
 import static org.elasticsearch.index.rankeval.EvaluationMetric.joinHitsWithRatings;
@@ -191,21 +190,13 @@ public class RecallAtK implements EvaluationMetric {
         return Objects.hash(relevantRatingThreshold, k);
     }
 
-    public static final class Detail implements MetricDetail {
+    public record Detail(long relevantRetrieved, long relevant) implements MetricDetail {
 
         private static final ParseField RELEVANT_DOCS_RETRIEVED_FIELD = new ParseField("relevant_docs_retrieved");
         private static final ParseField RELEVANT_DOCS_FIELD = new ParseField("relevant_docs");
-        private long relevantRetrieved;
-        private long relevant;
 
-        Detail(long relevantRetrieved, long relevant) {
-            this.relevantRetrieved = relevantRetrieved;
-            this.relevant = relevant;
-        }
-
-        Detail(StreamInput in) throws IOException {
-            this.relevantRetrieved = in.readVLong();
-            this.relevant = in.readVLong();
+        static Detail from(StreamInput in) throws IOException {
+            return new Detail(in.readVLong(), in.readVLong());
         }
 
         private static final ConstructingObjectParser<Detail, Void> PARSER = new ConstructingObjectParser<>(
@@ -241,14 +232,6 @@ public class RecallAtK implements EvaluationMetric {
             return NAME;
         }
 
-        public long getRelevantRetrieved() {
-            return relevantRetrieved;
-        }
-
-        public long getRelevant() {
-            return relevant;
-        }
-
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -261,9 +244,5 @@ public class RecallAtK implements EvaluationMetric {
             return Objects.equals(relevantRetrieved, other.relevantRetrieved) && Objects.equals(relevant, other.relevant);
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(relevantRetrieved, relevant);
-        }
     }
 }

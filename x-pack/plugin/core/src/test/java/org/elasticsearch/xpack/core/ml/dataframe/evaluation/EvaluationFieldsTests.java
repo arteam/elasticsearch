@@ -19,22 +19,22 @@ public class EvaluationFieldsTests extends ESTestCase {
 
     public void testConstructorAndGetters() {
         EvaluationFields fields = new EvaluationFields("a", "b", "c", "d", "e", true);
-        assertThat(fields.getActualField(), is(equalTo("a")));
-        assertThat(fields.getPredictedField(), is(equalTo("b")));
-        assertThat(fields.getTopClassesField(), is(equalTo("c")));
-        assertThat(fields.getPredictedClassField(), is(equalTo("d")));
-        assertThat(fields.getPredictedProbabilityField(), is(equalTo("e")));
-        assertThat(fields.isPredictedProbabilityFieldNested(), is(true));
+        assertThat(fields.actualField(), is(equalTo("a")));
+        assertThat(fields.predictedField(), is(equalTo("b")));
+        assertThat(fields.topClassesField(), is(equalTo("c")));
+        assertThat(fields.predictedClassField(), is(equalTo("d")));
+        assertThat(fields.predictedProbabilityField(), is(equalTo("e")));
+        assertThat(fields.predictedProbabilityFieldNested(), is(true));
     }
 
     public void testConstructorAndGetters_WithNullValues() {
         EvaluationFields fields = new EvaluationFields("a", null, "c", null, "e", true);
-        assertThat(fields.getActualField(), is(equalTo("a")));
-        assertThat(fields.getPredictedField(), is(nullValue()));
-        assertThat(fields.getTopClassesField(), is(equalTo("c")));
-        assertThat(fields.getPredictedClassField(), is(nullValue()));
-        assertThat(fields.getPredictedProbabilityField(), is(equalTo("e")));
-        assertThat(fields.isPredictedProbabilityFieldNested(), is(true));
+        assertThat(fields.actualField(), is(equalTo("a")));
+        assertThat(fields.predictedField(), is(nullValue()));
+        assertThat(fields.topClassesField(), is(equalTo("c")));
+        assertThat(fields.predictedClassField(), is(nullValue()));
+        assertThat(fields.predictedProbabilityField(), is(equalTo("e")));
+        assertThat(fields.predictedProbabilityFieldNested(), is(true));
     }
 
     public void testListPotentiallyRequiredFields() {

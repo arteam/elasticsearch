@@ -84,7 +84,7 @@ public class CombinedDeletionPolicy extends IndexDeletionPolicy {
             totalDocsOfSafeCommit = getDocCountOfCommit(safeCommit);
         } catch (IOException ex) {
             logger.info("failed to get the total docs from the safe commit; use the total docs from the previous safe commit", ex);
-            totalDocsOfSafeCommit = safeCommitInfo.docCount;
+            totalDocsOfSafeCommit = safeCommitInfo.docCount();
         }
         synchronized (this) {
             this.safeCommitInfo = new SafeCommitInfo(

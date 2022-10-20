@@ -122,10 +122,10 @@ public class SequenceMatcher {
             HitReference hit = tuple.v2();
 
             if (stage == 0) {
-                Sequence seq = new Sequence(ko.key, numberOfStages, ko.ordinal, hit);
+                Sequence seq = new Sequence(ko.key(), numberOfStages, ko.ordinal(), hit);
                 trackSequence(seq);
             } else {
-                match(stage, ko.key, ko.ordinal, hit);
+                match(stage, ko.key(), ko.ordinal(), hit);
 
                 // early skip in case of reaching the limit
                 // check the last stage to avoid calling the state machine in other stages

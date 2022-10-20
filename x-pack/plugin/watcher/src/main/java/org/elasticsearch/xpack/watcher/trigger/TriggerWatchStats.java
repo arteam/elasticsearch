@@ -38,17 +38,7 @@ public class TriggerWatchStats {
         this.actions = actions;
     }
 
-    public static final class ActionStats {
-        public final String actionType;
-        public final String transformType;
-        public final String conditionType;
-
-        public ActionStats(String actionType, String transformType, String conditionType) {
-            this.actionType = actionType;
-            this.transformType = transformType;
-            this.conditionType = conditionType;
-        }
-    }
+    public record ActionStats(String actionType, String transformType, String conditionType) {}
 
     public static TriggerWatchStats create(Watch watch) {
         final boolean metadata = watch.metadata() != null && watch.metadata().isEmpty() == false;
@@ -56,7 +46,7 @@ public class TriggerWatchStats {
         String scheduleTriggerType = null;
         if (ScheduleTrigger.TYPE.equals(watch.trigger().type())) {
             ScheduleTrigger scheduleTrigger = (ScheduleTrigger) watch.trigger();
-            scheduleTriggerType = scheduleTrigger.getSchedule().type();
+            scheduleTriggerType = scheduleTrigger.schedule().type();
         }
         final String inputType = watch.input().type();
         final String conditionType = watch.condition().type();

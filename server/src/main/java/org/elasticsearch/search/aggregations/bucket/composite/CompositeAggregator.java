@@ -607,13 +607,6 @@ public final class CompositeAggregator extends BucketsAggregator implements Size
         return innerSizedBucketAggregators[0].bucketSize(unit);
     }
 
-    private static class Entry {
-        final AggregationExecutionContext aggCtx;
-        final DocIdSet docIdSet;
-
-        Entry(AggregationExecutionContext aggCtx, DocIdSet docIdSet) {
-            this.aggCtx = aggCtx;
-            this.docIdSet = docIdSet;
-        }
+    private record Entry(AggregationExecutionContext aggCtx, DocIdSet docIdSet) {
     }
 }

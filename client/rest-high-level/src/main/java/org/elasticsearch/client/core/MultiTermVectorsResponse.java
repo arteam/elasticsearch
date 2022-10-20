@@ -17,12 +17,7 @@ import java.util.Objects;
 
 import static org.elasticsearch.xcontent.ConstructingObjectParser.constructorArg;
 
-public class MultiTermVectorsResponse {
-    private final List<TermVectorsResponse> responses;
-
-    public MultiTermVectorsResponse(List<TermVectorsResponse> responses) {
-        this.responses = responses;
-    }
+public record MultiTermVectorsResponse(List<TermVectorsResponse> responses) {
 
     private static final ConstructingObjectParser<MultiTermVectorsResponse, Void> PARSER = new ConstructingObjectParser<>(
         "multi_term_vectors",
@@ -49,18 +44,4 @@ public class MultiTermVectorsResponse {
     public List<TermVectorsResponse> getTermVectorsResponses() {
         return responses;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if ((obj instanceof MultiTermVectorsResponse) == false) return false;
-        MultiTermVectorsResponse other = (MultiTermVectorsResponse) obj;
-        return Objects.equals(responses, other.responses);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(responses);
-    }
-
 }

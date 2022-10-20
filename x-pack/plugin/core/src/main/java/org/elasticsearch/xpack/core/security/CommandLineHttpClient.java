@@ -236,7 +236,7 @@ public class CommandLineHttpClient {
     }
 
     public static String getErrorCause(HttpResponse httpResponse) {
-        final Object error = httpResponse.getResponseBody().get("error");
+        final Object error = httpResponse.responseBody().get("error");
         if (error == null) {
             return null;
         }
@@ -280,7 +280,7 @@ public class CommandLineHttpClient {
                 throw new IllegalStateException("Failed to determine the health of the cluster. ", e);
             }
         }
-        final int responseStatus = response.getHttpStatus();
+        final int responseStatus = response.httpStatus();
         if (responseStatus != HttpURLConnection.HTTP_OK) {
             if (responseStatus != HttpURLConnection.HTTP_UNAVAILABLE) {
                 if (retries > 0) {
@@ -298,7 +298,7 @@ public class CommandLineHttpClient {
                 "Failed to determine the health of the cluster. Unexpected http status [" + responseStatus + "]"
             );
         } else {
-            final String clusterStatus = Objects.toString(response.getResponseBody().get("status"), "");
+            final String clusterStatus = Objects.toString(response.responseBody().get("status"), "");
             if (clusterStatus.isEmpty()) {
                 throw new IllegalStateException(
                     "Failed to determine the health of the cluster. Cluster health API did not return a status value."

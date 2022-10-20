@@ -32,7 +32,7 @@ public class KeepFilterFactoryTests extends ESTokenStreamTestCase {
             RESOURCE,
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("keep");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("keep");
         Assert.assertNull(tokenFilter);
     }
 
@@ -82,7 +82,7 @@ public class KeepFilterFactoryTests extends ESTokenStreamTestCase {
             RESOURCE,
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_keep_filter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_keep_filter");
         assertThat(tokenFilter, instanceOf(KeepWordFilterFactory.class));
         String source = "hello small world";
         String[] expected = new String[] { "hello", "world" };
@@ -97,7 +97,7 @@ public class KeepFilterFactoryTests extends ESTokenStreamTestCase {
             RESOURCE,
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_case_sensitive_keep_filter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_case_sensitive_keep_filter");
         assertThat(tokenFilter, instanceOf(KeepWordFilterFactory.class));
         String source = "Hello small world";
         String[] expected = new String[] { "Hello" };

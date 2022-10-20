@@ -247,7 +247,7 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
 
         List<Object[]> tests = new ArrayList<>();
         for (ClientYamlTestSuite yamlTestSuite : suites) {
-            for (ClientYamlTestSection testSection : yamlTestSuite.getTestSections()) {
+            for (ClientYamlTestSection testSection : yamlTestSuite.testSections()) {
                 tests.add(new Object[] { new ClientYamlTestCandidate(yamlTestSuite, testSection) });
             }
         }
@@ -412,7 +412,7 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
     public void test() throws IOException {
         // skip test if it matches one of the blacklist globs
         for (BlacklistedPathPatternMatcher blacklistedPathMatcher : blacklistPathMatchers) {
-            String testPath = testCandidate.getSuitePath() + "/" + testCandidate.getTestSection().getName();
+            String testPath = testCandidate.getSuitePath() + "/" + testCandidate.getTestSection().name();
             assumeFalse(
                 "[" + testCandidate.getTestPath() + "] skipped, reason: blacklisted",
                 blacklistedPathMatcher.isSuffixMatch(testPath)
@@ -421,8 +421,8 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
 
         // skip test if the whole suite (yaml file) is disabled
         assumeFalse(
-            testCandidate.getSetupSection().getSkipSection().getSkipMessage(testCandidate.getSuitePath()),
-            testCandidate.getSetupSection().getSkipSection().skip(restTestExecutionContext.esVersion())
+            testCandidate.getSetupSection().skipSection().getSkipMessage(testCandidate.getSuitePath()),
+            testCandidate.getSetupSection().skipSection().skip(restTestExecutionContext.esVersion())
         );
         // skip test if the whole suite (yaml file) is disabled
         assumeFalse(
@@ -431,22 +431,22 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
         );
         // skip test if test section is disabled
         assumeFalse(
-            testCandidate.getTestSection().getSkipSection().getSkipMessage(testCandidate.getTestPath()),
-            testCandidate.getTestSection().getSkipSection().skip(restTestExecutionContext.esVersion())
+            testCandidate.getTestSection().skipSection().getSkipMessage(testCandidate.getTestPath()),
+            testCandidate.getTestSection().skipSection().skip(restTestExecutionContext.esVersion())
         );
         // skip test if os is excluded
         assumeFalse(
-            testCandidate.getTestSection().getSkipSection().getSkipMessage(testCandidate.getTestPath()),
-            testCandidate.getTestSection().getSkipSection().skip(restTestExecutionContext.os())
+            testCandidate.getTestSection().skipSection().getSkipMessage(testCandidate.getTestPath()),
+            testCandidate.getTestSection().skipSection().skip(restTestExecutionContext.os())
         );
 
         // let's check that there is something to run, otherwise there might be a problem with the test section
-        if (testCandidate.getTestSection().getExecutableSections().size() == 0) {
+        if (testCandidate.getTestSection().executableSections().size() == 0) {
             throw new IllegalArgumentException("No executable sections loaded for [" + testCandidate.getTestPath() + "]");
         }
 
         if (useDefaultNumberOfShards == false
-            && testCandidate.getTestSection().getSkipSection().getFeatures().contains("default_shards") == false) {
+            && testCandidate.getTestSection().skipSection().getFeatures().contains("default_shards") == false) {
             final Request request = new Request("PUT", "/_template/global");
             request.setJsonEntity("{\"index_patterns\":[\"*\"],\"settings\":{\"index.number_of_shards\":2}}");
             // Because this has not yet transitioned to a composable template, it's possible that
@@ -461,12 +461,12 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
         }
         assumeFalse(
             "[" + testCandidate.getTestPath() + "] skipped, reason: in fips 140 mode",
-            inFipsJvm() && testCandidate.getTestSection().getSkipSection().getFeatures().contains("fips_140")
+            inFipsJvm() && testCandidate.getTestSection().skipSection().getFeatures().contains("fips_140")
         );
 
         if (skipSetupSections() == false && testCandidate.getSetupSection().isEmpty() == false) {
             logger.debug("start setup test [{}]", testCandidate.getTestPath());
-            for (ExecutableSection executableSection : testCandidate.getSetupSection().getExecutableSections()) {
+            for (ExecutableSection executableSection : testCandidate.getSetupSection().executableSections()) {
                 executeSection(executableSection);
             }
             logger.debug("end setup test [{}]", testCandidate.getTestPath());
@@ -475,7 +475,7 @@ public abstract class ESClientYamlSuiteTestCase extends ESRestTestCase {
         restTestExecutionContext.clear();
 
         try {
-            for (ExecutableSection executableSection : testCandidate.getTestSection().getExecutableSections()) {
+            for (ExecutableSection executableSection : testCandidate.getTestSection().executableSections()) {
                 executeSection(executableSection);
             }
         } finally {

@@ -253,7 +253,7 @@ public class WatcherServiceTests extends ESTestCase {
         ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
         verify(triggerService).start(captor.capture());
         List<Watch> watches = captor.getValue();
-        watches.forEach(watch -> assertThat(watch.status().state().isActive(), is(true)));
+        watches.forEach(watch -> assertThat(watch.status().state().active(), is(true)));
         assertThat(watches, hasSize(activeWatchCount));
     }
 

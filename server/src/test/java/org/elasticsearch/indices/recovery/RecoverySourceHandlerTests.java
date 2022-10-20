@@ -308,13 +308,13 @@ public class RecoverySourceHandlerTests extends MapperServiceTestCase {
         );
         final int expectedOps = (int) (endingSeqNo - startingSeqNo + 1);
         RecoverySourceHandler.SendSnapshotResult result = future.actionGet();
-        assertThat(result.sentOperations, equalTo(expectedOps));
+        assertThat(result.sentOperations(), equalTo(expectedOps));
         List<Translog.Operation> sortedShippedOps = shippedOps.stream().sorted(Comparator.comparing(Translog.Operation::seqNo)).toList();
         assertThat(shippedOps.size(), equalTo(expectedOps));
         for (int i = 0; i < shippedOps.size(); i++) {
             assertThat(sortedShippedOps.get(i), equalTo(operations.get(i + (int) startingSeqNo + initialNumberOfDocs)));
         }
-        assertThat(result.targetLocalCheckpoint, equalTo(checkpointOnTarget.get()));
+        assertThat(result.targetLocalCheckpoint(), equalTo(checkpointOnTarget.get()));
     }
 
     public void testSendSnapshotStopOnError() throws Exception {
@@ -449,8 +449,8 @@ public class RecoverySourceHandlerTests extends MapperServiceTestCase {
         );
         RecoverySourceHandler.SendSnapshotResult sendSnapshotResult = sendFuture.actionGet();
         assertTrue(received.get());
-        assertThat(sendSnapshotResult.targetLocalCheckpoint, equalTo(localCheckpoint.get()));
-        assertThat(sendSnapshotResult.sentOperations, equalTo(receivedSeqNos.size()));
+        assertThat(sendSnapshotResult.targetLocalCheckpoint(), equalTo(localCheckpoint.get()));
+        assertThat(sendSnapshotResult.sentOperations(), equalTo(receivedSeqNos.size()));
         Set<Long> sentSeqNos = new HashSet<>();
         for (Translog.Operation op : operations) {
             if (startingSeqNo <= op.seqNo() && op.seqNo() <= endingSeqNo && skipOperations.contains(op) == false) {
@@ -1185,7 +1185,7 @@ public class RecoverySourceHandlerTests extends MapperServiceTestCase {
             final ShardRecoveryPlan shardRecoveryPlan = createShardRecoveryPlan(store, randomIntBetween(10, 20), randomIntBetween(10, 20));
 
             final ShardRecoveryPlan.SnapshotFilesToRecover snapshotFilesToRecover = shardRecoveryPlan.getSnapshotFilesToRecover();
-            final List<String> fileNamesToBeRecoveredFromSnapshot = snapshotFilesToRecover.getSnapshotFiles()
+            final List<String> fileNamesToBeRecoveredFromSnapshot = snapshotFilesToRecover.snapshotFiles()
                 .stream()
                 .map(fileInfo -> fileInfo.metadata().name())
                 .toList();
@@ -1206,8 +1206,8 @@ public class RecoverySourceHandlerTests extends MapperServiceTestCase {
                     BlobStoreIndexShardSnapshot.FileInfo snapshotFile,
                     ActionListener<Void> listener
                 ) {
-                    assertThat(repository, is(equalTo(snapshotFilesToRecover.getRepository())));
-                    assertThat(indexId, is(equalTo(snapshotFilesToRecover.getIndexId())));
+                    assertThat(repository, is(equalTo(snapshotFilesToRecover.repository())));
+                    assertThat(indexId, is(equalTo(snapshotFilesToRecover.indexId())));
                     assertThat(containsSnapshotFile(snapshotFilesToRecover, snapshotFile), is(equalTo(true)));
                     String fileName = snapshotFile.metadata().name();
 
@@ -1528,7 +1528,7 @@ public class RecoverySourceHandlerTests extends MapperServiceTestCase {
             final ShardRecoveryPlan fallbackPlan = shardRecoveryPlan.getFallbackPlan();
             List<StoreFileMetadata> sourceFilesToRecover = fallbackPlan.getSourceFilesToRecover();
             List<StoreFileMetadata> snapshotFilesToRecover = shardRecoveryPlan.getSnapshotFilesToRecover()
-                .getSnapshotFiles()
+                .snapshotFiles()
                 .stream()
                 .map(BlobStoreIndexShardSnapshot.FileInfo::metadata)
                 .toList();
@@ -1563,7 +1563,7 @@ public class RecoverySourceHandlerTests extends MapperServiceTestCase {
                         assertThat(receiveFileInfoFromSourceCalls.incrementAndGet(), is(equalTo(1)));
                     } else {
                         filesToRecover = shardRecoveryPlan.getSnapshotFilesToRecover()
-                            .getSnapshotFiles()
+                            .snapshotFiles()
                             .stream()
                             .map(BlobStoreIndexShardSnapshot.FileInfo::metadata)
                             .toList();
@@ -1696,7 +1696,7 @@ public class RecoverySourceHandlerTests extends MapperServiceTestCase {
         ShardRecoveryPlan.SnapshotFilesToRecover snapshotFilesToRecover,
         BlobStoreIndexShardSnapshot.FileInfo snapshotFile
     ) {
-        return snapshotFilesToRecover.getSnapshotFiles().stream().anyMatch(f -> f.metadata().isSame(snapshotFile.metadata()));
+        return snapshotFilesToRecover.snapshotFiles().stream().anyMatch(f -> f.metadata().isSame(snapshotFile.metadata()));
     }
 
     private boolean containsFile(List<StoreFileMetadata> filesMetadata, StoreFileMetadata storeFileMetadata) {
@@ -1757,7 +1757,7 @@ public class RecoverySourceHandlerTests extends MapperServiceTestCase {
         );
 
         Map<String, StoreFileMetadata> snapshotFiles = shardRecoveryPlan.getSnapshotFilesToRecover()
-            .getSnapshotFiles()
+            .snapshotFiles()
             .stream()
             .map(BlobStoreIndexShardSnapshot.FileInfo::metadata)
             .collect(Collectors.toMap(StoreFileMetadata::name, Function.identity()));
@@ -1791,15 +1791,7 @@ public class RecoverySourceHandlerTests extends MapperServiceTestCase {
         return new Store(shardId, INDEX_SETTINGS, baseDirectoryWrapper, new DummyShardLock(shardId));
     }
 
-    static final class FileChunkResponse {
-        final long chunkNumber;
-        final ActionListener<Void> listener;
-
-        FileChunkResponse(long chunkNumber, ActionListener<Void> listener) {
-            this.chunkNumber = chunkNumber;
-            this.listener = listener;
-        }
-    }
+    record FileChunkResponse(long chunkNumber, ActionListener<Void> listener) {}
 
     private List<StoreFileMetadata> generateFiles(Store store, int numFiles, IntSupplier fileSizeSupplier) throws IOException {
         List<StoreFileMetadata> files = new ArrayList<>();
@@ -1981,13 +1973,5 @@ public class RecoverySourceHandlerTests extends MapperServiceTestCase {
         return operations;
     }
 
-    static class RecoverSnapshotFileResponse {
-        final BlobStoreIndexShardSnapshot.FileInfo fileInfo;
-        final ActionListener<Void> listener;
-
-        RecoverSnapshotFileResponse(BlobStoreIndexShardSnapshot.FileInfo fileInfo, ActionListener<Void> listener) {
-            this.fileInfo = fileInfo;
-            this.listener = listener;
-        }
-    }
+    record RecoverSnapshotFileResponse(BlobStoreIndexShardSnapshot.FileInfo fileInfo, ActionListener<Void> listener) {}
 }

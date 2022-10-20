@@ -6,7 +6,6 @@
  */
 package org.elasticsearch.xpack.core.security.authz.permission;
 
-import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.xpack.core.security.authz.support.SecurityQueryTemplateEvaluator.DlsQueryEvaluationContext;
 import org.elasticsearch.xpack.core.security.support.CacheKey;
@@ -66,50 +65,10 @@ public final class FieldPermissionsDefinition implements CacheKey {
         out.writeCollection(fieldGrantExcludeGroups, (o, g) -> g.buildCacheKey(o, context));
     }
 
-    public static final class FieldGrantExcludeGroup implements CacheKey, Comparable<FieldGrantExcludeGroup> {
-        private final String[] grantedFields;
-        private final String[] excludedFields;
-
-        public FieldGrantExcludeGroup(String[] grantedFields, String[] excludedFields) {
-            this.grantedFields = grantedFields;
-            this.excludedFields = excludedFields;
-        }
-
-        public String[] getGrantedFields() {
-            return grantedFields;
-        }
-
-        public String[] getExcludedFields() {
-            return excludedFields;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            FieldGrantExcludeGroup that = (FieldGrantExcludeGroup) o;
-
-            if (Arrays.equals(grantedFields, that.grantedFields) == false) return false;
-            return Arrays.equals(excludedFields, that.excludedFields);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = Arrays.hashCode(grantedFields);
-            result = 31 * result + Arrays.hashCode(excludedFields);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName()
-                + "[grant="
-                + Strings.arrayToCommaDelimitedString(grantedFields)
-                + "; exclude="
-                + Strings.arrayToCommaDelimitedString(excludedFields)
-                + "]";
-        }
+    public record FieldGrantExcludeGroup(String[] grantedFields, String[] excludedFields)
+        implements
+            CacheKey,
+            Comparable<FieldGrantExcludeGroup> {
 
         @Override
         public void buildCacheKey(StreamOutput out, DlsQueryEvaluationContext context) throws IOException {

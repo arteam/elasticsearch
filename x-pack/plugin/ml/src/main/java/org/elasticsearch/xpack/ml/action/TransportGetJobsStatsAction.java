@@ -156,7 +156,7 @@ public class TransportGetJobsStatsAction extends TransportTasksAction<
             PersistentTasksCustomMetadata.PersistentTask<?> pTask = MlTasks.getJobTask(jobId, tasks);
             DiscoveryNode node = state.nodes().get(pTask.getExecutorNode());
             JobState jobState = MlTasks.getJobState(jobId, tasks);
-            String assignmentExplanation = pTask.getAssignment().getExplanation();
+            String assignmentExplanation = pTask.getAssignment().explanation();
             TimeValue openTime = processManager.jobOpenTime(task).map(value -> TimeValue.timeValueSeconds(value.getSeconds())).orElse(null);
             jobResultsProvider.getForecastStats(jobId, parentTaskId, forecastStats -> {
                 JobStats jobStats = new JobStats(
@@ -222,7 +222,7 @@ public class TransportGetJobsStatsAction extends TransportTasksAction<
                                     PersistentTasksCustomMetadata.PersistentTask<?> pTask = MlTasks.getJobTask(jobId, tasks);
                                     String assignmentExplanation = null;
                                     if (pTask != null) {
-                                        assignmentExplanation = pTask.getAssignment().getExplanation();
+                                        assignmentExplanation = pTask.getAssignment().explanation();
                                     }
                                     jobStats.set(
                                         slot,

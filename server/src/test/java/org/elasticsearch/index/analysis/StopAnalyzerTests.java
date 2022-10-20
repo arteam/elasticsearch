@@ -27,7 +27,7 @@ public class StopAnalyzerTests extends ESTokenStreamTestCase {
             .put(IndexMetadata.SETTING_VERSION_CREATED, Version.CURRENT)
             .build();
         IndexSettings idxSettings = IndexSettingsModule.newIndexSettings("index", settings);
-        IndexAnalyzers indexAnalyzers = createTestAnalysis(idxSettings, settings).indexAnalyzers;
+        IndexAnalyzers indexAnalyzers = createTestAnalysis(idxSettings, settings).indexAnalyzers();
         NamedAnalyzer analyzer1 = indexAnalyzers.get("analyzer1");
 
         assertTokenStreamContents(analyzer1.tokenStream("test", "to be or not to be"), new String[0]);

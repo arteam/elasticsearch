@@ -77,7 +77,7 @@ public class CodecTests extends ESTestCase {
         Settings nodeSettings = Settings.builder().put(Environment.PATH_HOME_SETTING.getKey(), createTempDir()).build();
         IndexSettings settings = IndexSettingsModule.newIndexSettings("_na", nodeSettings);
         SimilarityService similarityService = new SimilarityService(settings, null, Collections.emptyMap());
-        IndexAnalyzers indexAnalyzers = createTestAnalysis(settings, nodeSettings).indexAnalyzers;
+        IndexAnalyzers indexAnalyzers = createTestAnalysis(settings, nodeSettings).indexAnalyzers();
         MapperRegistry mapperRegistry = new MapperRegistry(
             Collections.emptyMap(),
             Collections.emptyMap(),

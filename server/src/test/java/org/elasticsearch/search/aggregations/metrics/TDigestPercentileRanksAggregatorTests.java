@@ -50,8 +50,8 @@ public class TDigestPercentileRanksAggregatorTests extends AggregatorTestCase {
             IndexSearcher searcher = new IndexSearcher(reader);
             PercentileRanks ranks = searchAndReduce(searcher, new AggTestConfig(aggBuilder, fieldType));
             Percentile rank = ranks.iterator().next();
-            assertEquals(Double.NaN, rank.getPercent(), 0d);
-            assertEquals(0.5, rank.getValue(), 0d);
+            assertEquals(Double.NaN, rank.percent(), 0d);
+            assertEquals(0.5, rank.value(), 0d);
             assertFalse(AggregationInspectionHelper.hasValue(((InternalTDigestPercentileRanks) ranks)));
         }
     }
@@ -73,16 +73,16 @@ public class TDigestPercentileRanksAggregatorTests extends AggregatorTestCase {
                 PercentileRanks ranks = searchAndReduce(searcher, new AggTestConfig(aggBuilder, fieldType));
                 Iterator<Percentile> rankIterator = ranks.iterator();
                 Percentile rank = rankIterator.next();
-                assertEquals(0.1, rank.getValue(), 0d);
+                assertEquals(0.1, rank.value(), 0d);
                 // TODO: Fix T-Digest: this assertion should pass but we currently get ~15
                 // https://github.com/elastic/elasticsearch/issues/14851
                 // assertThat(rank.getPercent(), Matchers.equalTo(0d));
                 rank = rankIterator.next();
-                assertEquals(0.5, rank.getValue(), 0d);
-                assertThat(rank.getPercent(), Matchers.greaterThan(0d));
-                assertThat(rank.getPercent(), Matchers.lessThan(100d));
+                assertEquals(0.5, rank.value(), 0d);
+                assertThat(rank.percent(), Matchers.greaterThan(0d));
+                assertThat(rank.percent(), Matchers.lessThan(100d));
                 rank = rankIterator.next();
-                assertEquals(12, rank.getValue(), 0d);
+                assertEquals(12, rank.value(), 0d);
                 // TODO: Fix T-Digest: this assertion should pass but we currently get ~59
                 // https://github.com/elastic/elasticsearch/issues/14851
                 // assertThat(rank.getPercent(), Matchers.equalTo(100d));

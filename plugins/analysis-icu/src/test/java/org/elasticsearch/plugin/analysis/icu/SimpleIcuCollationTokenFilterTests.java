@@ -38,7 +38,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollatesToSame(filterFactory, "FOO", "foo");
     }
 
@@ -56,7 +56,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollatesToSame(filterFactory, "I WİLL USE TURKİSH CASING", "ı will use turkish casıng");
     }
 
@@ -72,7 +72,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollatesToSame(filterFactory, "I W\u0049\u0307LL USE TURKİSH CASING", "ı will use turkish casıng");
     }
 
@@ -88,7 +88,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollatesToSame(filterFactory, "TESTING", "testing");
     }
 
@@ -105,7 +105,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollatesToSame(filterFactory, "foo-bar", "foo bar");
     }
 
@@ -123,7 +123,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollatesToSame(filterFactory, "foo bar", "foobar");
         // now assert that punctuation still matters: foo-bar < foo bar
         assertCollation(filterFactory, "foo-bar", "foo bar", -1);
@@ -141,7 +141,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollation(filterFactory, "foobar-9", "foobar-10", -1);
     }
 
@@ -158,7 +158,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollatesToSame(filterFactory, "résumé", "resume");
         assertCollatesToSame(filterFactory, "Résumé", "Resume");
         // now assert that case still matters: resume < Resume
@@ -178,7 +178,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollation(filterFactory, "Resume", "resume", -1);
     }
 
@@ -203,7 +203,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollatesToSame(filterFactory, "Töne", "Toene");
     }
 
@@ -219,7 +219,7 @@ public class SimpleIcuCollationTokenFilterTests extends ESTestCase {
             .build();
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), settings, new AnalysisICUPlugin());
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("myCollator");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("myCollator");
         assertCollation(filterFactory, "green", "bird", -1);
     }
 

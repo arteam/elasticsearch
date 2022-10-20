@@ -12,14 +12,10 @@ import org.elasticsearch.search.DocValueFormat;
 
 import java.util.Objects;
 
-public final class SortFieldAndFormat {
+public record SortFieldAndFormat(SortField field, DocValueFormat format) {
 
-    public final SortField field;
-    public final DocValueFormat format;
-
-    public SortFieldAndFormat(SortField field, DocValueFormat format) {
-        this.field = Objects.requireNonNull(field);
-        this.format = Objects.requireNonNull(format);
+    public SortFieldAndFormat {
+        Objects.requireNonNull(field);
+        Objects.requireNonNull(format);
     }
-
 }

@@ -338,7 +338,7 @@ public class TransportGetTransformStatsAction extends TransportTasksAction<Trans
                         new TransformStats(
                             stat.getId(),
                             TransformStats.State.WAITING,
-                            assignment.getExplanation(),
+                            assignment.explanation(),
                             null,
                             stat.getTransformStats(),
                             checkpointingInfo

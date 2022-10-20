@@ -29,20 +29,20 @@ final class LaplaceScorer extends WordScorer {
 
     @Override
     protected double scoreUnigram(Candidate word) throws IOException {
-        return (alpha + frequency(word.term)) / (vocabluarySize + alpha * numTerms);
+        return (alpha + frequency(word.term())) / (vocabluarySize + alpha * numTerms);
     }
 
     @Override
     protected double scoreBigram(Candidate word, Candidate w_1) throws IOException {
-        join(separator, spare, w_1.term, word.term);
-        return (alpha + frequency(spare.get())) / (w_1.termStats.totalTermFreq + alpha * numTerms);
+        join(separator, spare, w_1.term(), word.term());
+        return (alpha + frequency(spare.get())) / (w_1.termStats().totalTermFreq + alpha * numTerms);
     }
 
     @Override
     protected double scoreTrigram(Candidate word, Candidate w_1, Candidate w_2) throws IOException {
-        join(separator, spare, w_2.term, w_1.term, word.term);
+        join(separator, spare, w_2.term(), w_1.term(), word.term());
         long trigramCount = frequency(spare.get());
-        join(separator, spare, w_1.term, word.term);
+        join(separator, spare, w_1.term(), word.term());
         return (alpha + trigramCount) / (frequency(spare.get()) + alpha * numTerms);
     }
 

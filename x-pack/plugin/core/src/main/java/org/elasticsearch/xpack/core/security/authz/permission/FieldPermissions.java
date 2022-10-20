@@ -121,11 +121,11 @@ public final class FieldPermissions implements Accountable, CacheKey {
         long ramBytesUsed = 0L;
         for (FieldGrantExcludeGroup group : fpd.getFieldGrantExcludeGroups()) {
             ramBytesUsed += BASE_FIELD_GROUP_BYTES + BASE_HASHSET_ENTRY_SIZE;
-            if (group.getGrantedFields() != null) {
-                ramBytesUsed += RamUsageEstimator.shallowSizeOf(group.getGrantedFields());
+            if (group.grantedFields() != null) {
+                ramBytesUsed += RamUsageEstimator.shallowSizeOf(group.grantedFields());
             }
-            if (group.getExcludedFields() != null) {
-                ramBytesUsed += RamUsageEstimator.shallowSizeOf(group.getExcludedFields());
+            if (group.excludedFields() != null) {
+                ramBytesUsed += RamUsageEstimator.shallowSizeOf(group.excludedFields());
             }
         }
         return ramBytesUsed;
@@ -143,7 +143,7 @@ public final class FieldPermissions implements Accountable, CacheKey {
         Set<FieldGrantExcludeGroup> groups = fieldPermissionsDefinition.getFieldGrantExcludeGroups();
         assert groups.size() > 0 : "there must always be a single group for field inclusion/exclusion";
         List<Automaton> automatonList = groups.stream()
-            .map(g -> FieldPermissions.buildPermittedFieldsAutomaton(g.getGrantedFields(), g.getExcludedFields()))
+            .map(g -> FieldPermissions.buildPermittedFieldsAutomaton(g.grantedFields(), g.excludedFields()))
             .collect(Collectors.toList());
         return Automatons.unionAndMinimize(automatonList);
     }

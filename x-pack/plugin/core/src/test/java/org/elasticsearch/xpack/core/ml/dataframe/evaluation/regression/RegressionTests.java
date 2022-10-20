@@ -91,12 +91,12 @@ public class RegressionTests extends AbstractXContentSerializingTestCase<Regress
     public void testGetFields() {
         Regression evaluation = new Regression("foo", "bar", null);
         EvaluationFields fields = evaluation.getFields();
-        assertThat(fields.getActualField(), is(equalTo("foo")));
-        assertThat(fields.getPredictedField(), is(equalTo("bar")));
-        assertThat(fields.getTopClassesField(), is(nullValue()));
-        assertThat(fields.getPredictedClassField(), is(nullValue()));
-        assertThat(fields.getPredictedProbabilityField(), is(nullValue()));
-        assertThat(fields.isPredictedProbabilityFieldNested(), is(false));
+        assertThat(fields.actualField(), is(equalTo("foo")));
+        assertThat(fields.predictedField(), is(equalTo("bar")));
+        assertThat(fields.topClassesField(), is(nullValue()));
+        assertThat(fields.predictedClassField(), is(nullValue()));
+        assertThat(fields.predictedProbabilityField(), is(nullValue()));
+        assertThat(fields.predictedProbabilityFieldNested(), is(false));
     }
 
     public void testBuildSearch() {

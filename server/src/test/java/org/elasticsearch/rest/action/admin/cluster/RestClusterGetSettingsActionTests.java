@@ -28,11 +28,11 @@ import java.util.stream.Stream;
 public class RestClusterGetSettingsActionTests extends ESTestCase {
 
     public void testFilterPersistentSettings() {
-        runTestFilterSettingsTest(Metadata.Builder::persistentSettings, RestClusterGetSettingsResponse::getPersistentSettings);
+        runTestFilterSettingsTest(Metadata.Builder::persistentSettings, RestClusterGetSettingsResponse::persistentSettings);
     }
 
     public void testFilterTransientSettings() {
-        runTestFilterSettingsTest(Metadata.Builder::transientSettings, RestClusterGetSettingsResponse::getTransientSettings);
+        runTestFilterSettingsTest(Metadata.Builder::transientSettings, RestClusterGetSettingsResponse::transientSettings);
     }
 
     private void runTestFilterSettingsTest(

@@ -420,8 +420,8 @@ public class TransformIndexerFailureHandlingTests extends ESTestCase {
         );
 
         IterationResult<TransformIndexerPosition> newPosition = indexer.doProcess(searchResponse);
-        assertThat(newPosition.getToIndex().collect(Collectors.toList()), is(empty()));
-        assertThat(newPosition.getPosition(), is(nullValue()));
+        assertThat(newPosition.toIndex().collect(Collectors.toList()), is(empty()));
+        assertThat(newPosition.position(), is(nullValue()));
         assertThat(newPosition.isDone(), is(true));
     }
 

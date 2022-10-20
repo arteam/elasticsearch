@@ -270,17 +270,11 @@ public class TransportServiceHandshakeTests extends ESTestCase {
         assertTrue(handleA.transportService.nodeConnected(handleB.discoveryNode));
     }
 
-    private static class NetworkHandle {
-        final TransportService transportService;
-        final DiscoveryNode discoveryNode;
-        final DisruptingTransportInterceptor transportInterceptor;
-
-        NetworkHandle(TransportService transportService, DiscoveryNode discoveryNode, DisruptingTransportInterceptor transportInterceptor) {
-            this.transportService = transportService;
-            this.discoveryNode = discoveryNode;
-            this.transportInterceptor = transportInterceptor;
-        }
-    }
+    private record NetworkHandle(
+        TransportService transportService,
+        DiscoveryNode discoveryNode,
+        DisruptingTransportInterceptor transportInterceptor
+    ) {}
 
     private static class DisruptingTransportInterceptor implements TransportInterceptor {
 

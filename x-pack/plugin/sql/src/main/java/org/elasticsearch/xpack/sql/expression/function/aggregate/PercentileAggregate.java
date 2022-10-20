@@ -52,25 +52,15 @@ abstract class PercentileAggregate extends NumericAggregate implements EnclosedA
         })).forEach(c -> METHOD_CONFIGURATORS.put(c.method.getParseField().getPreferredName(), c));
     }
 
-    private static class MethodConfigurator {
+    private record MethodConfigurator(
+        PercentilesMethod method,
+        PercentileAggregate.MethodConfigurator.MethodParameterResolver resolver,
+        Function<Expression, PercentilesConfig> parameterToConfig
+    ) {
 
         @FunctionalInterface
         private interface MethodParameterResolver {
             TypeResolution resolve(Expression methodParameter, String sourceText, ParamOrdinal methodParameterOrdinal);
-        }
-
-        private final PercentilesMethod method;
-        private final MethodParameterResolver resolver;
-        private final Function<Expression, PercentilesConfig> parameterToConfig;
-
-        MethodConfigurator(
-            PercentilesMethod method,
-            MethodParameterResolver resolver,
-            Function<Expression, PercentilesConfig> parameterToConfig
-        ) {
-            this.method = method;
-            this.resolver = resolver;
-            this.parameterToConfig = parameterToConfig;
         }
 
     }

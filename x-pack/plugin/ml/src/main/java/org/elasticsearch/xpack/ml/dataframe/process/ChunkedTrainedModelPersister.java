@@ -137,9 +137,9 @@ public class ChunkedTrainedModelPersister {
         }
         TrainedModelMetadata trainedModelMetadata = new TrainedModelMetadata(
             this.currentModelId.get(),
-            modelMetadata.getFeatureImportances(),
-            modelMetadata.getFeatureImportanceBaseline(),
-            modelMetadata.getHyperparameters()
+            modelMetadata.featureImportances(),
+            modelMetadata.featureImportanceBaseline(),
+            modelMetadata.hyperparameters()
         );
 
         CountDownLatch latch = storeTrainedModelMetadata(trainedModelMetadata);
@@ -169,11 +169,11 @@ public class ChunkedTrainedModelPersister {
                 () -> format(
                     "[%s] stored trained model definition chunk [%s] [%s]",
                     analytics.getId(),
-                    trainedModelDefinitionDoc.getModelId(),
-                    trainedModelDefinitionDoc.getDocNum()
+                    trainedModelDefinitionDoc.modelId(),
+                    trainedModelDefinitionDoc.docNum()
                 )
             );
-            if (trainedModelDefinitionDoc.isEos() == false) {
+            if (trainedModelDefinitionDoc.eos() == false) {
                 refreshListener.onResponse(null);
                 return;
             }
@@ -186,8 +186,8 @@ public class ChunkedTrainedModelPersister {
                 () -> format(
                     "[%s] error storing trained model definition chunk [%s] with id [%s]",
                     analytics.getId(),
-                    trainedModelDefinitionDoc.getDocNum(),
-                    trainedModelDefinitionDoc.getModelId()
+                    trainedModelDefinitionDoc.docNum(),
+                    trainedModelDefinitionDoc.modelId()
                 ),
                 e
             );
@@ -196,8 +196,8 @@ public class ChunkedTrainedModelPersister {
                 ExceptionsHelper.serverError(
                     "error storing trained model definition chunk [{}] with id [{}]",
                     e,
-                    trainedModelDefinitionDoc.getDocNum(),
-                    trainedModelDefinitionDoc.getModelId()
+                    trainedModelDefinitionDoc.docNum(),
+                    trainedModelDefinitionDoc.modelId()
                 )
             );
             refreshListener.onResponse(null);

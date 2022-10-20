@@ -10,52 +10,17 @@ import org.elasticsearch.common.io.stream.StreamOutput;
 import org.elasticsearch.xcontent.XContentBuilder;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.elasticsearch.xpack.core.ml.inference.trainedmodel.InferenceConfig.DEFAULT_RESULTS_FIELD;
 
-public class RawInferenceResults implements InferenceResults {
+public record RawInferenceResults(double[] value, double[][] featureImportance) implements InferenceResults {
 
     public static final String NAME = "raw";
-
-    private final double[] value;
-    private final double[][] featureImportance;
-
-    public RawInferenceResults(double[] value, double[][] featureImportance) {
-        this.value = value;
-        this.featureImportance = featureImportance;
-    }
-
-    public double[] getValue() {
-        return value;
-    }
-
-    public double[][] getFeatureImportance() {
-        return featureImportance;
-    }
 
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         throw new UnsupportedOperationException("[raw] does not support wire serialization");
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-        RawInferenceResults that = (RawInferenceResults) object;
-        return Arrays.equals(value, that.value) && Arrays.deepEquals(featureImportance, that.featureImportance);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(Arrays.hashCode(value), featureImportance);
     }
 
     @Override

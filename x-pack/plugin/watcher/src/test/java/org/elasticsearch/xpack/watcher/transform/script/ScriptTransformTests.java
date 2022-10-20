@@ -132,7 +132,7 @@ public class ScriptTransformTests extends ESTestCase {
         parser.nextToken();
         ExecutableScriptTransform transform = new ScriptTransformFactory(service).parseExecutable("_id", parser);
         Script script = new Script(type, type == ScriptType.STORED ? null : "_lang", "_script", singletonMap("key", "value"));
-        assertThat(transform.transform().getScript(), equalTo(script));
+        assertThat(transform.transform().script(), equalTo(script));
     }
 
     public void testParserString() throws Exception {
@@ -142,7 +142,7 @@ public class ScriptTransformTests extends ESTestCase {
         XContentParser parser = createParser(builder);
         parser.nextToken();
         ExecutableScriptTransform transform = new ScriptTransformFactory(service).parseExecutable("_id", parser);
-        assertEquals(new Script(ScriptType.INLINE, Script.DEFAULT_SCRIPT_LANG, "_script", emptyMap()), transform.transform().getScript());
+        assertEquals(new Script(ScriptType.INLINE, Script.DEFAULT_SCRIPT_LANG, "_script", emptyMap()), transform.transform().script());
     }
 
     public void testScriptConditionParserBadScript() throws Exception {

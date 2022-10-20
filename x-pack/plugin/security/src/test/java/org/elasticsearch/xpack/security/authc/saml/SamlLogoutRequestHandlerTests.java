@@ -66,13 +66,13 @@ public class SamlLogoutRequestHandlerTests extends SamlTestCase {
 
     private void assertResultMatchesRequest(SamlLogoutRequestHandler.Result result, LogoutRequest logoutRequest) {
         assertThat(result, notNullValue());
-        assertThat(result.getNameId(), notNullValue());
-        assertThat(result.getNameId().idpNameQualifier, equalTo(logoutRequest.getNameID().getNameQualifier()));
-        assertThat(result.getNameId().spNameQualifier, equalTo(logoutRequest.getNameID().getSPNameQualifier()));
-        assertThat(result.getNameId().value, equalTo(logoutRequest.getNameID().getValue()));
-        assertThat(result.getNameId().spProvidedId, nullValue());
-        assertThat(result.getSession(), nullValue());
-        assertThat(result.getRequestId(), equalTo(logoutRequest.getID()));
+        assertThat(result.nameId(), notNullValue());
+        assertThat(result.nameId().idpNameQualifier, equalTo(logoutRequest.getNameID().getNameQualifier()));
+        assertThat(result.nameId().spNameQualifier, equalTo(logoutRequest.getNameID().getSPNameQualifier()));
+        assertThat(result.nameId().value, equalTo(logoutRequest.getNameID().getValue()));
+        assertThat(result.nameId().spProvidedId, nullValue());
+        assertThat(result.session(), nullValue());
+        assertThat(result.requestId(), equalTo(logoutRequest.getID()));
     }
 
     public void testLogoutWithIncorrectIssuerIsRejected() throws Exception {
@@ -169,7 +169,7 @@ public class SamlLogoutRequestHandlerTests extends SamlTestCase {
         final SamlLogoutRequestHandler handler = buildHandler();
         final SamlLogoutRequestHandler.Result result = handler.parseFromQueryString(query);
         assertResultMatchesRequest(result, logoutRequest);
-        assertThat(result.getRelayState(), equalTo("Hail Hydra"));
+        assertThat(result.relayState(), equalTo("Hail Hydra"));
     }
 
     private String urlEncode(String str) {

@@ -174,7 +174,7 @@ public abstract class AbstractWatcherIntegrationTestCase extends ESIntegTestCase
         if (timeWarped()) {
             timeWarp = new TimeWarp(
                 internalCluster().getInstances(ScheduleTriggerEngineMock.class),
-                (ClockMock) getInstanceFromMaster(ClockHolder.class).clock
+                (ClockMock) getInstanceFromMaster(ClockHolder.class).clock()
             );
         }
 
@@ -669,13 +669,13 @@ public abstract class AbstractWatcherIntegrationTestCase extends ESIntegTestCase
         @Override
         public synchronized void applyToNode(String node, InternalTestCluster cluster) {
             if (frozen) {
-                ((ClockMock) cluster.getInstance(ClockHolder.class, node).clock).freeze();
+                ((ClockMock) cluster.getInstance(ClockHolder.class, node).clock()).freeze();
             }
         }
 
         @Override
         public void removeFromNode(String node, InternalTestCluster cluster) {
-            ((ClockMock) cluster.getInstance(ClockHolder.class, node).clock).unfreeze();
+            ((ClockMock) cluster.getInstance(ClockHolder.class, node).clock()).unfreeze();
         }
 
         @Override

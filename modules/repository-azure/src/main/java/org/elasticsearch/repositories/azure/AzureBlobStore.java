@@ -774,14 +774,7 @@ public class AzureBlobStore implements BlobStore {
         }
     }
 
-    private static class RequestStatsCollector {
-        private final BiPredicate<String, URL> filter;
-        private final Runnable onHttpRequest;
-
-        private RequestStatsCollector(BiPredicate<String, URL> filter, Runnable onHttpRequest) {
-            this.filter = filter;
-            this.onHttpRequest = onHttpRequest;
-        }
+    private record RequestStatsCollector(BiPredicate<String, URL> filter, Runnable onHttpRequest) {
 
         static RequestStatsCollector create(BiPredicate<String, URL> filter, Runnable consumer) {
             return new RequestStatsCollector(filter, consumer);

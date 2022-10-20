@@ -24,7 +24,6 @@ import org.elasticsearch.xpack.autoscaling.capacity.AutoscalingDeciderService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 public class ProactiveStorageDeciderService implements AutoscalingDeciderService {
     public static final String NAME = "proactive_storage";
@@ -94,48 +93,17 @@ public class ProactiveStorageDeciderService implements AutoscalingDeciderService
         return List.of(FORECAST_WINDOW);
     }
 
-    public static class ProactiveReason implements AutoscalingDeciderResult.Reason {
-        private final String reason;
-        private final long unassigned;
-        private final long assigned;
-        private final long forecasted;
-        private final TimeValue forecastWindow;
+    public record ProactiveReason(String reason, long unassigned, long assigned, long forecasted, TimeValue forecastWindow)
+        implements
+            AutoscalingDeciderResult.Reason {
 
-        public ProactiveReason(String reason, long unassigned, long assigned, long forecasted, TimeValue forecastWindow) {
-            this.reason = reason;
-            this.unassigned = unassigned;
-            this.assigned = assigned;
-            this.forecasted = forecasted;
-            this.forecastWindow = forecastWindow;
-        }
-
-        public ProactiveReason(StreamInput in) throws IOException {
-            this.reason = in.readString();
-            this.unassigned = in.readLong();
-            this.assigned = in.readLong();
-            this.forecasted = in.readLong();
-            this.forecastWindow = in.readTimeValue();
+        public static ProactiveReason from(StreamInput in) throws IOException {
+            return new ProactiveReason(in.readString(), in.readLong(), in.readLong(), in.readLong(), in.readTimeValue());
         }
 
         @Override
         public String summary() {
             return reason;
-        }
-
-        public long unassigned() {
-            return unassigned;
-        }
-
-        public long assigned() {
-            return assigned;
-        }
-
-        public long forecasted() {
-            return forecasted;
-        }
-
-        public TimeValue forecastWindow() {
-            return forecastWindow;
         }
 
         @Override
@@ -164,21 +132,5 @@ public class ProactiveStorageDeciderService implements AutoscalingDeciderService
             return builder;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ProactiveReason that = (ProactiveReason) o;
-            return unassigned == that.unassigned
-                && assigned == that.assigned
-                && forecasted == that.forecasted
-                && reason.equals(that.reason)
-                && forecastWindow.equals(that.forecastWindow);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(reason, unassigned, assigned, forecasted, forecastWindow);
-        }
     }
 }

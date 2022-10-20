@@ -43,17 +43,17 @@ public final class Correction implements Comparable<Correction> {
         int len = separator.length * this.candidates.length - 1;
         for (int i = 0; i < toJoin.length; i++) {
             Candidate candidate = candidates[i];
-            if (preTag == null || candidate.userInput) {
-                toJoin[i] = candidate.term;
+            if (preTag == null || candidate.userInput()) {
+                toJoin[i] = candidate.term();
             } else {
-                final int maxLen = preTag.length + postTag.length + candidate.term.length;
+                final int maxLen = preTag.length + postTag.length + candidate.term().length;
                 final BytesRefBuilder highlighted = new BytesRefBuilder();// just allocate once
                 highlighted.grow(maxLen);
-                if (i == 0 || candidates[i - 1].userInput) {
+                if (i == 0 || candidates[i - 1].userInput()) {
                     highlighted.append(preTag);
                 }
-                highlighted.append(candidate.term);
-                if (toJoin.length == i + 1 || candidates[i + 1].userInput) {
+                highlighted.append(candidate.term());
+                if (toJoin.length == i + 1 || candidates[i + 1].userInput()) {
                     highlighted.append(postTag);
                 }
                 toJoin[i] = highlighted.get();
@@ -75,7 +75,7 @@ public final class Correction implements Comparable<Correction> {
         if (score == otherScore) {
             int limit = Math.min(candidates.length, otherCandidates.length);
             for (int i = 0; i < limit; i++) {
-                int cmp = candidates[i].term.compareTo(otherCandidates[i].term);
+                int cmp = candidates[i].term().compareTo(otherCandidates[i].term());
                 if (cmp != 0) {
                     // Later (zzz) terms sort before (are weaker than) earlier (aaa) terms:
                     return -cmp;

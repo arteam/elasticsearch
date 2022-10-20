@@ -24,59 +24,15 @@ import java.util.Objects;
 
 import static org.elasticsearch.core.TimeValue.timeValueMillis;
 
-public class SearchTransform implements Transform {
+public record SearchTransform(WatcherSearchTemplateRequest request, @Nullable TimeValue timeout, @Nullable ZoneId dynamicNameTimeZone)
+    implements
+        Transform {
 
     public static final String TYPE = "search";
-
-    private final WatcherSearchTemplateRequest request;
-    @Nullable
-    private final TimeValue timeout;
-    @Nullable
-    private final ZoneId dynamicNameTimeZone;
-
-    public SearchTransform(WatcherSearchTemplateRequest request, @Nullable TimeValue timeout, @Nullable ZoneId dynamicNameTimeZone) {
-        this.request = request;
-        this.timeout = timeout;
-        this.dynamicNameTimeZone = dynamicNameTimeZone;
-    }
 
     @Override
     public String type() {
         return TYPE;
-    }
-
-    public WatcherSearchTemplateRequest getRequest() {
-        return request;
-    }
-
-    public TimeValue getTimeout() {
-        return timeout;
-    }
-
-    public ZoneId getDynamicNameTimeZone() {
-        return dynamicNameTimeZone;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        SearchTransform that = (SearchTransform) o;
-        return Objects.equals(request, that.request)
-            && Objects.equals(timeout, that.timeout)
-            && Objects.equals(dynamicNameTimeZone, that.dynamicNameTimeZone);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = request != null ? request.hashCode() : 0;
-        result = 31 * result + (timeout != null ? timeout.hashCode() : 0);
-        result = 31 * result + (dynamicNameTimeZone != null ? dynamicNameTimeZone.hashCode() : 0);
-        return result;
     }
 
     @Override

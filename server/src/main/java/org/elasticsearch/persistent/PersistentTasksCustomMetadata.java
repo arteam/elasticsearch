@@ -235,8 +235,8 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
 
         PersistentTasksCustomMetadata.Builder taskBuilder = PersistentTasksCustomMetadata.builder(tasks);
         for (PersistentTask<?> task : tasks.tasks()) {
-            if (task.getAssignment().getExecutorNode() != null
-                && clusterState.nodes().nodeExists(task.getAssignment().getExecutorNode()) == false) {
+            if (task.getAssignment().executorNode() != null
+                && clusterState.nodes().nodeExists(task.getAssignment().executorNode()) == false) {
                 taskBuilder.reassignTask(task.getId(), LOST_NODE_ASSIGNMENT);
             }
         }
@@ -250,37 +250,9 @@ public final class PersistentTasksCustomMetadata extends AbstractNamedDiffable<M
         return ClusterState.builder(clusterState).metadata(metadataBuilder).build();
     }
 
-    public static class Assignment {
-        @Nullable
-        private final String executorNode;
-        private final String explanation;
-
-        public Assignment(String executorNode, String explanation) {
-            this.executorNode = executorNode;
+    public record Assignment(@Nullable String executorNode, String explanation) {
+        public Assignment {
             assert explanation != null;
-            this.explanation = explanation;
-        }
-
-        @Nullable
-        public String getExecutorNode() {
-            return executorNode;
-        }
-
-        public String getExplanation() {
-            return explanation;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Assignment that = (Assignment) o;
-            return Objects.equals(executorNode, that.executorNode) && Objects.equals(explanation, that.explanation);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(executorNode, explanation);
         }
 
         public boolean isAssigned() {

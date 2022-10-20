@@ -251,9 +251,9 @@ public class LangIdentNeuralNetwork implements StrictlyParsedTrainedModel, Lenie
                 continue;
             }
             CustomWordEmbedding.StringLengthAndEmbedding stringLengthAndEmbedding = (CustomWordEmbedding.StringLengthAndEmbedding) vec;
-            int square = stringLengthAndEmbedding.getUtf8StringLen() * stringLengthAndEmbedding.getUtf8StringLen();
+            int square = stringLengthAndEmbedding.utf8StringLen() * stringLengthAndEmbedding.utf8StringLen();
             totalLen += square;
-            double[] h0 = hiddenLayer.productPlusBias(false, stringLengthAndEmbedding.getEmbedding());
+            double[] h0 = hiddenLayer.productPlusBias(false, stringLengthAndEmbedding.embedding());
             double[] score = softmaxLayer.productPlusBias(true, h0);
             sumDoubleArrays(probabilities, softMax(score), Math.max(square, 1));
         }

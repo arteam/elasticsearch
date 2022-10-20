@@ -41,13 +41,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class GeoJsonSerializationTests extends ESTestCase {
 
-    private static class GeometryWrapper implements ToXContentObject {
-
-        private final Geometry geometry;
-
-        GeometryWrapper(Geometry geometry) {
-            this.geometry = geometry;
-        }
+    private record GeometryWrapper(Geometry geometry) implements ToXContentObject {
 
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {
@@ -57,19 +51,6 @@ public class GeoJsonSerializationTests extends ESTestCase {
         public static GeometryWrapper fromXContent(XContentParser parser) throws IOException {
             parser.nextToken();
             return new GeometryWrapper(GeoJson.fromXContent(GeographyValidator.instance(true), false, true, parser));
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            GeometryWrapper that = (GeometryWrapper) o;
-            return Objects.equals(geometry, that.geometry);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(geometry);
         }
     }
 

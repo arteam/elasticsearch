@@ -42,7 +42,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -164,7 +163,7 @@ public final class DocumentSubsetBitsetCache implements IndexReader.ClosedListen
      * Cleanup (synchronize) the internal state when an object is removed from the primary cache
      */
     private void onCacheEviction(RemovalNotification<BitsetCacheKey, BitSet> notification) {
-        final BitsetCacheKey bitsetKey = notification.getKey();
+        final BitsetCacheKey bitsetKey = notification.key();
         final IndexReader.CacheKey indexKey = bitsetKey.index;
         if (keysByIndex.getOrDefault(indexKey, Set.of()).contains(bitsetKey) == false) {
             // If the bitsetKey isn't in the lookup map, then there's nothing to synchronize
@@ -323,37 +322,7 @@ public final class DocumentSubsetBitsetCache implements IndexReader.ClosedListen
         return Map.of("count", entryCount(), "memory", ram.toString(), "memory_in_bytes", ram.getBytes());
     }
 
-    private static class BitsetCacheKey {
-        final IndexReader.CacheKey index;
-        final Query query;
-
-        private BitsetCacheKey(IndexReader.CacheKey index, Query query) {
-            this.index = index;
-            this.query = query;
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (this == other) {
-                return true;
-            }
-            if (other == null || getClass() != other.getClass()) {
-                return false;
-            }
-            final BitsetCacheKey that = (BitsetCacheKey) other;
-            return Objects.equals(this.index, that.index) && Objects.equals(this.query, that.query);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(index, query);
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + "(" + index + "," + query + ")";
-        }
-    }
+    private record BitsetCacheKey(IndexReader.CacheKey index, Query query) {}
 
     /**
      * This method verifies that the two internal data structures ({@link #bitsetCache} and {@link #keysByIndex}) are consistent with one

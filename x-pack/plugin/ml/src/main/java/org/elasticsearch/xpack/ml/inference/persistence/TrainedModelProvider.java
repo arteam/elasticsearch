@@ -263,10 +263,10 @@ public class TrainedModelProvider {
         String index,
         ActionListener<Void> listener
     ) {
-        if (MODELS_STORED_AS_RESOURCE.contains(trainedModelDefinitionDoc.getModelId())) {
+        if (MODELS_STORED_AS_RESOURCE.contains(trainedModelDefinitionDoc.modelId())) {
             listener.onFailure(
                 new ResourceAlreadyExistsException(
-                    Messages.getMessage(Messages.INFERENCE_TRAINED_MODEL_EXISTS, trainedModelDefinitionDoc.getModelId())
+                    Messages.getMessage(Messages.INFERENCE_TRAINED_MODEL_EXISTS, trainedModelDefinitionDoc.modelId())
                 )
             );
             return;
@@ -283,8 +283,8 @@ public class TrainedModelProvider {
                         new ResourceAlreadyExistsException(
                             Messages.getMessage(
                                 Messages.INFERENCE_TRAINED_MODEL_DOC_EXISTS,
-                                trainedModelDefinitionDoc.getModelId(),
-                                trainedModelDefinitionDoc.getDocNum()
+                                trainedModelDefinitionDoc.modelId(),
+                                trainedModelDefinitionDoc.docNum()
                             )
                         )
                     );
@@ -293,8 +293,8 @@ public class TrainedModelProvider {
                         new ElasticsearchStatusException(
                             Messages.getMessage(
                                 Messages.INFERENCE_FAILED_TO_STORE_MODEL_DEFINITION,
-                                trainedModelDefinitionDoc.getModelId(),
-                                trainedModelDefinitionDoc.getDocNum()
+                                trainedModelDefinitionDoc.modelId(),
+                                trainedModelDefinitionDoc.docNum()
                             ),
                             RestStatus.INTERNAL_SERVER_ERROR,
                             e
@@ -433,7 +433,7 @@ public class TrainedModelProvider {
             .add(createRequest(trainedModelConfig.getModelId(), trainedModelConfig));
         trainedModelDefinitionDocs.forEach(
             defDoc -> bulkRequest.add(
-                createRequest(TrainedModelDefinitionDoc.docId(trainedModelConfig.getModelId(), defDoc.getDocNum()), defDoc)
+                createRequest(TrainedModelDefinitionDoc.docId(trainedModelConfig.getModelId(), defDoc.docNum()), defDoc)
             )
         );
 
@@ -1232,21 +1232,21 @@ public class TrainedModelProvider {
         // If the user requested the compressed data string, we need access to the underlying bytes.
         // BytesArray gives us that access.
         BytesReference bytes = docs.size() == 1
-            ? docs.get(0).getBinaryData()
+            ? docs.get(0).binaryData()
             : new BytesArray(
-                CompositeBytesReference.of(docs.stream().map(TrainedModelDefinitionDoc::getBinaryData).toArray(BytesReference[]::new))
+                CompositeBytesReference.of(docs.stream().map(TrainedModelDefinitionDoc::binaryData).toArray(BytesReference[]::new))
                     .toBytesRef()
             );
 
-        if (docs.get(0).getTotalDefinitionLength() != null) {
-            if (bytes.length() != docs.get(0).getTotalDefinitionLength()) {
+        if (docs.get(0).totalDefinitionLength() != null) {
+            if (bytes.length() != docs.get(0).totalDefinitionLength()) {
                 throw ExceptionsHelper.serverError(Messages.getMessage(Messages.MODEL_DEFINITION_TRUNCATED, modelId));
             }
         }
 
         TrainedModelDefinitionDoc lastDoc = docs.get(docs.size() - 1);
         // Either we are missing the last doc, or some previous doc
-        if (lastDoc.isEos() == false || lastDoc.getDocNum() != docs.size() - 1) {
+        if (lastDoc.eos() == false || lastDoc.docNum() != docs.size() - 1) {
             throw ExceptionsHelper.serverError(Messages.getMessage(Messages.MODEL_DEFINITION_TRUNCATED, modelId));
         }
         return bytes;

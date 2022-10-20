@@ -312,7 +312,7 @@ public class TransportSetUpgradeModeAction extends AcknowledgedTransportMasterNo
                 chainedTask -> persistentTasksClusterService.unassignPersistentTask(
                     task.getId(),
                     task.getAllocationId(),
-                    AWAITING_UPGRADE.getExplanation(),
+                    AWAITING_UPGRADE.explanation(),
                     chainedTask
                 )
             );

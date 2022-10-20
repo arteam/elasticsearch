@@ -90,14 +90,14 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
     }
 
     public static FieldDoc buildFieldDoc(SortAndFormats sort, Object[] values, @Nullable String collapseField) {
-        if (sort == null || sort.sort.getSort() == null || sort.sort.getSort().length == 0) {
+        if (sort == null || sort.sort().getSort() == null || sort.sort().getSort().length == 0) {
             throw new IllegalArgumentException("Sort must contain at least one field.");
         }
 
-        SortField[] sortFields = sort.sort.getSort();
+        SortField[] sortFields = sort.sort().getSort();
         if (sortFields.length != values.length) {
             throw new IllegalArgumentException(
-                SEARCH_AFTER.getPreferredName() + " has " + values.length + " value(s) but sort has " + sort.sort.getSort().length + "."
+                SEARCH_AFTER.getPreferredName() + " has " + values.length + " value(s) but sort has " + sort.sort().getSort().length + "."
             );
         }
 
@@ -112,7 +112,7 @@ public class SearchAfterBuilder implements ToXContentObject, Writeable {
         Object[] fieldValues = new Object[sortFields.length];
         for (int i = 0; i < sortFields.length; i++) {
             SortField sortField = sortFields[i];
-            DocValueFormat format = sort.formats[i];
+            DocValueFormat format = sort.formats()[i];
             if (values[i] != null) {
                 fieldValues[i] = convertValueFromSortField(values[i], sortField, format);
             } else {

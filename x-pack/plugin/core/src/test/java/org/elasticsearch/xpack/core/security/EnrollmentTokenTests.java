@@ -24,10 +24,10 @@ public class EnrollmentTokenTests extends ESTestCase {
 
     public void testEnrollmentToken() throws Exception {
         final EnrollmentToken enrollmentToken = createEnrollmentToken();
-        final String apiKey = enrollmentToken.getApiKey();
-        final String fingerprint = enrollmentToken.getFingerprint();
-        final String version = enrollmentToken.getVersion();
-        final List<String> boundAddresses = enrollmentToken.getBoundAddress();
+        final String apiKey = enrollmentToken.apiKey();
+        final String fingerprint = enrollmentToken.fingerprint();
+        final String version = enrollmentToken.version();
+        final List<String> boundAddresses = enrollmentToken.boundAddress();
         final String jsonString = enrollmentToken.getRaw();
         final String encoded = enrollmentToken.getEncoded();
         final Map<String, String> enrollmentMap;

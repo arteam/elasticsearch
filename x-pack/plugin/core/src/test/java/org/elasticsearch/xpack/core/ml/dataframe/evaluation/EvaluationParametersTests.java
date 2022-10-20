@@ -14,6 +14,6 @@ public class EvaluationParametersTests extends ESTestCase {
 
     public void testConstructorAndGetters() {
         EvaluationParameters params = new EvaluationParameters(17);
-        assertThat(params.getMaxBuckets(), equalTo(17));
+        assertThat(params.maxBuckets(), equalTo(17));
     }
 }

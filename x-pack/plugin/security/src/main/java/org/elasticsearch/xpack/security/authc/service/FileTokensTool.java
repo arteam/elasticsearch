@@ -71,7 +71,7 @@ class FileTokensTool extends MultiCommand {
             FileAttributesChecker attributesChecker = new FileAttributesChecker(serviceTokensFile);
             final Map<String, char[]> tokenHashes = new TreeMap<>(FileServiceAccountTokenStore.parseFile(serviceTokensFile, null));
 
-            try (ServiceAccountToken token = ServiceAccountToken.newToken(accountTokenId.getAccountId(), accountTokenId.getTokenName())) {
+            try (ServiceAccountToken token = ServiceAccountToken.newToken(accountTokenId.accountId(), accountTokenId.tokenName())) {
                 if (tokenHashes.containsKey(token.getQualifiedName())) {
                     throw new UserException(ExitCodes.CODE_ERROR, "Service token [" + token.getQualifiedName() + "] already exists");
                 }

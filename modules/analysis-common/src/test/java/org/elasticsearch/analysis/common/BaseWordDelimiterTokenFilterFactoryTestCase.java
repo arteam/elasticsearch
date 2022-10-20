@@ -38,7 +38,7 @@ public abstract class BaseWordDelimiterTokenFilterFactoryTestCase extends ESToke
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot 500-42 wi-fi wi-fi-4000 j2se O'Neil's";
         String[] expected = new String[] { "Power", "Shot", "500", "42", "wi", "fi", "wi", "fi", "4000", "j", "2", "se", "O", "Neil" };
         Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -56,7 +56,7 @@ public abstract class BaseWordDelimiterTokenFilterFactoryTestCase extends ESToke
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot 500-42 wi-fi wi-fi-4000 j2se O'Neil's";
         String[] expected = new String[] { "PowerShot", "500", "42", "wifi", "wifi", "4000", "j", "2", "se", "ONeil" };
         Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -74,7 +74,7 @@ public abstract class BaseWordDelimiterTokenFilterFactoryTestCase extends ESToke
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot 500-42 wi-fi wi-fi-4000 j2se O'Neil's";
         String[] expected = new String[] { "Power", "Shot", "50042", "wi", "fi", "wi", "fi", "4000", "j", "2", "se", "O", "Neil" };
         Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -93,7 +93,7 @@ public abstract class BaseWordDelimiterTokenFilterFactoryTestCase extends ESToke
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot 500-42 wi-fi wi-fi-4000 j2se O'Neil's";
         String[] expected = new String[] { "PowerShot", "50042", "wifi", "wifi4000", "j2se", "ONeil" };
         Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -110,7 +110,7 @@ public abstract class BaseWordDelimiterTokenFilterFactoryTestCase extends ESToke
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot";
         String[] expected = new String[] { "PowerShot" };
         Tokenizer tokenizer = new WhitespaceTokenizer();
@@ -127,7 +127,7 @@ public abstract class BaseWordDelimiterTokenFilterFactoryTestCase extends ESToke
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot 500-42 wi-fi wi-fi-4000 j2se O'Neil's";
         String[] expected = new String[] {
             "PowerShot",
@@ -164,7 +164,7 @@ public abstract class BaseWordDelimiterTokenFilterFactoryTestCase extends ESToke
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot 500-42 wi-fi wi-fi-4000 j2se O'Neil's";
         String[] expected = new String[] { "Power", "Shot", "500", "42", "wi", "fi", "wi", "fi", "4000", "j", "2", "se", "O", "Neil", "s" };
         Tokenizer tokenizer = new WhitespaceTokenizer();

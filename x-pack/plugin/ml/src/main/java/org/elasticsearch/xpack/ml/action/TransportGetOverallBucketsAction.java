@@ -205,16 +205,7 @@ public class TransportGetOverallBucketsAction extends HandledTransportAction<
         );
     }
 
-    private static class JobsContext {
-        private final int jobCount;
-        private final String[] indices;
-        private final TimeValue maxBucketSpan;
-
-        private JobsContext(int jobCount, String[] indices, TimeValue maxBucketSpan) {
-            this.jobCount = jobCount;
-            this.indices = indices;
-            this.maxBucketSpan = maxBucketSpan;
-        }
+    private record JobsContext(int jobCount, String[] indices, TimeValue maxBucketSpan) {
 
         private static JobsContext build(List<Job> jobs, GetOverallBucketsAction.Request request) {
             Set<String> indices = new HashSet<>();

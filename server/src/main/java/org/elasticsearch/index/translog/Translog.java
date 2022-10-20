@@ -169,8 +169,8 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
 
         try {
             final Checkpoint checkpoint = readCheckpoint(location);
-            final Path nextTranslogFile = location.resolve(getFilename(checkpoint.generation + 1));
-            final Path currentCheckpointFile = location.resolve(getCommitCheckpointFileName(checkpoint.generation));
+            final Path nextTranslogFile = location.resolve(getFilename(checkpoint.generation() + 1));
+            final Path currentCheckpointFile = location.resolve(getCommitCheckpointFileName(checkpoint.generation()));
             // this is special handling for error condition when we create a new writer but we fail to bake
             // the newly written file (generation+1) into the checkpoint. This is still a valid state
             // we just need to cleanup before we continue
@@ -197,9 +197,9 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
             current = null;
             try {
                 current = createWriter(
-                    checkpoint.generation + 1,
+                    checkpoint.generation() + 1,
                     getMinFileGeneration(),
-                    checkpoint.globalCheckpoint,
+                    checkpoint.globalCheckpoint(),
                     persistedSequenceNumberConsumer
                 );
                 success = true;
@@ -226,13 +226,13 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
         try (ReleasableLock ignored = writeLock.acquire()) {
             logger.debug("open uncommitted translog checkpoint {}", checkpoint);
 
-            final long minGenerationToRecoverFrom = checkpoint.minTranslogGeneration;
+            final long minGenerationToRecoverFrom = checkpoint.minTranslogGeneration();
             assert minGenerationToRecoverFrom >= 0 : "minTranslogGeneration should be non-negative";
 
             // we open files in reverse order in order to validate the translog uuid before we start traversing the translog based on
             // the generation id we found in the lucene commit. This gives for better error messages if the wrong
             // translog was found.
-            for (long i = checkpoint.generation; i >= minGenerationToRecoverFrom; i--) {
+            for (long i = checkpoint.generation(); i >= minGenerationToRecoverFrom; i--) {
                 Path committedTranslogFile = location.resolve(getFilename(i));
                 if (Files.exists(committedTranslogFile) == false) {
                     throw new TranslogCorruptedException(
@@ -242,11 +242,11 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
                             + " recovering from: "
                             + minGenerationToRecoverFrom
                             + " checkpoint: "
-                            + checkpoint.generation
+                            + checkpoint.generation()
                             + " - translog ids must be consecutive"
                     );
                 }
-                final Checkpoint readerCheckpoint = i == checkpoint.generation
+                final Checkpoint readerCheckpoint = i == checkpoint.generation()
                     ? checkpoint
                     : Checkpoint.read(location.resolve(getCommitCheckpointFileName(i)));
                 final TranslogReader reader = openReader(committedTranslogFile, readerCheckpoint);
@@ -270,7 +270,7 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
                 location.resolve(getCommitCheckpointFileName(minGenerationToRecoverFrom - 1))
             );
 
-            Path commitCheckpoint = location.resolve(getCommitCheckpointFileName(checkpoint.generation));
+            Path commitCheckpoint = location.resolve(getCommitCheckpointFileName(checkpoint.generation()));
             if (Files.exists(commitCheckpoint)) {
                 Checkpoint checkpointFromDisk = Checkpoint.read(commitCheckpoint);
                 if (checkpoint.equals(checkpointFromDisk) == false) {
@@ -324,8 +324,8 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
     TranslogReader openReader(Path path, Checkpoint checkpoint) throws IOException {
         FileChannel channel = FileChannel.open(path, StandardOpenOption.READ);
         try {
-            assert Translog.parseIdFromFileName(path) == checkpoint.generation
-                : "expected generation: " + Translog.parseIdFromFileName(path) + " but got: " + checkpoint.generation;
+            assert Translog.parseIdFromFileName(path) == checkpoint.generation()
+                : "expected generation: " + Translog.parseIdFromFileName(path) + " but got: " + checkpoint.generation();
             TranslogReader reader = TranslogReader.open(channel, path, checkpoint, translogUUID);
             channel = null;
             return reader;
@@ -646,7 +646,7 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
      * @return the last synced checkpoint
      */
     public long getLastSyncedGlobalCheckpoint() {
-        return getLastSyncedCheckpoint().globalCheckpoint;
+        return getLastSyncedCheckpoint().globalCheckpoint();
     }
 
     final Checkpoint getLastSyncedCheckpoint() {
@@ -673,7 +673,7 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
         try (ReleasableLock ignored = readLock.acquire()) {
             ensureOpen();
             TranslogSnapshot[] snapshots = Stream.concat(readers.stream(), Stream.of(current))
-                .filter(reader -> reader.getCheckpoint().minSeqNo <= toSeqNo && fromSeqNo <= reader.getCheckpoint().maxEffectiveSeqNo())
+                .filter(reader -> reader.getCheckpoint().minSeqNo() <= toSeqNo && fromSeqNo <= reader.getCheckpoint().maxEffectiveSeqNo())
                 .map(BaseTranslogReader::newSnapshot)
                 .toArray(TranslogSnapshot[]::new);
             final Snapshot snapshot = newMultiSnapshot(snapshots);
@@ -688,10 +688,10 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
     public Operation readOperation(Location location) throws IOException {
         try (ReleasableLock ignored = readLock.acquire()) {
             ensureOpen();
-            if (location.generation < getMinFileGeneration()) {
+            if (location.generation() < getMinFileGeneration()) {
                 return null;
             }
-            if (current.generation == location.generation) {
+            if (current.generation == location.generation()) {
                 // no need to fsync here the read operation will ensure that buffers are written to disk
                 // if they are still in RAM and we are reading onto that position
                 return current.read(location);
@@ -699,7 +699,7 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
                 // read backwards - it's likely we need to read on that is recent
                 for (int i = readers.size() - 1; i >= 0; i--) {
                     TranslogReader translogReader = readers.get(i);
-                    if (translogReader.generation == location.generation) {
+                    if (translogReader.generation == location.generation()) {
                         return translogReader.read(location);
                     }
                 }
@@ -846,9 +846,9 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
      */
     public boolean ensureSynced(Location location) throws IOException {
         try (ReleasableLock lock = readLock.acquire()) {
-            if (location.generation == current.getGeneration()) { // if we have a new one it's already synced
+            if (location.generation() == current.getGeneration()) { // if we have a new one it's already synced
                 ensureOpen();
-                return current.syncUpTo(location.translogLocation + location.size);
+                return current.syncUpTo(location.translogLocation() + location.size());
             }
         } catch (final Exception ex) {
             closeOnTragicEvent(ex);
@@ -928,58 +928,14 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
         return deletionPolicy;
     }
 
-    public static class Location implements Comparable<Location> {
-
-        public final long generation;
-        public final long translogLocation;
-        public final int size;
-
-        public Location(long generation, long translogLocation, int size) {
-            this.generation = generation;
-            this.translogLocation = translogLocation;
-            this.size = size;
-        }
-
-        @Override
-        public String toString() {
-            return "[generation: " + generation + ", location: " + translogLocation + ", size: " + size + "]";
-        }
+    public record Location(long generation, long translogLocation, int size) implements Comparable<Location> {
 
         @Override
         public int compareTo(Location o) {
-            if (generation == o.generation) {
-                return Long.compare(translogLocation, o.translogLocation);
+            if (generation() == o.generation()) {
+                return Long.compare(translogLocation(), o.translogLocation());
             }
-            return Long.compare(generation, o.generation);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            Location location = (Location) o;
-
-            if (generation != location.generation) {
-                return false;
-            }
-            if (translogLocation != location.translogLocation) {
-                return false;
-            }
-            return size == location.size;
-
-        }
-
-        @Override
-        public int hashCode() {
-            int result = Long.hashCode(generation);
-            result = 31 * result + Long.hashCode(translogLocation);
-            result = 31 * result + size;
-            return result;
+            return Long.compare(generation(), o.generation());
         }
     }
 
@@ -1652,7 +1608,7 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
             try {
                 final TranslogReader reader = current.closeIntoReader();
                 readers.add(reader);
-                assert Checkpoint.read(location.resolve(CHECKPOINT_FILE_NAME)).generation == current.getGeneration();
+                assert Checkpoint.read(location.resolve(CHECKPOINT_FILE_NAME)).generation() == current.getGeneration();
                 copyCheckpointTo(location.resolve(getCommitCheckpointFileName(current.getGeneration())));
                 // create a new translog file; this will sync it and update the checkpoint data;
                 current = createWriter(current.getGeneration() + 1);
@@ -1769,16 +1725,7 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
     /**
      * References a transaction log generation
      */
-    public static final class TranslogGeneration {
-        public final String translogUUID;
-        public final long translogFileGeneration;
-
-        public TranslogGeneration(String translogUUID, long translogFileGeneration) {
-            this.translogUUID = translogUUID;
-            this.translogFileGeneration = translogFileGeneration;
-        }
-
-    }
+    public record TranslogGeneration(String translogUUID, long translogFileGeneration) {}
 
     /**
      * Returns the current generation of this translog. This corresponds to the latest uncommitted translog generation
@@ -1826,13 +1773,13 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
      */
     public static long readGlobalCheckpoint(final Path location, final String expectedTranslogUUID) throws IOException {
         final Checkpoint checkpoint = readCheckpoint(location, expectedTranslogUUID);
-        return checkpoint.globalCheckpoint;
+        return checkpoint.globalCheckpoint();
     }
 
     private static Checkpoint readCheckpoint(Path location, String expectedTranslogUUID) throws IOException {
         final Checkpoint checkpoint = readCheckpoint(location);
         // We need to open at least one translog header to validate the translogUUID.
-        final Path translogFile = location.resolve(getFilename(checkpoint.generation));
+        final Path translogFile = location.resolve(getFilename(checkpoint.generation()));
         try (FileChannel channel = FileChannel.open(translogFile, StandardOpenOption.READ)) {
             TranslogHeader.read(expectedTranslogUUID, translogFile, channel);
         } catch (TranslogCorruptedException ex) {
@@ -1858,7 +1805,7 @@ public class Translog extends AbstractIndexShardComponent implements IndexShardC
         try (ReleasableLock ignored = readLock.acquire()) {
             ensureOpen();
             final OptionalLong maxSeqNo = Stream.concat(readers.stream(), Stream.of(current))
-                .mapToLong(reader -> reader.getCheckpoint().maxSeqNo)
+                .mapToLong(reader -> reader.getCheckpoint().maxSeqNo())
                 .max();
             assert maxSeqNo.isPresent() : "must have at least one translog generation";
             return maxSeqNo.getAsLong();

@@ -176,7 +176,7 @@ public class CcsCommonYamlTestSuiteIT extends ESClientYamlSuiteTestCase {
      */
     private static ClientYamlTestCandidate rewrite(ClientYamlTestCandidate clientYamlTestCandidate) {
         ClientYamlTestSection testSection = clientYamlTestCandidate.getTestSection();
-        List<ExecutableSection> executableSections = testSection.getExecutableSections();
+        List<ExecutableSection> executableSections = testSection.executableSections();
         List<ExecutableSection> modifiedExecutableSections = new ArrayList<>();
         String lastAPIDoSection = "";
         for (ExecutableSection section : executableSections) {
@@ -219,9 +219,9 @@ public class CcsCommonYamlTestSuiteIT extends ESClientYamlSuiteTestCase {
         return new ClientYamlTestCandidate(
             clientYamlTestCandidate.getRestTestSuite(),
             new ClientYamlTestSection(
-                testSection.getLocation(),
-                testSection.getName(),
-                testSection.getSkipSection(),
+                testSection.location(),
+                testSection.name(),
+                testSection.skipSection(),
                 modifiedExecutableSections
             )
         );

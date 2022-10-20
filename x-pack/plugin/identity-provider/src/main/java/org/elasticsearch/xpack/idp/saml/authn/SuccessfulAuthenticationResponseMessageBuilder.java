@@ -183,19 +183,19 @@ public class SuccessfulAuthenticationResponseMessageBuilder {
         final SamlServiceProvider serviceProvider = user.getServiceProvider();
         final AttributeStatement statement = samlFactory.object(AttributeStatement.class, AttributeStatement.DEFAULT_ELEMENT_NAME);
         final List<Attribute> attributes = new ArrayList<>();
-        final Attribute roles = buildAttribute(serviceProvider.getAttributeNames().roles, "roles", user.getRoles());
+        final Attribute roles = buildAttribute(serviceProvider.getAttributeNames().roles(), "roles", user.getRoles());
         if (roles != null) {
             attributes.add(roles);
         }
-        final Attribute principal = buildAttribute(serviceProvider.getAttributeNames().principal, "principal", user.getPrincipal());
+        final Attribute principal = buildAttribute(serviceProvider.getAttributeNames().principal(), "principal", user.getPrincipal());
         if (principal != null) {
             attributes.add(principal);
         }
-        final Attribute email = buildAttribute(serviceProvider.getAttributeNames().email, "email", user.getEmail());
+        final Attribute email = buildAttribute(serviceProvider.getAttributeNames().email(), "email", user.getEmail());
         if (email != null) {
             attributes.add(email);
         }
-        final Attribute name = buildAttribute(serviceProvider.getAttributeNames().name, "name", user.getName());
+        final Attribute name = buildAttribute(serviceProvider.getAttributeNames().name(), "name", user.getName());
         if (name != null) {
             attributes.add(name);
         }

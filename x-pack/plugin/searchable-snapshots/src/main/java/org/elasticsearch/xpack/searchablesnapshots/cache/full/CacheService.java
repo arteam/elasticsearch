@@ -160,7 +160,7 @@ public class CacheService extends AbstractLifecycleComponent {
             .weigher((key, entry) -> entry.getLength())
             // NORELEASE This does not immediately free space on disk, as cache file are only deleted when all index inputs
             // are done with reading/writing the cache file
-            .removalListener(notification -> onCacheFileEviction(notification.getValue()))
+            .removalListener(notification -> onCacheFileEviction(notification.value()))
             .build();
         this.persistentCache = Objects.requireNonNull(persistentCache);
         this.cacheSyncLock = new ReentrantLock();
@@ -491,8 +491,8 @@ public class CacheService extends AbstractLifecycleComponent {
     // used in tests
     boolean isCacheFileToSync(CacheFile cacheFile) {
         return cacheFilesEventsQueue.stream()
-            .filter(event -> event.type == CacheFileEventType.NEEDS_FSYNC)
-            .anyMatch(event -> event.value == cacheFile);
+            .filter(event -> event.type() == CacheFileEventType.NEEDS_FSYNC)
+            .anyMatch(event -> event.value() == cacheFile);
     }
 
     // used in tests
@@ -557,10 +557,10 @@ public class CacheService extends AbstractLifecycleComponent {
                 final long numberOfEvents = numberOfCacheFilesEvents.decrementAndGet();
                 assert numberOfEvents >= 0L : numberOfEvents;
 
-                final CacheFile cacheFile = event.value;
+                final CacheFile cacheFile = event.value();
                 final Path cacheDir = cacheFile.getFile().toAbsolutePath().getParent();
                 try {
-                    switch (event.type) {
+                    switch (event.type()) {
                         case DELETE -> {
                             logger.trace("deleting cache file [{}] from persistent cache", cacheFile.getFile().getFileName());
                             persistentCache.removeCacheFile(cacheFile);
@@ -600,7 +600,7 @@ public class CacheService extends AbstractLifecycleComponent {
                 } catch (Exception e) {
                     if (cacheFilesSyncExceptionsLogs.putIfAbsent(cacheDir, startTimeNanos) == null) {
                         logger.warn(
-                            () -> format("failed to process [%s] for cache file [%s]", event.type, cacheFile.getFile().getFileName()),
+                            () -> format("failed to process [%s] for cache file [%s]", event.type(), cacheFile.getFile().getFileName()),
                             e
                         );
                     }
@@ -684,54 +684,12 @@ public class CacheService extends AbstractLifecycleComponent {
      * Represents the searchable snapshots information of a shard that has been removed from the node. These information are kept around
      * to evict the cache files associated to that shard.
      */
-    static class ShardEviction {
-
-        private final String snapshotUUID;
-        private final String snapshotIndexName;
-        private final ShardId shardId;
-
-        ShardEviction(String snapshotUUID, String snapshotIndexName, ShardId shardId) {
-            this.snapshotUUID = snapshotUUID;
-            this.snapshotIndexName = snapshotIndexName;
-            this.shardId = shardId;
-        }
-
-        public String getSnapshotUUID() {
-            return snapshotUUID;
-        }
-
-        public String getSnapshotIndexName() {
-            return snapshotIndexName;
-        }
-
-        public ShardId getShardId() {
-            return shardId;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ShardEviction that = (ShardEviction) o;
-            return Objects.equals(snapshotUUID, that.snapshotUUID)
-                && Objects.equals(snapshotIndexName, that.snapshotIndexName)
-                && Objects.equals(shardId, that.shardId);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(snapshotUUID, snapshotIndexName, shardId);
-        }
-
-        @Override
-        public String toString() {
-            return "[snapshotUUID=" + snapshotUUID + ", snapshotIndexName=" + snapshotIndexName + ", shardId=" + shardId + ']';
-        }
+    record ShardEviction(String snapshotUUID, String snapshotIndexName, ShardId shardId) {
 
         boolean matches(CacheKey cacheKey) {
-            return Objects.equals(snapshotUUID, cacheKey.getSnapshotUUID())
-                && Objects.equals(snapshotIndexName, cacheKey.getSnapshotIndexName())
-                && Objects.equals(shardId, cacheKey.getShardId());
+            return Objects.equals(snapshotUUID, cacheKey.snapshotUUID())
+                && Objects.equals(snapshotIndexName, cacheKey.snapshotIndexName())
+                && Objects.equals(shardId, cacheKey.shardId());
         }
     }
 
@@ -743,38 +701,11 @@ public class CacheService extends AbstractLifecycleComponent {
     /**
      * Represents an event that occurred on a specified {@link CacheFile}
      */
-    public static class CacheFileEvent {
+    public record CacheFileEvent(CacheFileEventType type, CacheFile value) {
 
-        public final CacheFileEventType type;
-        public final CacheFile value;
-
-        private CacheFileEvent(CacheFileEventType type, CacheFile value) {
+        public CacheFileEvent {
             assert type != null;
-            this.type = type;
             assert value != null;
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            final CacheFileEvent event = (CacheFileEvent) o;
-            return type == event.type && value == event.value;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(type, value);
-        }
-
-        @Override
-        public String toString() {
-            return "cache file event [type=" + type + ", value=" + value + ']';
         }
     }
 }

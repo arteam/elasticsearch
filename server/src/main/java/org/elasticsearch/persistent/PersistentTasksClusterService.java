@@ -334,8 +334,8 @@ public class PersistentTasksClusterService implements ClusterStateListener, Clos
         PersistentTasksExecutor<Params> persistentTasksExecutor = registry.getPersistentTaskExecutorSafe(taskName);
 
         AssignmentDecision decision = enableDecider.canAssign();
-        if (decision.getType() == AssignmentDecision.Type.NO) {
-            return unassignedAssignment("persistent task [" + taskName + "] cannot be assigned [" + decision.getReason() + "]");
+        if (decision.type() == AssignmentDecision.Type.NO) {
+            return unassignedAssignment("persistent task [" + taskName + "] cannot be assigned [" + decision.reason() + "]");
         }
 
         // Filter all nodes that are marked as shutting down, because we do not
@@ -350,12 +350,12 @@ public class PersistentTasksClusterService implements ClusterStateListener, Clos
 
         final Assignment assignment = persistentTasksExecutor.getAssignment(taskParams, candidateNodes, currentState);
         assert assignment != null : "getAssignment() should always return an Assignment object, containing a node or a reason why not";
-        assert (assignment.getExecutorNode() == null
-            || NodesShutdownMetadata.isNodeShuttingDown(currentState, assignment.getExecutorNode()) == false)
+        assert (assignment.executorNode() == null
+            || NodesShutdownMetadata.isNodeShuttingDown(currentState, assignment.executorNode()) == false)
             : "expected task ["
                 + taskName
                 + "] to be assigned to a node that is not marked as shutting down, but "
-                + assignment.getExecutorNode()
+                + assignment.executorNode()
                 + " is currently marked as shutting down";
         return assignment;
     }
@@ -469,8 +469,8 @@ public class PersistentTasksClusterService implements ClusterStateListener, Clos
                         logger.trace(
                             "reassigning task {} from node {} to node {}",
                             task.getId(),
-                            task.getAssignment().getExecutorNode(),
-                            assignment.getExecutorNode()
+                            task.getAssignment().executorNode(),
+                            assignment.executorNode()
                         );
                         clusterState = update(clusterState, builder(clusterState).reassignTask(task.getId(), assignment));
                     } else {
@@ -492,7 +492,7 @@ public class PersistentTasksClusterService implements ClusterStateListener, Clos
 
     /** Returns true if the task is not assigned or is assigned to a non-existing node */
     public static boolean needsReassignment(final Assignment assignment, final DiscoveryNodes nodes) {
-        return (assignment.isAssigned() == false || nodes.nodeExists(assignment.getExecutorNode()) == false);
+        return (assignment.isAssigned() == false || nodes.nodeExists(assignment.executorNode()) == false);
     }
 
     private static PersistentTasksCustomMetadata.Builder builder(ClusterState currentState) {

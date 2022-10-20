@@ -65,7 +65,7 @@ public class ActivateWatchTests extends AbstractWatcherIntegrationTestCase {
 
         GetWatchResponse getWatchResponse = new GetWatchRequestBuilder(client(), "_id").get();
         assertThat(getWatchResponse, notNullValue());
-        assertThat(getWatchResponse.getStatus().state().isActive(), is(true));
+        assertThat(getWatchResponse.getStatus().state().active(), is(true));
 
         logger.info("Waiting for watch to be executed at least once");
         assertWatchWithMinimumActionsCount("_id", ExecutionState.EXECUTED, 1);
@@ -73,11 +73,11 @@ public class ActivateWatchTests extends AbstractWatcherIntegrationTestCase {
         // we now know the watch is executing... lets deactivate it
         ActivateWatchResponse activateWatchResponse = new ActivateWatchRequestBuilder(client(), "_id", false).get();
         assertThat(activateWatchResponse, notNullValue());
-        assertThat(activateWatchResponse.getStatus().state().isActive(), is(false));
+        assertThat(activateWatchResponse.getStatus().state().active(), is(false));
 
         getWatchResponse = new GetWatchRequestBuilder(client(), "_id").get();
         assertThat(getWatchResponse, notNullValue());
-        assertThat(getWatchResponse.getStatus().state().isActive(), is(false));
+        assertThat(getWatchResponse.getStatus().state().active(), is(false));
 
         // wait until no watch is executing
         assertBusy(() -> {
@@ -94,11 +94,11 @@ public class ActivateWatchTests extends AbstractWatcherIntegrationTestCase {
 
         activateWatchResponse = new ActivateWatchRequestBuilder(client(), "_id", true).get();
         assertThat(activateWatchResponse, notNullValue());
-        assertThat(activateWatchResponse.getStatus().state().isActive(), is(true));
+        assertThat(activateWatchResponse.getStatus().state().active(), is(true));
 
         getWatchResponse = new GetWatchRequestBuilder(client(), "_id").get();
         assertThat(getWatchResponse, notNullValue());
-        assertThat(getWatchResponse.getStatus().state().isActive(), is(true));
+        assertThat(getWatchResponse.getStatus().state().active(), is(true));
 
         refresh();
         assertBusy(() -> {
@@ -122,7 +122,7 @@ public class ActivateWatchTests extends AbstractWatcherIntegrationTestCase {
 
         GetWatchResponse getWatchResponse = new GetWatchRequestBuilder(client(), "_id").get();
         assertThat(getWatchResponse, notNullValue());
-        assertThat(getWatchResponse.getStatus().state().isActive(), is(true));
+        assertThat(getWatchResponse.getStatus().state().active(), is(true));
 
         GetResponse getResponse = client().prepareGet().setIndex(".watches").setId("_id").get();
         XContentSource source = new XContentSource(getResponse.getSourceAsBytesRef(), XContentType.JSON);
@@ -159,7 +159,7 @@ public class ActivateWatchTests extends AbstractWatcherIntegrationTestCase {
         getWatchResponse = new GetWatchRequestBuilder(client(), "_id").get();
         assertThat(getWatchResponse, notNullValue());
         assertThat(getWatchResponse.getStatus().state(), notNullValue());
-        assertThat(getWatchResponse.getStatus().state().isActive(), is(true));
+        assertThat(getWatchResponse.getStatus().state().active(), is(true));
     }
 
 }

@@ -389,23 +389,7 @@ public class WatchStatus implements ToXContentObject, Writeable {
         return new WatchStatus(version, state, executionState, lastChecked, lastMetCondition, actions, headers);
     }
 
-    public static class State implements ToXContentObject {
-
-        final boolean active;
-        final ZonedDateTime timestamp;
-
-        public State(boolean active, ZonedDateTime timestamp) {
-            this.active = active;
-            this.timestamp = timestamp;
-        }
-
-        public boolean isActive() {
-            return active;
-        }
-
-        public ZonedDateTime getTimestamp() {
-            return timestamp;
-        }
+    public record State(boolean active, ZonedDateTime timestamp) implements ToXContentObject {
 
         @Override
         public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {

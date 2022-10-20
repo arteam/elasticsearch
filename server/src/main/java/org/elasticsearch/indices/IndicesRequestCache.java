@@ -105,7 +105,7 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
 
     @Override
     public void onRemoval(RemovalNotification<Key, BytesReference> notification) {
-        notification.getKey().entity.onRemoval(notification);
+        notification.key().entity.onRemoval(notification);
     }
 
     BytesReference getOrCompute(
@@ -218,19 +218,18 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
         void onRemoval(RemovalNotification<Key, BytesReference> notification);
     }
 
-    static class Key implements Accountable {
+    /**
+     * @param entity use as identity equality
+     */
+    record Key(CacheEntity entity, MappingLookup.CacheKey mappingCacheKey, Object readerCacheKey, BytesReference value)
+        implements
+            Accountable {
+
         private static final long BASE_RAM_BYTES_USED = RamUsageEstimator.shallowSizeOfInstance(Key.class);
 
-        public final CacheEntity entity; // use as identity equality
-        public final MappingLookup.CacheKey mappingCacheKey;
-        public final Object readerCacheKey;
-        public final BytesReference value;
-
-        Key(CacheEntity entity, MappingLookup.CacheKey mappingCacheKey, Object readerCacheKey, BytesReference value) {
-            this.entity = entity;
-            this.mappingCacheKey = Objects.requireNonNull(mappingCacheKey);
-            this.readerCacheKey = Objects.requireNonNull(readerCacheKey);
-            this.value = value;
+        Key {
+            Objects.requireNonNull(mappingCacheKey);
+            Objects.requireNonNull(readerCacheKey);
         }
 
         @Override
@@ -242,27 +241,6 @@ public final class IndicesRequestCache implements RemovalListener<IndicesRequest
         public Collection<Accountable> getChildResources() {
             // TODO: more detailed ram usage?
             return Collections.emptyList();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Key key = (Key) o;
-            if (mappingCacheKey.equals(key.mappingCacheKey) == false) return false;
-            if (readerCacheKey.equals(key.readerCacheKey) == false) return false;
-            if (entity.getCacheIdentity().equals(key.entity.getCacheIdentity()) == false) return false;
-            if (value.equals(key.value) == false) return false;
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = entity.getCacheIdentity().hashCode();
-            result = 31 * result + mappingCacheKey.hashCode();
-            result = 31 * result + readerCacheKey.hashCode();
-            result = 31 * result + value.hashCode();
-            return result;
         }
 
         @Override

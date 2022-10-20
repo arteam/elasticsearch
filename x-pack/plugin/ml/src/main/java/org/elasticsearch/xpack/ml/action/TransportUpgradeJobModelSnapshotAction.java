@@ -190,7 +190,7 @@ public class TransportUpgradeJobModelSnapshotAction extends TransportMasterNodeA
                 );
                 return;
             }
-            if (Version.CURRENT.equals(response.result.getMinVersion())) {
+            if (Version.CURRENT.equals(response.result().getMinVersion())) {
                 listener.onFailure(
                     ExceptionsHelper.conflictStatusException(
                         "Cannot upgrade job [{}] snapshot [{}] as it is already compatible with current version {}",

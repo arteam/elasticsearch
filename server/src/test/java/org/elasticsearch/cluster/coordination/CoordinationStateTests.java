@@ -361,7 +361,7 @@ public class CoordinationStateTests extends ESTestCase {
 
         ClusterState state2 = clusterState(startJoinRequest1.getTerm(), 2L, node1, initialConfig, newConfig, 42L);
         PublishRequest publishRequest = cs1.handleClientValue(state2);
-        assertThat(publishRequest.getAcceptedState(), equalTo(state2));
+        assertThat(publishRequest.acceptedState(), equalTo(state2));
         assertThat(cs1.getLastPublishedVersion(), equalTo(state2.version()));
         // check that another join does not mess with lastPublishedVersion
         Join v3 = cs3.handleStartJoin(startJoinRequest1);

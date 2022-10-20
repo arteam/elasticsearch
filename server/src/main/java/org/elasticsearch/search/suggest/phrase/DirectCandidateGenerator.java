@@ -135,7 +135,7 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
     @Override
     public CandidateSet drawCandidates(CandidateSet set) throws IOException {
         Candidate original = set.originalTerm;
-        BytesRef term = preFilter(original.term, spare, byteSpare);
+        BytesRef term = preFilter(original.term(), spare, byteSpare);
         float origThreshold = spellchecker.getThresholdFrequency();
         try {
             if (suggestMode != SuggestMode.SUGGEST_ALWAYS) {
@@ -144,7 +144,7 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
                  * because that's what {@link DirectSpellChecker#suggestSimilar} expects
                  * when filtering terms.
                  */
-                int threshold = thresholdTermFrequency(original.termStats.docFreq);
+                int threshold = thresholdTermFrequency(original.termStats().docFreq);
                 if (threshold == Integer.MAX_VALUE) {
                     // the threshold is the max possible frequency so we can skip the search
                     return set;
@@ -202,12 +202,12 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
             candidates.add(candidate);
         } else {
             final BytesRefBuilder result = byteSpare;
-            analyze(postFilter, candidate.term, field, new TokenConsumer() {
+            analyze(postFilter, candidate.term(), field, new TokenConsumer() {
                 @Override
                 public void nextToken() throws IOException {
                     this.fillBytesRef(result);
 
-                    if (posIncAttr.getPositionIncrement() > 0 && result.get().bytesEquals(candidate.term)) {
+                    if (posIncAttr.getPositionIncrement() > 0 && result.get().bytesEquals(candidate.term())) {
                         BytesRef term = result.toBytesRef();
                         // We should not use frequency(term) here because it will analyze the term again
                         // If preFilter and postFilter are the same analyzer it would fail.
@@ -216,8 +216,8 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
                             new Candidate(
                                 result.toBytesRef(),
                                 termStats,
-                                candidate.stringDistance,
-                                score(candidate.termStats, candidate.stringDistance, sumTotalTermFreq),
+                                candidate.stringDistance(),
+                                score(candidate.termStats(), candidate.stringDistance(), sumTotalTermFreq),
                                 false
                             )
                         );
@@ -225,9 +225,9 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
                         candidates.add(
                             new Candidate(
                                 result.toBytesRef(),
-                                candidate.termStats,
+                                candidate.termStats(),
                                 nonErrorLikelihood,
-                                score(candidate.termStats, candidate.stringDistance, sumTotalTermFreq),
+                                score(candidate.termStats(), candidate.stringDistance(), sumTotalTermFreq),
                                 false
                             )
                         );
@@ -299,21 +299,11 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
 
     }
 
-    public static class Candidate implements Comparable<Candidate> {
-        public static final Candidate[] EMPTY = new Candidate[0];
-        public final BytesRef term;
-        public final double stringDistance;
-        public final TermStats termStats;
-        public final double score;
-        public final boolean userInput;
+    public record Candidate(BytesRef term, TermStats termStats, double stringDistance, double score, boolean userInput)
+        implements
+            Comparable<Candidate> {
 
-        public Candidate(BytesRef term, TermStats termStats, double stringDistance, double score, boolean userInput) {
-            this.termStats = termStats;
-            this.term = term;
-            this.stringDistance = stringDistance;
-            this.score = score;
-            this.userInput = userInput;
-        }
+        public static final Candidate[] EMPTY = new Candidate[0];
 
         @Override
         public String toString() {
@@ -351,14 +341,16 @@ public final class DirectCandidateGenerator extends CandidateGenerator {
             return true;
         }
 
-        /** Lower scores sort first; if scores are equal, then later (zzz) terms sort first */
+        /**
+         * Lower scores sort first; if scores are equal, then later (zzz) terms sort first
+         */
         @Override
         public int compareTo(Candidate other) {
-            if (score == other.score) {
+            if (score() == other.score()) {
                 // Later (zzz) terms sort before earlier (aaa) terms:
-                return other.term.compareTo(term);
+                return other.term().compareTo(term());
             } else {
-                return Double.compare(score, other.score);
+                return Double.compare(score(), other.score());
             }
         }
     }

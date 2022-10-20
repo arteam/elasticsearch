@@ -158,48 +158,14 @@ public class Connection {
     }
 
     /**
-     * An identifier (implements hashcode and equals) that represents a
-     * unique key for a {@link Connection}
-     */
-    public static class ConnectionId {
-        private final VertexId source;
-        private final VertexId target;
-
-        public ConnectionId(VertexId source, VertexId target) {
-            this.source = source;
-            this.target = target;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            ConnectionId that = (ConnectionId) o;
-            return Objects.equals(source, that.source) && Objects.equals(target, that.target);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = source != null ? source.hashCode() : 0;
-            result = 31 * result + (target != null ? target.hashCode() : 0);
-            return result;
-        }
-
-        public VertexId getSource() {
-            return source;
-        }
-
-        public VertexId getTarget() {
-            return target;
-        }
+         * An identifier (implements hashcode and equals) that represents a
+         * unique key for a {@link Connection}
+         */
+    public record ConnectionId(VertexId source, VertexId target) {
 
         @Override
         public String toString() {
-            return getSource() + "->" + getTarget();
+            return source() + "->" + target();
         }
     }
 }

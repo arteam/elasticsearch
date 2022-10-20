@@ -206,14 +206,11 @@ public class EnrichCoordinatorProxyAction extends ActionType<SearchResponse> {
             coordinateLookups();
         }
 
-        static class Slot {
+        record Slot(SearchRequest searchRequest, ActionListener<SearchResponse> actionListener) {
 
-            final SearchRequest searchRequest;
-            final ActionListener<SearchResponse> actionListener;
-
-            Slot(SearchRequest searchRequest, ActionListener<SearchResponse> actionListener) {
-                this.searchRequest = Objects.requireNonNull(searchRequest);
-                this.actionListener = Objects.requireNonNull(actionListener);
+            Slot {
+                Objects.requireNonNull(searchRequest);
+                Objects.requireNonNull(actionListener);
             }
         }
 

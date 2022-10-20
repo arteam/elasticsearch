@@ -292,7 +292,7 @@ public class CoordinationStateTestCluster {
         // one master per term
         messages.stream()
             .filter(m -> m.payload instanceof PublishRequest)
-            .collect(Collectors.groupingBy(m -> ((PublishRequest) m.payload).getAcceptedState().term()))
+            .collect(Collectors.groupingBy(m -> ((PublishRequest) m.payload).acceptedState().term()))
             .forEach((term, publishMessages) -> {
                 Set<DiscoveryNode> mastersForTerm = publishMessages.stream().collect(Collectors.groupingBy(m -> m.sourceNode)).keySet();
                 assertThat("Multiple masters " + mastersForTerm + " for term " + term, mastersForTerm, hasSize(1));
@@ -301,7 +301,7 @@ public class CoordinationStateTestCluster {
         // unique cluster state per (term, version) pair
         messages.stream()
             .filter(m -> m.payload instanceof PublishRequest)
-            .map(m -> ((PublishRequest) m.payload).getAcceptedState())
+            .map(m -> ((PublishRequest) m.payload).acceptedState())
             .collect(Collectors.groupingBy(ClusterState::term))
             .forEach((term, clusterStates) -> {
                 clusterStates.stream().collect(Collectors.groupingBy(ClusterState::version)).forEach((version, clusterStates1) -> {

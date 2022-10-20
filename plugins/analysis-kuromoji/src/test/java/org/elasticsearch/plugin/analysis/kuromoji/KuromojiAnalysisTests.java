@@ -47,31 +47,31 @@ public class KuromojiAnalysisTests extends ESTestCase {
     public void testDefaultsKuromojiAnalysis() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
 
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("kuromoji_tokenizer");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("kuromoji_tokenizer");
         assertThat(tokenizerFactory, instanceOf(KuromojiTokenizerFactory.class));
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("kuromoji_part_of_speech");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("kuromoji_part_of_speech");
         assertThat(filterFactory, instanceOf(KuromojiPartOfSpeechFilterFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("kuromoji_readingform");
+        filterFactory = analysis.tokenFilter().get("kuromoji_readingform");
         assertThat(filterFactory, instanceOf(KuromojiReadingFormFilterFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("kuromoji_baseform");
+        filterFactory = analysis.tokenFilter().get("kuromoji_baseform");
         assertThat(filterFactory, instanceOf(KuromojiBaseFormFilterFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("kuromoji_stemmer");
+        filterFactory = analysis.tokenFilter().get("kuromoji_stemmer");
         assertThat(filterFactory, instanceOf(KuromojiKatakanaStemmerFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("ja_stop");
+        filterFactory = analysis.tokenFilter().get("ja_stop");
         assertThat(filterFactory, instanceOf(JapaneseStopTokenFilterFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("kuromoji_number");
+        filterFactory = analysis.tokenFilter().get("kuromoji_number");
         assertThat(filterFactory, instanceOf(KuromojiNumberFilterFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("kuromoji_completion");
+        filterFactory = analysis.tokenFilter().get("kuromoji_completion");
         assertThat(filterFactory, instanceOf(KuromojiCompletionFilterFactory.class));
 
-        IndexAnalyzers indexAnalyzers = analysis.indexAnalyzers;
+        IndexAnalyzers indexAnalyzers = analysis.indexAnalyzers();
         NamedAnalyzer analyzer = indexAnalyzers.get("kuromoji");
         assertThat(analyzer.analyzer(), instanceOf(JapaneseAnalyzer.class));
 
@@ -82,14 +82,14 @@ public class KuromojiAnalysisTests extends ESTestCase {
         assertThat(analyzer.analyzer(), instanceOf(CustomAnalyzer.class));
         assertThat(analyzer.analyzer().tokenStream(null, new StringReader("")), instanceOf(JapaneseTokenizer.class));
 
-        CharFilterFactory charFilterFactory = analysis.charFilter.get("kuromoji_iteration_mark");
+        CharFilterFactory charFilterFactory = analysis.charFilter().get("kuromoji_iteration_mark");
         assertThat(charFilterFactory, instanceOf(KuromojiIterationMarkCharFilterFactory.class));
 
     }
 
     public void testBaseFormFilterFactory() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("kuromoji_pos");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("kuromoji_pos");
         assertThat(tokenFilter, instanceOf(KuromojiPartOfSpeechFilterFactory.class));
         String source = "私は制限スピードを超える。";
         String[] expected = new String[] { "私", "は", "制限", "スピード", "を" };
@@ -100,7 +100,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
 
     public void testPartOfSpeechFilter() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("kuromoji_part_of_speech");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("kuromoji_part_of_speech");
 
         assertThat(tokenFilter, instanceOf(KuromojiPartOfSpeechFilterFactory.class));
 
@@ -115,7 +115,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
 
     public void testReadingFormFilterFactory() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("kuromoji_rf");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("kuromoji_rf");
         assertThat(tokenFilter, instanceOf(KuromojiReadingFormFilterFactory.class));
         String source = "今夜はロバート先生と話した";
         String[] expected_tokens_romaji = new String[] { "kon'ya", "ha", "robato", "sensei", "to", "hanashi", "ta" };
@@ -128,14 +128,14 @@ public class KuromojiAnalysisTests extends ESTestCase {
         tokenizer = new JapaneseTokenizer(null, true, JapaneseTokenizer.Mode.SEARCH);
         tokenizer.setReader(new StringReader(source));
         String[] expected_tokens_katakana = new String[] { "コンヤ", "ハ", "ロバート", "センセイ", "ト", "ハナシ", "タ" };
-        tokenFilter = analysis.tokenFilter.get("kuromoji_readingform");
+        tokenFilter = analysis.tokenFilter().get("kuromoji_readingform");
         assertThat(tokenFilter, instanceOf(KuromojiReadingFormFilterFactory.class));
         assertSimpleTSOutput(tokenFilter.create(tokenizer), expected_tokens_katakana);
     }
 
     public void testKatakanaStemFilter() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("kuromoji_stemmer");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("kuromoji_stemmer");
         assertThat(tokenFilter, instanceOf(KuromojiKatakanaStemmerFactory.class));
         String source = "明後日パーティーに行く予定がある。図書館で資料をコピーしました。";
 
@@ -162,7 +162,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
             "た" };
         assertSimpleTSOutput(tokenFilter.create(tokenizer), expected_tokens_katakana);
 
-        tokenFilter = analysis.tokenFilter.get("kuromoji_ks");
+        tokenFilter = analysis.tokenFilter().get("kuromoji_ks");
         assertThat(tokenFilter, instanceOf(KuromojiKatakanaStemmerFactory.class));
         tokenizer = new JapaneseTokenizer(null, true, JapaneseTokenizer.Mode.SEARCH);
         tokenizer.setReader(new StringReader(source));
@@ -191,7 +191,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
     public void testIterationMarkCharFilter() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
         // test only kanji
-        CharFilterFactory charFilterFactory = analysis.charFilter.get("kuromoji_im_only_kanji");
+        CharFilterFactory charFilterFactory = analysis.charFilter().get("kuromoji_im_only_kanji");
         assertNotNull(charFilterFactory);
         assertThat(charFilterFactory, instanceOf(KuromojiIterationMarkCharFilterFactory.class));
 
@@ -202,7 +202,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
 
         // test only kana
 
-        charFilterFactory = analysis.charFilter.get("kuromoji_im_only_kana");
+        charFilterFactory = analysis.charFilter().get("kuromoji_im_only_kana");
         assertNotNull(charFilterFactory);
         assertThat(charFilterFactory, instanceOf(KuromojiIterationMarkCharFilterFactory.class));
 
@@ -212,7 +212,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
 
         // test default
 
-        charFilterFactory = analysis.charFilter.get("kuromoji_im_default");
+        charFilterFactory = analysis.charFilter().get("kuromoji_im_default");
         assertNotNull(charFilterFactory);
         assertThat(charFilterFactory, instanceOf(KuromojiIterationMarkCharFilterFactory.class));
 
@@ -223,7 +223,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
 
     public void testJapaneseStopFilterFactory() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("ja_stop");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("ja_stop");
         assertThat(tokenFilter, instanceOf(JapaneseStopTokenFilterFactory.class));
         String source = "私は制限スピードを超える。";
         String[] expected = new String[] { "私", "制限", "超える" };
@@ -235,7 +235,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
     public void testCompletionFilterFactory() throws IOException {
         // mode=INDEX
         TestAnalysis analysis = createTestAnalysis();
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("kuromoji_completion_index");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("kuromoji_completion_index");
         assertThat(tokenFilter, instanceOf(KuromojiCompletionFilterFactory.class));
         String source = "東京都";
         String[] expected_tokens = new String[] { "東京", "toukyou", "都", "to" };
@@ -244,7 +244,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
         assertSimpleTSOutput(tokenFilter.create(tokenizer), expected_tokens);
 
         // mode=QUERY
-        tokenFilter = analysis.tokenFilter.get("kuromoji_completion_query");
+        tokenFilter = analysis.tokenFilter().get("kuromoji_completion_query");
         assertThat(tokenFilter, instanceOf(KuromojiCompletionFilterFactory.class));
         source = "サッk";
         expected_tokens = new String[] { "サッk", "sakk" };
@@ -256,13 +256,13 @@ public class KuromojiAnalysisTests extends ESTestCase {
     public void testCompletionAnalyzer() throws IOException {
         // mode=INDEX
         TestAnalysis analysis = createTestAnalysis();
-        Analyzer analyzer = analysis.indexAnalyzers.get("completion_index_analyzer");
+        Analyzer analyzer = analysis.indexAnalyzers().get("completion_index_analyzer");
         try (TokenStream stream = analyzer.tokenStream("", "ｿｰｽｺｰﾄﾞ")) {
             assertTokenStreamContents(stream, new String[] { "ソース", "soーsu", "コード", "koーdo" });
         }
 
         // mode=QUERY
-        analyzer = analysis.indexAnalyzers.get("completion_query_analyzer");
+        analyzer = analysis.indexAnalyzers().get("completion_query_analyzer");
         try (TokenStream stream = analyzer.tokenStream("", "ｿｰｽｺｰﾄﾞ")) {
             assertTokenStreamContents(stream, new String[] { "ソースコード", "soーsukoーdo" });
         }
@@ -314,7 +314,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
 
     public void testKuromojiUserDict() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("kuromoji_user_dict");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("kuromoji_user_dict");
         String source = "私は制限スピードを超える。";
         String[] expected = new String[] { "私", "は", "制限スピード", "を", "超える" };
 
@@ -326,13 +326,13 @@ public class KuromojiAnalysisTests extends ESTestCase {
     // fix #59
     public void testKuromojiEmptyUserDict() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("kuromoji_empty_user_dict");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("kuromoji_empty_user_dict");
         assertThat(tokenizerFactory, instanceOf(KuromojiTokenizerFactory.class));
     }
 
     public void testNbestCost() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("kuromoji_nbest_cost");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("kuromoji_nbest_cost");
         String source = "鳩山積み";
         String[] expected = new String[] { "鳩", "鳩山", "山積み", "積み" };
 
@@ -343,7 +343,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
 
     public void testNbestExample() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("kuromoji_nbest_examples");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("kuromoji_nbest_examples");
         String source = "鳩山積み";
         String[] expected = new String[] { "鳩", "鳩山", "山積み", "積み" };
 
@@ -354,7 +354,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
 
     public void testNbestBothOptions() throws IOException {
         TestAnalysis analysis = createTestAnalysis();
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("kuromoji_nbest_both");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("kuromoji_nbest_both");
         String source = "鳩山積み";
         String[] expected = new String[] { "鳩", "鳩山", "山積み", "積み" };
 
@@ -366,7 +366,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
 
     public void testNumberFilterFactory() throws Exception {
         TestAnalysis analysis = createTestAnalysis();
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("kuromoji_number");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("kuromoji_number");
         assertThat(tokenFilter, instanceOf(KuromojiNumberFilterFactory.class));
         String source = "本日十万二千五百円のワインを買った";
         String[] expected = new String[] { "本日", "102500", "円", "の", "ワイン", "を", "買っ", "た" };
@@ -381,7 +381,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
             .putList("index.analysis.analyzer.my_analyzer.user_dictionary_rules", "c++,c++,w,w", "制限スピード,制限スピード,セイゲンスピード,テスト名詞")
             .build();
         TestAnalysis analysis = createTestAnalysis(settings);
-        Analyzer analyzer = analysis.indexAnalyzers.get("my_analyzer");
+        Analyzer analyzer = analysis.indexAnalyzers().get("my_analyzer");
         try (TokenStream stream = analyzer.tokenStream("", "制限スピード")) {
             assertTokenStreamContents(stream, new String[] { "制限スピード" });
         }
@@ -421,7 +421,7 @@ public class KuromojiAnalysisTests extends ESTestCase {
 
     public void testDiscardCompoundToken() throws Exception {
         TestAnalysis analysis = createTestAnalysis();
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("kuromoji_discard_compound_token");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("kuromoji_discard_compound_token");
         String source = "株式会社";
         String[] expected = new String[] { "株式", "会社" };
 

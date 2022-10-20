@@ -102,8 +102,8 @@ public class Precision implements EvaluationMetric {
         EvaluationParameters parameters,
         EvaluationFields fields
     ) {
-        String actualFieldName = fields.getActualField();
-        String predictedField = fields.getPredictedField();
+        String actualFieldName = fields.actualField();
+        String predictedField = fields.predictedField();
         // Store given {@code actualField} for the purpose of generating error message in {@code process}.
         this.actualField.trySet(actualFieldName);
         if (topActualClassNames.get() == null) {  // This is step 1

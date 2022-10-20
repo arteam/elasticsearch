@@ -73,10 +73,10 @@ public abstract class WordScorer {
     }
 
     protected double channelScore(Candidate candidate, Candidate original) throws IOException {
-        if (candidate.stringDistance == 1.0d) {
+        if (candidate.stringDistance() == 1.0d) {
             return realWordLikelihood;
         }
-        return candidate.stringDistance;
+        return candidate.stringDistance();
     }
 
     public double score(Candidate[] path, CandidateSet[] candidateSet, int at, int gramSize) throws IOException {
@@ -90,7 +90,7 @@ public abstract class WordScorer {
     }
 
     protected double scoreUnigram(Candidate word) throws IOException {
-        return (1.0 + frequency(word.term)) / (vocabluarySize + numTerms);
+        return (1.0 + frequency(word.term())) / (vocabluarySize + numTerms);
     }
 
     protected double scoreBigram(Candidate word, Candidate w_1) throws IOException {

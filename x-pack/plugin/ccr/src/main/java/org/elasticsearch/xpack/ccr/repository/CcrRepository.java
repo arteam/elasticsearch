@@ -751,21 +751,6 @@ public class CcrRepository extends AbstractLifecycleComponent implements Reposit
                 .actionGet(ccrSettings.getRecoveryActionTimeout());
         }
 
-        private static class FileChunk implements MultiChunkTransfer.ChunkRequest {
-            final StoreFileMetadata md;
-            final int bytesRequested;
-            final boolean lastChunk;
-
-            FileChunk(StoreFileMetadata md, int bytesRequested, boolean lastChunk) {
-                this.md = md;
-                this.bytesRequested = bytesRequested;
-                this.lastChunk = lastChunk;
-            }
-
-            @Override
-            public boolean lastChunk() {
-                return lastChunk;
-            }
-        }
+        private record FileChunk(StoreFileMetadata md, int bytesRequested, boolean lastChunk) implements MultiChunkTransfer.ChunkRequest {}
     }
 }

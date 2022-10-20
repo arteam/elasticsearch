@@ -17,23 +17,7 @@ import java.util.stream.Collectors;
 
 import static org.elasticsearch.common.logging.LoggerMessageFormat.format;
 
-public class Failure {
-
-    private final Node<?> node;
-    private final String message;
-
-    public Failure(Node<?> node, String message) {
-        this.node = node;
-        this.message = message;
-    }
-
-    public Node<?> node() {
-        return node;
-    }
-
-    public String message() {
-        return message;
-    }
+public record Failure(Node<?> node, String message) {
 
     @Override
     public int hashCode() {

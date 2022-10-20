@@ -595,31 +595,9 @@ public class BlobAnalyzeAction extends ActionType<BlobAnalyzeAction.Response> {
         }
     }
 
-    private static class NodeResponse {
-        final DiscoveryNode node;
-        final boolean beforeWriteComplete;
-        final GetBlobChecksumAction.Response response;
+    private record NodeResponse(DiscoveryNode node, boolean beforeWriteComplete, GetBlobChecksumAction.Response response) {}
 
-        NodeResponse(DiscoveryNode node, boolean beforeWriteComplete, GetBlobChecksumAction.Response response) {
-            this.node = node;
-            this.beforeWriteComplete = beforeWriteComplete;
-            this.response = response;
-        }
-    }
-
-    private static class WriteDetails {
-        final long bytesWritten;
-        final long elapsedNanos;
-        final long throttledNanos;
-        final long checksum;
-
-        private WriteDetails(long bytesWritten, long elapsedNanos, long throttledNanos, long checksum) {
-            this.bytesWritten = bytesWritten;
-            this.elapsedNanos = elapsedNanos;
-            this.throttledNanos = throttledNanos;
-            this.checksum = checksum;
-        }
-    }
+    private record WriteDetails(long bytesWritten, long elapsedNanos, long throttledNanos, long checksum) {}
 
     public static class Request extends ActionRequest implements TaskAwareRequest {
         private final String repositoryName;

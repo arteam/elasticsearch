@@ -10,15 +10,7 @@ import org.elasticsearch.xpack.monitoring.exporter.Exporters;
 
 /**
  * A wrapper around the services needed to produce usage information for the monitoring feature.
- *
+ * <p>
  * This class is temporary until actions can be constructed directly by plugins.
  */
-class MonitoringUsageServices {
-    final MonitoringService monitoringService;
-    final Exporters exporters;
-
-    MonitoringUsageServices(MonitoringService monitoringService, Exporters exporters) {
-        this.monitoringService = monitoringService;
-        this.exporters = exporters;
-    }
-}
+record MonitoringUsageServices(MonitoringService monitoringService, Exporters exporters) {}

@@ -104,51 +104,11 @@ public class IndexResolver {
         }
     }
 
-    public static class IndexInfo {
-        private final String cluster;
-        private final String name;
-        private final IndexType type;
-
-        public IndexInfo(String cluster, String name, IndexType type) {
-            this.cluster = cluster;
-            this.name = name;
-            this.type = type;
-        }
-
-        public String cluster() {
-            return cluster;
-        }
-
-        public String name() {
-            return name;
-        }
-
-        public IndexType type() {
-            return type;
-        }
+    public record IndexInfo(String cluster, String name, IndexType type) {
 
         @Override
         public String toString() {
             return buildRemoteIndexName(cluster, name);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(cluster, name, type);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-
-            if (obj == null || getClass() != obj.getClass()) {
-                return false;
-            }
-
-            IndexResolver.IndexInfo other = (IndexResolver.IndexInfo) obj;
-            return Objects.equals(cluster, other.cluster) && Objects.equals(name, other.name) && Objects.equals(type, other.type);
         }
     }
 

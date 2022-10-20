@@ -273,12 +273,12 @@ public class OpenIdConnectAuthenticator {
             final JWTClaimsSet idTokenClaim = new JWTClaimsSet.Builder().claim("id_token_hint", idToken.serialize()).build();
             mergeObjects(verifiedIdTokenClaimsObject, idTokenClaim.toJSONObject());
             final JWTClaimsSet enrichedVerifiedIdTokenClaims = JWTClaimsSet.parse(verifiedIdTokenClaimsObject);
-            if (accessToken != null && opConfig.getUserinfoEndpoint() != null) {
+            if (accessToken != null && opConfig.userinfoEndpoint() != null) {
                 getAndCombineUserInfoClaims(accessToken, enrichedVerifiedIdTokenClaims, claimsListener);
             } else {
-                if (accessToken == null && opConfig.getUserinfoEndpoint() != null) {
+                if (accessToken == null && opConfig.userinfoEndpoint() != null) {
                     LOGGER.debug("UserInfo endpoint is configured but the OP didn't return an access token so we can't query it");
-                } else if (accessToken != null && opConfig.getUserinfoEndpoint() == null) {
+                } else if (accessToken != null && opConfig.userinfoEndpoint() == null) {
                     LOGGER.debug("OP returned an access token but the UserInfo endpoint is not configured.");
                 }
                 claimsListener.onResponse(enrichedVerifiedIdTokenClaims);
@@ -288,7 +288,7 @@ public class OpenIdConnectAuthenticator {
             // RSA or ECDSA is used for signatures
             if (shouldRetry
                 && JWSAlgorithm.Family.HMAC_SHA.contains(rpConfig.getSignatureAlgorithm()) == false
-                && opConfig.getJwkSetPath().startsWith("https://")) {
+                && opConfig.jwkSetPath().startsWith("https://")) {
                 ((ReloadableJWKSource) ((JWSVerificationKeySelector) idTokenValidator.get().getJWSKeySelector()).getJWKSource())
                     .triggerReload(
                         ActionListener.wrap(v -> { getUserClaims(accessToken, idToken, expectedNonce, false, claimsListener); }, ex -> {
@@ -409,7 +409,7 @@ public class OpenIdConnectAuthenticator {
         ActionListener<JWTClaimsSet> claimsListener
     ) {
         try {
-            final HttpGet httpGet = new HttpGet(opConfig.getUserinfoEndpoint());
+            final HttpGet httpGet = new HttpGet(opConfig.userinfoEndpoint());
             httpGet.setHeader("Authorization", "Bearer " + accessToken.getValue());
             AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
                 httpClient.execute(httpGet, new FutureCallback<HttpResponse>() {
@@ -539,7 +539,7 @@ public class OpenIdConnectAuthenticator {
     private void exchangeCodeForToken(AuthorizationCode code, ActionListener<Tuple<AccessToken, JWT>> tokensListener) {
         try {
             final AuthorizationCodeGrant codeGrant = new AuthorizationCodeGrant(code, rpConfig.getRedirectUri());
-            final HttpPost httpPost = new HttpPost(opConfig.getTokenEndpoint());
+            final HttpPost httpPost = new HttpPost(opConfig.tokenEndpoint());
             httpPost.setHeader("Content-type", "application/x-www-form-urlencoded");
             final List<NameValuePair> params = new ArrayList<>();
             for (Map.Entry<String, List<String>> entry : codeGrant.toParameters().entrySet()) {
@@ -558,7 +558,7 @@ public class OpenIdConnectAuthenticator {
             } else if (rpConfig.getClientAuthenticationMethod().equals(ClientAuthenticationMethod.CLIENT_SECRET_JWT)) {
                 ClientSecretJWT clientSecretJWT = new ClientSecretJWT(
                     rpConfig.getClientId(),
-                    opConfig.getTokenEndpoint(),
+                    opConfig.tokenEndpoint(),
                     rpConfig.getClientAuthenticationJwtAlgorithm(),
                     new Secret(rpConfig.getClientSecret().toString())
                 );
@@ -771,9 +771,9 @@ public class OpenIdConnectAuthenticator {
             final IDTokenValidator idTokenValidator;
             if (JWSAlgorithm.Family.HMAC_SHA.contains(requestedAlgorithm)) {
                 final Secret clientSecret = new Secret(rpConfig.getClientSecret().toString());
-                idTokenValidator = new IDTokenValidator(opConfig.getIssuer(), rpConfig.getClientId(), requestedAlgorithm, clientSecret);
+                idTokenValidator = new IDTokenValidator(opConfig.issuer(), rpConfig.getClientId(), requestedAlgorithm, clientSecret);
             } else {
-                String jwkSetPath = opConfig.getJwkSetPath();
+                String jwkSetPath = opConfig.jwkSetPath();
                 if (jwkSetPath.startsWith("http://")) {
                     throw new IllegalArgumentException("The [http] protocol is not supported as it is insecure. Use [https] instead");
                 } else if (jwkSetPath.startsWith("https://")) {
@@ -781,13 +781,13 @@ public class OpenIdConnectAuthenticator {
                         requestedAlgorithm,
                         new ReloadableJWKSource<>(new URL(jwkSetPath))
                     );
-                    idTokenValidator = new IDTokenValidator(opConfig.getIssuer(), rpConfig.getClientId(), keySelector, null);
+                    idTokenValidator = new IDTokenValidator(opConfig.issuer(), rpConfig.getClientId(), keySelector, null);
                 } else {
                     if (addFileWatcherIfRequired) {
                         setMetadataFileWatcher(jwkSetPath);
                     }
                     final JWKSet jwkSet = readJwkSetFromFile(jwkSetPath);
-                    idTokenValidator = new IDTokenValidator(opConfig.getIssuer(), rpConfig.getClientId(), requestedAlgorithm, jwkSet);
+                    idTokenValidator = new IDTokenValidator(opConfig.issuer(), rpConfig.getClientId(), requestedAlgorithm, jwkSet);
                 }
             }
             idTokenValidator.setMaxClockSkew(allowedClockSkew);

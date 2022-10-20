@@ -367,46 +367,15 @@ public interface AuthorizationEngine {
     }
 
     /**
-     * The result of a (has) privilege check. This is not to be used as an Elasticsearch authorization result (though clients can base their
-     * authorization decisions on this response). The {@link #allChecksSuccess} field tells if all the privileges are granted over
-     * all the resources. The {@link #details} field is only present (non-null) if the check has been run in a detailed mode
-     * {@link PrivilegesToCheck#runDetailedCheck}, and contains a run-down of which privileges are granted over which resources or not.
-     */
-    final class PrivilegesCheckResult {
+         * The result of a (has) privilege check. This is not to be used as an Elasticsearch authorization result (though clients can base their
+         * authorization decisions on this response). The {@link #allChecksSuccess} field tells if all the privileges are granted over
+         * all the resources. The {@link #details} field is only present (non-null) if the check has been run in a detailed mode
+         * {@link PrivilegesToCheck#runDetailedCheck}, and contains a run-down of which privileges are granted over which resources or not.
+         */
+    record PrivilegesCheckResult(boolean allChecksSuccess, @Nullable AuthorizationEngine.PrivilegesCheckResult.Details details) {
 
         public static final PrivilegesCheckResult ALL_CHECKS_SUCCESS_NO_DETAILS = new PrivilegesCheckResult(true, null);
         public static final PrivilegesCheckResult SOME_CHECKS_FAILURE_NO_DETAILS = new PrivilegesCheckResult(false, null);
-
-        private final boolean allChecksSuccess;
-
-        @Nullable
-        private final Details details;
-
-        public PrivilegesCheckResult(boolean allChecksSuccess, Details details) {
-            this.allChecksSuccess = allChecksSuccess;
-            this.details = details;
-        }
-
-        public boolean allChecksSuccess() {
-            return allChecksSuccess;
-        }
-
-        public @Nullable Details getDetails() {
-            return details;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            PrivilegesCheckResult that = (PrivilegesCheckResult) o;
-            return allChecksSuccess == that.allChecksSuccess && Objects.equals(details, that.details);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(allChecksSuccess, details);
-        }
 
         public record Details(
             Map<String, Boolean> cluster,

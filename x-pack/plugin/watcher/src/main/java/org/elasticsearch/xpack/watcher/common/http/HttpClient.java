@@ -194,12 +194,12 @@ public class HttpClient implements Closeable {
         final HttpHost httpHost = tuple.v1();
 
         HttpRequestBase internalRequest;
-        if (request.method == HttpMethod.HEAD) {
+        if (request.method() == HttpMethod.HEAD) {
             internalRequest = new HttpHead(uri);
         } else {
-            HttpMethodWithEntity methodWithEntity = new HttpMethodWithEntity(uri, request.method.name());
+            HttpMethodWithEntity methodWithEntity = new HttpMethodWithEntity(uri, request.method().name());
             if (request.hasBody()) {
-                ByteArrayEntity entity = new ByteArrayEntity(request.body.getBytes(StandardCharsets.UTF_8));
+                ByteArrayEntity entity = new ByteArrayEntity(request.body().getBytes(StandardCharsets.UTF_8));
                 String contentType = request.headers().get(HttpHeaders.CONTENT_TYPE);
                 if (Strings.hasLength(contentType)) {
                     entity.setContentType(contentType);
@@ -214,7 +214,7 @@ public class HttpClient implements Closeable {
 
         // headers
         if (request.headers().isEmpty() == false) {
-            for (Map.Entry<String, String> entry : request.headers.entrySet()) {
+            for (Map.Entry<String, String> entry : request.headers().entrySet()) {
                 internalRequest.setHeader(entry.getKey(), entry.getValue());
             }
         }
@@ -237,7 +237,7 @@ public class HttpClient implements Closeable {
                 request.auth().username,
                 new String(request.auth().password.text(cryptoService))
             );
-            credentialsProvider.setCredentials(new AuthScope(request.host, request.port), credentials);
+            credentialsProvider.setCredentials(new AuthScope(request.host(), request.port()), credentials);
             localContext.setCredentialsProvider(credentialsProvider);
 
             // preemptive auth, no need to wait for a 401 first
@@ -249,14 +249,14 @@ public class HttpClient implements Closeable {
 
         // timeouts
         if (request.connectionTimeout() != null) {
-            config.setConnectTimeout(Math.toIntExact(request.connectionTimeout.millis()));
+            config.setConnectTimeout(Math.toIntExact(request.connectionTimeout().millis()));
         } else {
             config.setConnectTimeout(Math.toIntExact(defaultConnectionTimeout.millis()));
         }
 
         if (request.readTimeout() != null) {
-            config.setSocketTimeout(Math.toIntExact(request.readTimeout.millis()));
-            config.setConnectionRequestTimeout(Math.toIntExact(request.readTimeout.millis()));
+            config.setSocketTimeout(Math.toIntExact(request.readTimeout().millis()));
+            config.setConnectionRequestTimeout(Math.toIntExact(request.readTimeout().millis()));
         } else {
             config.setSocketTimeout(Math.toIntExact(defaultReadTimeout.millis()));
             config.setConnectionRequestTimeout(Math.toIntExact(defaultReadTimeout.millis()));
@@ -305,11 +305,11 @@ public class HttpClient implements Closeable {
      * @param request   The request parsed into the HTTP client
      */
     static void setProxy(RequestConfig.Builder config, HttpRequest request, HttpProxy configuredProxy) {
-        if (request.proxy != null && request.proxy.equals(HttpProxy.NO_PROXY) == false) {
+        if (request.proxy() != null && request.proxy().equals(HttpProxy.NO_PROXY) == false) {
             // if a proxy scheme is configured use this, but fall back to the same than the request in case there was no special
             // configuration given
-            String scheme = request.proxy.getScheme() != null ? request.proxy.getScheme().scheme() : Scheme.HTTP.scheme();
-            HttpHost proxy = new HttpHost(request.proxy.getHost(), request.proxy.getPort(), scheme);
+            String scheme = request.proxy().getScheme() != null ? request.proxy().getScheme().scheme() : Scheme.HTTP.scheme();
+            HttpHost proxy = new HttpHost(request.proxy().getHost(), request.proxy().getPort(), scheme);
             config.setProxy(proxy);
         } else if (HttpProxy.NO_PROXY.equals(configuredProxy) == false) {
             HttpHost proxy = new HttpHost(configuredProxy.getHost(), configuredProxy.getPort(), configuredProxy.getScheme().scheme());
@@ -350,16 +350,16 @@ public class HttpClient implements Closeable {
     // for testing
     static Tuple<HttpHost, URI> createURI(HttpRequest request) {
         try {
-            List<NameValuePair> qparams = new ArrayList<>(request.params.size());
-            request.params.forEach((k, v) -> qparams.add(new BasicNameValuePair(k, v)));
+            List<NameValuePair> qparams = new ArrayList<>(request.params().size());
+            request.params().forEach((k, v) -> qparams.add(new BasicNameValuePair(k, v)));
             // this could be really simple, as the apache http client has a UriBuilder class, however this class is always doing
             // url path escaping, and we have done this already, so this would result in double escaping
             final List<String> unescapedPathParts;
-            if (Strings.isEmpty(request.path)) {
+            if (Strings.isEmpty(request.path())) {
                 unescapedPathParts = Collections.emptyList();
             } else {
-                final String[] pathParts = request.path.split("/");
-                final boolean isPathEndsWithSlash = request.path.endsWith("/");
+                final String[] pathParts = request.path().split("/");
+                final boolean isPathEndsWithSlash = request.path().endsWith("/");
                 unescapedPathParts = new ArrayList<>(pathParts.length);
                 for (int i = 0; i < pathParts.length; i++) {
                     String part = pathParts[i];
@@ -377,8 +377,8 @@ public class HttpClient implements Closeable {
             }
 
             final URI uri = new URIBuilder().setScheme(request.scheme().scheme())
-                .setHost(request.host)
-                .setPort(request.port)
+                .setHost(request.host())
+                .setPort(request.port())
                 .setPathSegments(unescapedPathParts)
                 .setParameters(qparams)
                 .build();

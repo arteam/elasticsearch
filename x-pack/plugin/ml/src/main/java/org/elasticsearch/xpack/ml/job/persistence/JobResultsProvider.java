@@ -491,7 +491,7 @@ public class JobResultsProvider {
             DataCounts.TYPE.getPreferredName(),
             createLatestDataCountsSearch(indexName, jobId),
             DataCounts.PARSER,
-            result -> handler.accept(result.result),
+            result -> handler.accept(result.result()),
             errorHandler,
             () -> new DataCounts(jobId)
         );
@@ -675,7 +675,7 @@ public class JobResultsProvider {
             DatafeedTimingStats.TYPE.getPreferredName(),
             createLatestDatafeedTimingStatsSearch(indexName, jobId),
             DatafeedTimingStats.PARSER,
-            result -> handler.accept(result.result),
+            result -> handler.accept(result.result()),
             errorHandler,
             () -> new DatafeedTimingStats(jobId)
         );
@@ -1264,7 +1264,7 @@ public class JobResultsProvider {
             ModelSnapshot.TYPE.getPreferredName(),
             search,
             ModelSnapshot.LENIENT_PARSER,
-            result -> handler.accept(result.result == null ? null : new Result<>(result.index, result.result.build())),
+            result -> handler.accept(result.result() == null ? null : new Result<>(result.index(), result.result().build())),
             errorHandler,
             () -> null
         );
@@ -1476,7 +1476,7 @@ public class JobResultsProvider {
             ModelSizeStats.RESULT_TYPE_VALUE,
             createLatestModelSizeStatsSearch(indexName),
             ModelSizeStats.LENIENT_PARSER,
-            result -> handler.accept(result.result.build()),
+            result -> handler.accept(result.result().build()),
             errorHandler,
             () -> new ModelSizeStats.Builder(jobId)
         );
@@ -1777,7 +1777,7 @@ public class JobResultsProvider {
             ForecastRequestStats.RESULTS_FIELD.getPreferredName(),
             forecastSearch,
             ForecastRequestStats.LENIENT_PARSER,
-            result -> handler.accept(result.result),
+            result -> handler.accept(result.result()),
             errorHandler,
             () -> null
         );

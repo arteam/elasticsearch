@@ -47,11 +47,11 @@ public class SamlLogoutRequestHandler extends SamlObjectHandler {
     public Result parseFromQueryString(String queryString) {
         final ParsedQueryString parsed = parseQueryStringAndValidateSignature(queryString, "SAMLRequest");
 
-        final Element root = parseSamlMessage(inflate(decodeBase64(parsed.samlMessage)));
+        final Element root = parseSamlMessage(inflate(decodeBase64(parsed.samlMessage())));
         if (REQUEST_TAG_NAME.equals(root.getLocalName()) && SAML_NAMESPACE.equals(root.getNamespaceURI())) {
             try {
                 final LogoutRequest logoutRequest = buildXmlObject(root, LogoutRequest.class);
-                return parseLogout(logoutRequest, parsed.hasSignature == false, parsed.relayState);
+                return parseLogout(logoutRequest, parsed.hasSignature() == false, parsed.relayState());
             } catch (ElasticsearchSecurityException e) {
                 logger.trace("Rejecting SAML logout request {} because {}", SamlUtils.toString(root), e.getMessage());
                 throw e;
@@ -138,51 +138,7 @@ public class SamlLogoutRequestHandler extends SamlObjectHandler {
         }
     }
 
-    public static class Result {
-        private final String requestId;
-        private final SamlNameId nameId;
-        private final String session;
-        private final String relayState;
-
-        public Result(String requestId, SamlNameId nameId, String session, String relayState) {
-            this.requestId = requestId;
-            this.nameId = nameId;
-            this.session = session;
-            this.relayState = relayState;
-        }
-
-        public String getRequestId() {
-            return requestId;
-        }
-
-        public SamlNameId getNameId() {
-            return nameId;
-        }
-
-        public String getSession() {
-            return session;
-        }
-
-        public String getRelayState() {
-            return relayState;
-        }
-
-        @Override
-        public String toString() {
-            return "SamlLogoutRequestHandler.Result{"
-                + "requestId='"
-                + requestId
-                + '\''
-                + ", nameId="
-                + nameId
-                + ", session='"
-                + session
-                + '\''
-                + ", relayState='"
-                + relayState
-                + '\''
-                + '}';
-        }
+    public record Result(String requestId, SamlNameId nameId, String session, String relayState) {
     }
 
 }

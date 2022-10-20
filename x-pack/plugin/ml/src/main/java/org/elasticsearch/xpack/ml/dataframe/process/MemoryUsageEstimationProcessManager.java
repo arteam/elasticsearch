@@ -65,7 +65,7 @@ public class MemoryUsageEstimationProcessManager {
     ) {
         DataFrameDataExtractor dataExtractor = dataExtractorFactory.newExtractor(false);
         DataFrameDataExtractor.DataSummary dataSummary = dataExtractor.collectDataSummary();
-        if (dataSummary.rows == 0) {
+        if (dataSummary.rows() == 0) {
             throw ExceptionsHelper.badRequestException(
                 "[{}] Unable to estimate memory usage as no documents in the source indices [{}] contained all the fields selected for "
                     + "analysis. If you are relying on automatic field selection then there are currently mapped fields that do not exist "
@@ -78,8 +78,8 @@ public class MemoryUsageEstimationProcessManager {
         Set<String> categoricalFields = dataExtractor.getCategoricalFields(config.getAnalysis());
         AnalyticsProcessConfig processConfig = new AnalyticsProcessConfig(
             jobId,
-            dataSummary.rows,
-            dataSummary.cols,
+                dataSummary.rows(),
+                dataSummary.cols(),
             // For memory estimation the model memory limit here should be set high enough not to trigger an error when C++ code
             // compares the limit to the result of estimation.
             ByteSizeValue.ofPb(1),

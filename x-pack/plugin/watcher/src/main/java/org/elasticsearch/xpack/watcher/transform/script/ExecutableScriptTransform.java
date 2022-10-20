@@ -27,7 +27,7 @@ public class ExecutableScriptTransform extends ExecutableTransform<ScriptTransfo
     public ExecutableScriptTransform(ScriptTransform transform, Logger logger, ScriptService scriptService) {
         super(transform, logger);
         this.scriptService = scriptService;
-        Script script = transform.getScript();
+        Script script = transform.script();
         // try to compile so we catch syntax errors early
         scriptService.compile(script, WatcherTransformScript.CONTEXT);
     }
@@ -43,7 +43,7 @@ public class ExecutableScriptTransform extends ExecutableTransform<ScriptTransfo
     }
 
     ScriptTransform.Result doExecute(WatchExecutionContext ctx, Payload payload) throws IOException {
-        Script script = transform.getScript();
+        Script script = transform.script();
         WatcherTransformScript.Factory factory = scriptService.compile(script, WatcherTransformScript.CONTEXT);
         WatcherTransformScript transformScript = factory.newInstance(script.getParams(), ctx, payload);
         Object value = transformScript.execute();

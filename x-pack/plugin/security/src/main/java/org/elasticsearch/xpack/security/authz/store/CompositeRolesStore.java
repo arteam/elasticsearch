@@ -286,7 +286,7 @@ public class CompositeRolesStore {
 
     private static boolean includesSuperuserRole(RoleReference roleReference) {
         if (roleReference instanceof RoleReference.NamedRoleReference namedRoles) {
-            return Arrays.asList(namedRoles.getRoleNames()).contains(ReservedRolesStore.SUPERUSER_ROLE_DESCRIPTOR.getName());
+            return Arrays.asList(namedRoles.roleNames()).contains(ReservedRolesStore.SUPERUSER_ROLE_DESCRIPTOR.getName());
         } else {
             return false;
         }
@@ -328,8 +328,8 @@ public class CompositeRolesStore {
         logger.trace(
             "Building role from descriptors [{}] for names [{}] from source [{}]",
             roleDescriptors,
-            roleKey.getNames(),
-            roleKey.getSource()
+            roleKey.names(),
+            roleKey.source()
         );
         buildRoleFromDescriptors(roleDescriptors, fieldPermissionsCache, privilegeStore, restrictedIndices, ActionListener.wrap(role -> {
             if (role != null && tryCache) {
@@ -501,13 +501,13 @@ public class CompositeRolesStore {
     public void invalidate(String role) {
         numInvalidation.incrementAndGet();
 
-        roleCacheHelper.removeKeysIf(key -> key.getNames().contains(role));
+        roleCacheHelper.removeKeysIf(key -> key.names().contains(role));
         negativeLookupCache.invalidate(role);
     }
 
     public void invalidate(Set<String> roles) {
         numInvalidation.incrementAndGet();
-        roleCacheHelper.removeKeysIf(key -> Sets.haveEmptyIntersection(key.getNames(), roles) == false);
+        roleCacheHelper.removeKeysIf(key -> Sets.haveEmptyIntersection(key.names(), roles) == false);
         roles.forEach(negativeLookupCache::invalidate);
     }
 

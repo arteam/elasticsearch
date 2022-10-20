@@ -63,16 +63,16 @@ public class TransformPersistentTasksExecutorTests extends ESTestCase {
         TransformPersistentTasksExecutor executor = buildTaskExecutor();
 
         assertThat(
-            executor.getAssignment(new TransformTaskParams("new-task-id", Version.CURRENT, null, true), cs.nodes(), cs).getExecutorNode(),
+            executor.getAssignment(new TransformTaskParams("new-task-id", Version.CURRENT, null, true), cs.nodes(), cs).executorNode(),
             equalTo("current-data-node-with-1-tasks")
         );
         assertThat(
-            executor.getAssignment(new TransformTaskParams("new-task-id", Version.CURRENT, null, false), cs.nodes(), cs).getExecutorNode(),
+            executor.getAssignment(new TransformTaskParams("new-task-id", Version.CURRENT, null, false), cs.nodes(), cs).executorNode(),
             equalTo("current-data-node-with-0-tasks-transform-remote-disabled")
         );
         assertThat(
             executor.getAssignment(new TransformTaskParams("new-old-task-id", Version.V_7_7_0, null, true), cs.nodes(), cs)
-                .getExecutorNode(),
+                .executorNode(),
             equalTo("past-data-node-1")
         );
     }
@@ -88,9 +88,9 @@ public class TransformPersistentTasksExecutorTests extends ESTestCase {
             cs.nodes(),
             cs
         );
-        assertNull(assignment.getExecutorNode());
+        assertNull(assignment.executorNode());
         assertThat(
-            assignment.getExplanation(),
+            assignment.explanation(),
             equalTo("Not starting transform [new-task-id], reasons [current-data-node-with-transform-disabled:not a transform node]")
         );
 
@@ -100,8 +100,8 @@ public class TransformPersistentTasksExecutorTests extends ESTestCase {
         executor = buildTaskExecutor();
 
         assignment = executor.getAssignment(new TransformTaskParams("new-task-id", Version.CURRENT, null, false), cs.nodes(), cs);
-        assertNotNull(assignment.getExecutorNode());
-        assertThat(assignment.getExecutorNode(), equalTo("dedicated-transform-node"));
+        assertNotNull(assignment.executorNode());
+        assertThat(assignment.executorNode(), equalTo("dedicated-transform-node"));
 
         // only an old node
         nodes = buildNodes(false, true, false, false, true);
@@ -109,9 +109,9 @@ public class TransformPersistentTasksExecutorTests extends ESTestCase {
         executor = buildTaskExecutor();
 
         assignment = executor.getAssignment(new TransformTaskParams("new-task-id", Version.V_8_0_0, null, false), cs.nodes(), cs);
-        assertNull(assignment.getExecutorNode());
+        assertNull(assignment.executorNode());
         assertThat(
-            assignment.getExplanation(),
+            assignment.explanation(),
             equalTo(
                 "Not starting transform [new-task-id], reasons ["
                     + "current-data-node-with-transform-disabled:not a transform node"
@@ -122,8 +122,8 @@ public class TransformPersistentTasksExecutorTests extends ESTestCase {
         );
 
         assignment = executor.getAssignment(new TransformTaskParams("new-task-id", Version.V_7_5_0, null, false), cs.nodes(), cs);
-        assertNotNull(assignment.getExecutorNode());
-        assertThat(assignment.getExecutorNode(), equalTo("past-data-node-1"));
+        assertNotNull(assignment.executorNode());
+        assertThat(assignment.executorNode(), equalTo("past-data-node-1"));
 
         // no remote
         nodes = buildNodes(false, false, false, true, false);
@@ -131,9 +131,9 @@ public class TransformPersistentTasksExecutorTests extends ESTestCase {
         executor = buildTaskExecutor();
 
         assignment = executor.getAssignment(new TransformTaskParams("new-task-id", Version.V_7_5_0, null, true), cs.nodes(), cs);
-        assertNull(assignment.getExecutorNode());
+        assertNull(assignment.executorNode());
         assertThat(
-            assignment.getExplanation(),
+            assignment.explanation(),
             equalTo(
                 "Not starting transform [new-task-id], reasons ["
                     + "current-data-node-with-0-tasks-transform-remote-disabled:"
@@ -143,8 +143,8 @@ public class TransformPersistentTasksExecutorTests extends ESTestCase {
         );
 
         assignment = executor.getAssignment(new TransformTaskParams("new-task-id", Version.CURRENT, null, false), cs.nodes(), cs);
-        assertNotNull(assignment.getExecutorNode());
-        assertThat(assignment.getExecutorNode(), equalTo("current-data-node-with-0-tasks-transform-remote-disabled"));
+        assertNotNull(assignment.executorNode());
+        assertThat(assignment.executorNode(), equalTo("current-data-node-with-0-tasks-transform-remote-disabled"));
 
         // no remote and disabled
         nodes = buildNodes(false, false, false, true, true);
@@ -152,9 +152,9 @@ public class TransformPersistentTasksExecutorTests extends ESTestCase {
         executor = buildTaskExecutor();
 
         assignment = executor.getAssignment(new TransformTaskParams("new-task-id", Version.V_7_5_0, null, true), cs.nodes(), cs);
-        assertNull(assignment.getExecutorNode());
+        assertNull(assignment.executorNode());
         assertThat(
-            assignment.getExplanation(),
+            assignment.explanation(),
             equalTo(
                 "Not starting transform [new-task-id], reasons ["
                     + "current-data-node-with-0-tasks-transform-remote-disabled:"
@@ -170,8 +170,8 @@ public class TransformPersistentTasksExecutorTests extends ESTestCase {
         executor = buildTaskExecutor();
 
         assignment = executor.getAssignment(new TransformTaskParams("new-task-id", Version.V_7_5_0, null, true), cs.nodes(), cs);
-        assertNotNull(assignment.getExecutorNode());
-        assertThat(assignment.getExecutorNode(), equalTo("past-data-node-1"));
+        assertNotNull(assignment.executorNode());
+        assertThat(assignment.executorNode(), equalTo("past-data-node-1"));
     }
 
     public void testVerifyIndicesPrimaryShardsAreActive() {

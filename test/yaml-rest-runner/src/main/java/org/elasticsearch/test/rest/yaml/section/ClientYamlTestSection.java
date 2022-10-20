@@ -20,7 +20,12 @@ import java.util.Objects;
 /**
  * Represents a test section, which is composed of a skip section and multiple executable sections.
  */
-public class ClientYamlTestSection implements Comparable<ClientYamlTestSection> {
+public record ClientYamlTestSection(
+    XContentLocation location,
+    String name,
+    SkipSection skipSection,
+    List<ExecutableSection> executableSections
+) implements Comparable<ClientYamlTestSection> {
     public static ClientYamlTestSection parse(XContentParser parser) throws IOException {
         ParserUtils.advanceToFieldName(parser);
         XContentLocation sectionLocation = parser.getTokenLocation();
@@ -51,11 +56,6 @@ public class ClientYamlTestSection implements Comparable<ClientYamlTestSection> 
         }
     }
 
-    private final XContentLocation location;
-    private final String name;
-    private final SkipSection skipSection;
-    private final List<ExecutableSection> executableSections;
-
     public ClientYamlTestSection(
         XContentLocation location,
         String name,
@@ -66,22 +66,6 @@ public class ClientYamlTestSection implements Comparable<ClientYamlTestSection> 
         this.name = name;
         this.skipSection = Objects.requireNonNull(skipSection, "skip section cannot be null");
         this.executableSections = Collections.unmodifiableList(executableSections);
-    }
-
-    public XContentLocation getLocation() {
-        return location;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public SkipSection getSkipSection() {
-        return skipSection;
-    }
-
-    public List<ExecutableSection> getExecutableSections() {
-        return executableSections;
     }
 
     @Override
@@ -103,6 +87,6 @@ public class ClientYamlTestSection implements Comparable<ClientYamlTestSection> 
 
     @Override
     public int compareTo(ClientYamlTestSection o) {
-        return name.compareTo(o.getName());
+        return name.compareTo(o.name());
     }
 }

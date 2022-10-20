@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.instanceOf;
 public class SimpleSmartChineseAnalysisTests extends ESTestCase {
     public void testDefaultsIcuAnalysis() throws IOException {
         final TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), Settings.EMPTY, new AnalysisSmartChinesePlugin());
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("smartcn_tokenizer");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("smartcn_tokenizer");
         MatcherAssert.assertThat(tokenizerFactory, instanceOf(SmartChineseTokenizerTokenizerFactory.class));
     }
 }

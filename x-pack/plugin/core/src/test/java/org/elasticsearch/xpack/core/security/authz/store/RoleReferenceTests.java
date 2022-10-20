@@ -28,8 +28,8 @@ public class RoleReferenceTests extends ESTestCase {
             assertThat(namedRoleReference.id(), is(RoleKey.ROLE_KEY_EMPTY));
         } else {
             final RoleKey roleKey = namedRoleReference.id();
-            assertThat(roleKey.getNames(), equalTo(Set.of(roleNames)));
-            assertThat(roleKey.getSource(), equalTo(RoleKey.ROLES_STORE_SOURCE));
+            assertThat(roleKey.names(), equalTo(Set.of(roleNames)));
+            assertThat(roleKey.source(), equalTo(RoleKey.ROLES_STORE_SOURCE));
         }
     }
 
@@ -42,8 +42,8 @@ public class RoleReferenceTests extends ESTestCase {
             assertThat(namedRoleReference.id(), is(RoleKey.ROLE_KEY_SUPERUSER));
         } else {
             final RoleKey roleKey = namedRoleReference.id();
-            assertThat(roleKey.getNames(), equalTo(Set.of(roleNames)));
-            assertThat(roleKey.getSource(), equalTo(RoleKey.ROLES_STORE_SOURCE));
+            assertThat(roleKey.names(), equalTo(Set.of(roleNames)));
+            assertThat(roleKey.source(), equalTo(RoleKey.ROLES_STORE_SOURCE));
         }
     }
 
@@ -59,10 +59,10 @@ public class RoleReferenceTests extends ESTestCase {
 
         final RoleKey roleKey = apiKeyRoleReference.id();
         assertThat(
-            roleKey.getNames(),
+            roleKey.names(),
             hasItem("apikey:" + MessageDigests.toHexString(MessageDigests.digest(roleDescriptorsBytes, MessageDigests.sha256())))
         );
-        assertThat(roleKey.getSource(), equalTo("apikey_" + apiKeyRoleType));
+        assertThat(roleKey.source(), equalTo("apikey_" + apiKeyRoleType));
     }
 
     public void testServiceAccountRoleReference() {
@@ -71,7 +71,7 @@ public class RoleReferenceTests extends ESTestCase {
             principal
         );
         final RoleKey roleKey = serviceAccountRoleReference.id();
-        assertThat(roleKey.getNames(), hasItem(principal));
-        assertThat(roleKey.getSource(), equalTo("service_account"));
+        assertThat(roleKey.names(), hasItem(principal));
+        assertThat(roleKey.source(), equalTo("service_account"));
     }
 }

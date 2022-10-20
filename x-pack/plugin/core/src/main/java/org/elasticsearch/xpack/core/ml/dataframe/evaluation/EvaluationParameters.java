@@ -8,19 +8,9 @@ package org.elasticsearch.xpack.core.ml.dataframe.evaluation;
 
 /**
  * Encapsulates parameters needed by evaluation.
+ *
+ * @param maxBuckets Maximum number of buckets allowed in any single search request.
  */
-public final class EvaluationParameters {
+public record EvaluationParameters(int maxBuckets) {
 
-    /**
-     * Maximum number of buckets allowed in any single search request.
-     */
-    private final int maxBuckets;
-
-    public EvaluationParameters(int maxBuckets) {
-        this.maxBuckets = maxBuckets;
-    }
-
-    public int getMaxBuckets() {
-        return maxBuckets;
-    }
 }

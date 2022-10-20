@@ -362,7 +362,7 @@ public class CoordinationState {
      * @throws CoordinationStateRejectedException if the arguments were incompatible with the current state of this object.
      */
     public PublishResponse handlePublishRequest(PublishRequest publishRequest) {
-        final ClusterState clusterState = publishRequest.getAcceptedState();
+        final ClusterState clusterState = publishRequest.acceptedState();
         if (clusterState.term() != getCurrentTerm()) {
             logger.debug(
                 "handlePublishRequest: ignored publish request due to term mismatch (expected: [{}], actual: [{}])",

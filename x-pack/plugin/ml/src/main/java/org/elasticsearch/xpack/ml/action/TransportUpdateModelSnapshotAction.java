@@ -77,7 +77,7 @@ public class TransportUpdateModelSnapshotAction extends HandledTransportAction<
                     // The quantiles can be large, and totally dominate the output -
                     // it's clearer to remove them
                     listener.onResponse(
-                        new UpdateModelSnapshotAction.Response(new ModelSnapshot.Builder(updatedSnapshot.result).setQuantiles(null).build())
+                        new UpdateModelSnapshotAction.Response(new ModelSnapshot.Builder(updatedSnapshot.result()).setQuantiles(null).build())
                     );
                 }, listener::onFailure);
             }
@@ -85,20 +85,20 @@ public class TransportUpdateModelSnapshotAction extends HandledTransportAction<
     }
 
     private static Result<ModelSnapshot> applyUpdate(UpdateModelSnapshotAction.Request request, Result<ModelSnapshot> target) {
-        ModelSnapshot.Builder updatedSnapshotBuilder = new ModelSnapshot.Builder(target.result);
+        ModelSnapshot.Builder updatedSnapshotBuilder = new ModelSnapshot.Builder(target.result());
         if (request.getDescription() != null) {
             updatedSnapshotBuilder.setDescription(request.getDescription());
         }
         if (request.getRetain() != null) {
             updatedSnapshotBuilder.setRetain(request.getRetain());
         }
-        return new Result<>(target.index, updatedSnapshotBuilder.build());
+        return new Result<>(target.index(), updatedSnapshotBuilder.build());
     }
 
     private void indexModelSnapshot(Result<ModelSnapshot> modelSnapshot, Consumer<Boolean> handler, Consumer<Exception> errorHandler) {
-        IndexRequest indexRequest = new IndexRequest(modelSnapshot.index).id(ModelSnapshot.documentId(modelSnapshot.result));
+        IndexRequest indexRequest = new IndexRequest(modelSnapshot.index()).id(ModelSnapshot.documentId(modelSnapshot.result()));
         try (XContentBuilder builder = XContentFactory.jsonBuilder()) {
-            modelSnapshot.result.toXContent(builder, ToXContent.EMPTY_PARAMS);
+            modelSnapshot.result().toXContent(builder, ToXContent.EMPTY_PARAMS);
             indexRequest.source(builder);
         } catch (IOException e) {
             errorHandler.accept(e);

@@ -136,17 +136,17 @@ public class ExternalEnrollmentTokenGenerator extends BaseEnrollmentTokenGenerat
             createApiKeyRequestBodySupplier,
             is -> responseBuilder(is)
         );
-        final int httpCode = httpResponseApiKey.getHttpStatus();
+        final int httpCode = httpResponseApiKey.httpStatus();
 
         if (httpCode != HttpURLConnection.HTTP_OK) {
             logger.error(
-                "Error " + httpCode + "when calling GET " + createApiKeyUrl + ". ResponseBody: " + httpResponseApiKey.getResponseBody()
+                "Error " + httpCode + "when calling GET " + createApiKeyUrl + ". ResponseBody: " + httpResponseApiKey.responseBody()
             );
             throw new IllegalStateException("Unexpected response code [" + httpCode + "] from calling POST " + createApiKeyUrl);
         }
 
-        final String apiKey = Objects.toString(httpResponseApiKey.getResponseBody().get("api_key"), "");
-        final String apiId = Objects.toString(httpResponseApiKey.getResponseBody().get("id"), "");
+        final String apiKey = Objects.toString(httpResponseApiKey.responseBody().get("api_key"), "");
+        final String apiId = Objects.toString(httpResponseApiKey.responseBody().get("id"), "");
         if (Strings.isNullOrEmpty(apiKey) || Strings.isNullOrEmpty(apiId)) {
             throw new IllegalStateException("Could not create an api key.");
         }
@@ -156,26 +156,26 @@ public class ExternalEnrollmentTokenGenerator extends BaseEnrollmentTokenGenerat
     protected Tuple<List<String>, String> getNodeInfo(String user, SecureString password, URL baseUrl) throws Exception {
         final URL httpInfoUrl = getHttpInfoUrl(baseUrl);
         final HttpResponse httpResponseHttp = client.execute("GET", httpInfoUrl, user, password, () -> null, is -> responseBuilder(is));
-        final int httpCode = httpResponseHttp.getHttpStatus();
+        final int httpCode = httpResponseHttp.httpStatus();
 
         if (httpCode != HttpURLConnection.HTTP_OK) {
-            logger.error("Error " + httpCode + "when calling GET " + httpInfoUrl + ". ResponseBody: " + httpResponseHttp.getResponseBody());
+            logger.error("Error " + httpCode + "when calling GET " + httpInfoUrl + ". ResponseBody: " + httpResponseHttp.responseBody());
             throw new IllegalStateException("Unexpected response code [" + httpCode + "] from calling GET " + httpInfoUrl);
         }
 
-        final List<String> addresses = getBoundAddresses(httpResponseHttp.getResponseBody());
+        final List<String> addresses = getBoundAddresses(httpResponseHttp.responseBody());
         if (addresses == null || addresses.isEmpty()) {
             logger.error(
                 "No bound addresses found in response from calling GET "
                     + httpInfoUrl
                     + ". ResponseBody: "
-                    + httpResponseHttp.getResponseBody()
+                    + httpResponseHttp.responseBody()
             );
             throw new IllegalStateException("No bound addresses found in response from calling GET " + httpInfoUrl);
         }
         final List<String> filteredAddresses = getFilteredAddresses(addresses);
 
-        final String stackVersion = getVersion(httpResponseHttp.getResponseBody());
+        final String stackVersion = getVersion(httpResponseHttp.responseBody());
         if (stackVersion == null || stackVersion.isEmpty()) {
             throw new IllegalStateException("Could not retrieve the version.");
         }

@@ -14,38 +14,13 @@ import org.elasticsearch.xpack.core.watcher.watch.Payload;
 
 import java.io.IOException;
 
-public class SimpleInput implements Input {
+public record SimpleInput(Payload payload) implements Input {
 
     public static final String TYPE = "simple";
-
-    private final Payload payload;
-
-    public SimpleInput(Payload payload) {
-        this.payload = payload;
-    }
 
     @Override
     public String type() {
         return TYPE;
-    }
-
-    public Payload getPayload() {
-        return payload;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SimpleInput that = (SimpleInput) o;
-
-        return payload.equals(that.payload);
-    }
-
-    @Override
-    public int hashCode() {
-        return payload.hashCode();
     }
 
     @Override

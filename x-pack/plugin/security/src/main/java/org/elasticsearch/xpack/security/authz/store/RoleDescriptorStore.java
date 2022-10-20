@@ -80,7 +80,7 @@ public class RoleDescriptorStore implements RoleReferenceResolver {
         RoleReference.NamedRoleReference namedRoleReference,
         ActionListener<RolesRetrievalResult> listener
     ) {
-        final Set<String> roleNames = Set.copyOf(new HashSet<>(List.of(namedRoleReference.getRoleNames())));
+        final Set<String> roleNames = Set.copyOf(new HashSet<>(List.of(namedRoleReference.roleNames())));
         if (roleNames.isEmpty()) {
             listener.onResponse(RolesRetrievalResult.EMPTY);
         } else if (roleNames.equals(Set.of(ReservedRolesStore.SUPERUSER_ROLE_DESCRIPTOR.getName()))) {
@@ -111,9 +111,9 @@ public class RoleDescriptorStore implements RoleReferenceResolver {
         ActionListener<RolesRetrievalResult> listener
     ) {
         final List<RoleDescriptor> roleDescriptors = apiKeyService.parseRoleDescriptors(
-            bwcApiKeyRoleReference.getApiKeyId(),
-            bwcApiKeyRoleReference.getRoleDescriptorsMap(),
-            bwcApiKeyRoleReference.getRoleType()
+            bwcApiKeyRoleReference.apiKeyId(),
+            bwcApiKeyRoleReference.roleDescriptorsMap(),
+            bwcApiKeyRoleReference.roleType()
         );
         final RolesRetrievalResult rolesRetrievalResult = new RolesRetrievalResult();
         rolesRetrievalResult.addDescriptors(Set.copyOf(roleDescriptors));
@@ -125,7 +125,7 @@ public class RoleDescriptorStore implements RoleReferenceResolver {
         RoleReference.ServiceAccountRoleReference roleReference,
         ActionListener<RolesRetrievalResult> listener
     ) {
-        serviceAccountService.getRoleDescriptorForPrincipal(roleReference.getPrincipal(), listener.map(roleDescriptor -> {
+        serviceAccountService.getRoleDescriptorForPrincipal(roleReference.principal(), listener.map(roleDescriptor -> {
             final RolesRetrievalResult rolesRetrievalResult = new RolesRetrievalResult();
             rolesRetrievalResult.addDescriptors(Set.of(roleDescriptor));
             return rolesRetrievalResult;

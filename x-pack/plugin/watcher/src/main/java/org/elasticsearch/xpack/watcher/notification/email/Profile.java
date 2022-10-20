@@ -83,21 +83,21 @@ public enum Profile {
             related.addBodyPart(wrap(alternative, "text/alternative"));
 
             MimeBodyPart text = new MimeBodyPart();
-            if (email.textBody != null) {
-                text.setText(email.textBody, StandardCharsets.UTF_8.name());
+            if (email.textBody() != null) {
+                text.setText(email.textBody(), StandardCharsets.UTF_8.name());
             } else {
                 text.setText("", StandardCharsets.UTF_8.name());
             }
             alternative.addBodyPart(text);
 
-            if (email.htmlBody != null) {
+            if (email.htmlBody() != null) {
                 MimeBodyPart html = new MimeBodyPart();
-                html.setText(email.htmlBody, StandardCharsets.UTF_8.name(), "html");
+                html.setText(email.htmlBody(), StandardCharsets.UTF_8.name(), "html");
                 alternative.addBodyPart(html);
             }
 
-            if (email.attachments.isEmpty() == false) {
-                for (Attachment attachment : email.attachments.values()) {
+            if (email.attachments().isEmpty() == false) {
+                for (Attachment attachment : email.attachments().values()) {
                     if (attachment.isInline()) {
                         related.addBodyPart(attachment.bodyPart());
                     } else {
@@ -176,26 +176,26 @@ public enum Profile {
 
     static MimeMessage createCommon(Email email, Session session) throws MessagingException {
         MimeMessage message = new MimeMessage(session);
-        message.setHeader(MESSAGE_ID_HEADER, email.id);
-        if (email.from != null) {
-            message.setFrom(email.from);
+        message.setHeader(MESSAGE_ID_HEADER, email.id());
+        if (email.from() != null) {
+            message.setFrom(email.from());
         }
-        if (email.replyTo != null) {
-            message.setReplyTo(email.replyTo.toArray());
+        if (email.replyTo() != null) {
+            message.setReplyTo(email.replyTo().toArray());
         }
-        if (email.priority != null) {
-            email.priority.applyTo(message);
+        if (email.priority() != null) {
+            email.priority().applyTo(message);
         }
-        message.setSentDate(Date.from(email.sentDate.toInstant()));
-        message.setRecipients(Message.RecipientType.TO, email.to.toArray());
-        if (email.cc != null) {
-            message.setRecipients(Message.RecipientType.CC, email.cc.toArray());
+        message.setSentDate(Date.from(email.sentDate().toInstant()));
+        message.setRecipients(Message.RecipientType.TO, email.to().toArray());
+        if (email.cc() != null) {
+            message.setRecipients(Message.RecipientType.CC, email.cc().toArray());
         }
-        if (email.bcc != null) {
-            message.setRecipients(Message.RecipientType.BCC, email.bcc.toArray());
+        if (email.bcc() != null) {
+            message.setRecipients(Message.RecipientType.BCC, email.bcc().toArray());
         }
-        if (email.subject != null) {
-            message.setSubject(email.subject, StandardCharsets.UTF_8.name());
+        if (email.subject() != null) {
+            message.setSubject(email.subject(), StandardCharsets.UTF_8.name());
         } else {
             message.setSubject("", StandardCharsets.UTF_8.name());
         }

@@ -313,7 +313,7 @@ public class SecondaryAuthenticatorTests extends ESTestCase {
 
         final PlainActionFuture<TokenService.CreateTokenResult> tokenFuture = new PlainActionFuture<>();
         tokenService.createOAuth2Tokens(auth, auth, Map.of(), false, tokenFuture);
-        final String token = tokenFuture.actionGet().getAccessToken();
+        final String token = tokenFuture.actionGet().accessToken();
 
         threadPool.getThreadContext().putHeader(SECONDARY_AUTH_HEADER_NAME, "Bearer " + token);
 

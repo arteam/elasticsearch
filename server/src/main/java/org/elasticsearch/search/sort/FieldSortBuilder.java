@@ -567,7 +567,7 @@ public class FieldSortBuilder extends SortBuilder<FieldSortBuilder> {
      */
     public static MinAndMax<?> getMinMaxOrNull(SearchExecutionContext context, FieldSortBuilder sortBuilder) throws IOException {
         SortAndFormats sort = SortBuilder.buildSort(Collections.singletonList(sortBuilder), context).get();
-        SortField sortField = sort.sort.getSort()[0];
+        SortField sortField = sort.sort().getSort()[0];
         if (sortField.getField() == null) {
             return null;
         }

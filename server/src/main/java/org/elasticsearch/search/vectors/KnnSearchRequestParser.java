@@ -25,9 +25,7 @@ import org.elasticsearch.xcontent.ParseField;
 import org.elasticsearch.xcontent.XContentParser;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static org.elasticsearch.xcontent.ConstructingObjectParser.constructorArg;
 
@@ -174,7 +172,7 @@ public class KnnSearchRequestParser {
         }
 
         sourceBuilder.query(queryBuilder);
-        sourceBuilder.size(knnSearch.k);
+        sourceBuilder.size(knnSearch.k());
 
         sourceBuilder.fetchSource(fetchSource);
         sourceBuilder.storedFields(storedFields);
@@ -193,7 +191,16 @@ public class KnnSearchRequestParser {
     }
 
     // visible for testing
-    static class KnnSearch {
+    /**
+     * Defines a kNN search.
+     *
+     * @param field       the name of the vector field to search against
+     * @param queryVector the query vector
+     * @param k           the final number of nearest neighbors to return as top hits
+     * @param numCands    the number of nearest neighbor candidates to consider per shard
+     */
+    record KnnSearch(String field, float[] queryVector, int k, int numCands) {
+
         private static final int NUM_CANDS_LIMIT = 10000;
         static final ParseField FIELD_FIELD = new ParseField("field");
         static final ParseField K_FIELD = new ParseField("k");
@@ -221,59 +228,21 @@ public class KnnSearchRequestParser {
             return PARSER.parse(parser, null);
         }
 
-        final String field;
-        final float[] queryVector;
-        final int k;
-        final int numCands;
-
-        /**
-         * Defines a kNN search.
-         *
-         * @param field the name of the vector field to search against
-         * @param queryVector the query vector
-         * @param k the final number of nearest neighbors to return as top hits
-         * @param numCands the number of nearest neighbor candidates to consider per shard
-         */
-        KnnSearch(String field, float[] queryVector, int k, int numCands) {
-            this.field = field;
-            this.queryVector = queryVector;
-            this.k = k;
-            this.numCands = numCands;
-        }
-
         public KnnVectorQueryBuilder toQueryBuilder() {
             // We perform validation here instead of the constructor because it makes the errors
             // much clearer. Otherwise, the error message is deeply nested under parsing exceptions.
-            if (k < 1) {
+            if (k() < 1) {
                 throw new IllegalArgumentException("[" + K_FIELD.getPreferredName() + "] must be greater than 0");
             }
-            if (numCands < k) {
+            if (numCands() < k()) {
                 throw new IllegalArgumentException(
                     "[" + NUM_CANDS_FIELD.getPreferredName() + "] cannot be less than " + "[" + K_FIELD.getPreferredName() + "]"
                 );
             }
-            if (numCands > NUM_CANDS_LIMIT) {
+            if (numCands() > NUM_CANDS_LIMIT) {
                 throw new IllegalArgumentException("[" + NUM_CANDS_FIELD.getPreferredName() + "] cannot exceed [" + NUM_CANDS_LIMIT + "]");
             }
-            return new KnnVectorQueryBuilder(field, queryVector, numCands);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            KnnSearch that = (KnnSearch) o;
-            return k == that.k
-                && numCands == that.numCands
-                && Objects.equals(field, that.field)
-                && Arrays.equals(queryVector, that.queryVector);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = Objects.hash(field, k, numCands);
-            result = 31 * result + Arrays.hashCode(queryVector);
-            return result;
+            return new KnnVectorQueryBuilder(field(), queryVector(), numCands());
         }
     }
 }

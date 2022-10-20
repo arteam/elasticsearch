@@ -61,25 +61,7 @@ public class ParametrizedMapperTests extends MapperServiceTestCase {
         return List.of(new TestPlugin());
     }
 
-    private static class StringWrapper {
-        final String name;
-
-        private StringWrapper(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            StringWrapper that = (StringWrapper) o;
-            return Objects.equals(name, that.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name);
-        }
+    private record StringWrapper(String name) {
     }
 
     private static TestMapper toType(Mapper in) {

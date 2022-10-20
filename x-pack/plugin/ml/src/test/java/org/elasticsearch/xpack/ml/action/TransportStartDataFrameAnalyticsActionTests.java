@@ -58,8 +58,8 @@ public class TransportStartDataFrameAnalyticsActionTests extends ESTestCase {
             .build();
 
         Assignment assignment = executor.getAssignment(params, clusterState.nodes(), clusterState);
-        assertThat(assignment.getExecutorNode(), is(nullValue()));
-        assertThat(assignment.getExplanation(), is(equalTo("persistent task cannot be assigned while upgrade mode is enabled.")));
+        assertThat(assignment.executorNode(), is(nullValue()));
+        assertThat(assignment.explanation(), is(equalTo("persistent task cannot be assigned while upgrade mode is enabled.")));
     }
 
     // Cannot assign the node because there are no existing nodes in the cluster state
@@ -71,8 +71,8 @@ public class TransportStartDataFrameAnalyticsActionTests extends ESTestCase {
             .build();
 
         Assignment assignment = executor.getAssignment(params, clusterState.nodes(), clusterState);
-        assertThat(assignment.getExecutorNode(), is(nullValue()));
-        assertThat(assignment.getExplanation(), is(emptyString()));
+        assertThat(assignment.executorNode(), is(nullValue()));
+        assertThat(assignment.explanation(), is(emptyString()));
     }
 
     // Cannot assign the node because none of the existing nodes is an ML node
@@ -90,9 +90,9 @@ public class TransportStartDataFrameAnalyticsActionTests extends ESTestCase {
             .build();
 
         Assignment assignment = executor.getAssignment(params, clusterState.nodes(), clusterState);
-        assertThat(assignment.getExecutorNode(), is(nullValue()));
+        assertThat(assignment.executorNode(), is(nullValue()));
         assertThat(
-            assignment.getExplanation(),
+            assignment.explanation(),
             allOf(
                 containsString("Not opening job [data_frame_id] on node [_node_name0]. Reason: This node isn't a machine learning node."),
                 containsString("Not opening job [data_frame_id] on node [_node_name1]. Reason: This node isn't a machine learning node."),
@@ -119,9 +119,9 @@ public class TransportStartDataFrameAnalyticsActionTests extends ESTestCase {
             .build();
 
         Assignment assignment = executor.getAssignment(params, clusterState.nodes(), clusterState);
-        assertThat(assignment.getExecutorNode(), is(nullValue()));
+        assertThat(assignment.executorNode(), is(nullValue()));
         assertThat(
-            assignment.getExplanation(),
+            assignment.explanation(),
             allOf(
                 containsString(
                     "Not opening job [data_frame_id] on node [{_node_name0}{version=7.2.0}], "
@@ -154,8 +154,8 @@ public class TransportStartDataFrameAnalyticsActionTests extends ESTestCase {
             .build();
 
         Assignment assignment = executor.getAssignment(params, clusterState.nodes(), clusterState);
-        assertThat(assignment.getExecutorNode(), is(equalTo("_node_id0")));
-        assertThat(assignment.getExplanation(), is(emptyString()));
+        assertThat(assignment.executorNode(), is(equalTo("_node_id0")));
+        assertThat(assignment.explanation(), is(emptyString()));
     }
 
     private static TaskExecutor createTaskExecutor() {

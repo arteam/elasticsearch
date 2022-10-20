@@ -377,7 +377,7 @@ public class TransportStartDataFrameAnalyticsAction extends TransportMasterNodeA
             startContext.extractedFields
         );
         extractorFactory.newExtractor(false).collectDataSummaryAsync(ActionListener.wrap(dataSummary -> {
-            if (dataSummary.rows == 0) {
+            if (dataSummary.rows() == 0) {
                 listener.onFailure(
                     ExceptionsHelper.badRequestException(
                         "Unable to start {} as no documents in the source indices [{}] contained all the fields "
@@ -389,7 +389,7 @@ public class TransportStartDataFrameAnalyticsAction extends TransportMasterNodeA
                         Strings.arrayToCommaDelimitedString(startContext.config.getSource().getIndex())
                     )
                 );
-            } else if (Math.floor(startContext.config.getAnalysis().getTrainingPercent() * dataSummary.rows) >= Math.pow(2, 32)) {
+            } else if (Math.floor(startContext.config.getAnalysis().getTrainingPercent() * dataSummary.rows()) >= Math.pow(2, 32)) {
                 listener.onFailure(
                     ExceptionsHelper.badRequestException(
                         "Unable to start because too many documents "
@@ -557,7 +557,7 @@ public class TransportStartDataFrameAnalyticsAction extends TransportMasterNodeA
             if (assignment != null
                 && assignment.equals(PersistentTasksCustomMetadata.INITIAL_ASSIGNMENT) == false
                 && assignment.isAssigned() == false) {
-                assignmentExplanation = assignment.getExplanation();
+                assignmentExplanation = assignment.explanation();
                 // Assignment failed due to primary shard check.
                 // This is hopefully intermittent and we should allow another assignment attempt.
                 if (assignmentExplanation.contains(PRIMARY_SHARDS_INACTIVE)) {
@@ -566,7 +566,7 @@ public class TransportStartDataFrameAnalyticsAction extends TransportMasterNodeA
                 exception = new ElasticsearchStatusException(
                     "Could not start data frame analytics task, allocation explanation [{}]",
                     RestStatus.TOO_MANY_REQUESTS,
-                    assignment.getExplanation()
+                    assignment.explanation()
                 );
                 return true;
             }

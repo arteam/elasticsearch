@@ -21,23 +21,7 @@ import org.elasticsearch.xpack.watcher.trigger.TriggerService;
 
 import java.io.IOException;
 
-public class TriggeredWatch implements ToXContentObject {
-
-    private final Wid id;
-    private final TriggerEvent triggerEvent;
-
-    public TriggeredWatch(Wid id, TriggerEvent triggerEvent) {
-        this.id = id;
-        this.triggerEvent = triggerEvent;
-    }
-
-    public Wid id() {
-        return id;
-    }
-
-    public TriggerEvent triggerEvent() {
-        return triggerEvent;
-    }
+public record TriggeredWatch(Wid id, TriggerEvent triggerEvent) implements ToXContentObject {
 
     @Override
     public XContentBuilder toXContent(XContentBuilder builder, Params params) throws IOException {

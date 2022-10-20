@@ -47,8 +47,8 @@ public class RemoteClusterMinimumVersionValidationTests extends ESTestCase {
 
     public void testGetters() {
         RemoteClusterMinimumVersionValidation validation = new RemoteClusterMinimumVersionValidation(MIN_EXPECTED_VERSION, REASON);
-        assertThat(validation.getMinExpectedVersion(), is(equalTo(MIN_EXPECTED_VERSION)));
-        assertThat(validation.getReason(), is(equalTo(REASON)));
+        assertThat(validation.minExpectedVersion(), is(equalTo(MIN_EXPECTED_VERSION)));
+        assertThat(validation.reason(), is(equalTo(REASON)));
     }
 
     public void testValidate_NoRemoteClusters() {

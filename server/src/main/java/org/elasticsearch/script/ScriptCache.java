@@ -195,40 +195,13 @@ public class ScriptCache {
         @Override
         public void onRemoval(RemovalNotification<CacheKey, Object> notification) {
             if (logger.isDebugEnabled()) {
-                logger.debug("removed [{}] from cache, reason: [{}]", notification.getValue(), notification.getRemovalReason());
+                logger.debug("removed [{}] from cache, reason: [{}]", notification.value(), notification.removalReason());
             }
             scriptMetrics.onCacheEviction();
         }
     }
 
-    private static final class CacheKey {
-        final String lang;
-        final String idOrCode;
-        final String context;
-        final Map<String, String> options;
-
-        private CacheKey(String lang, String idOrCode, String context, Map<String, String> options) {
-            this.lang = lang;
-            this.idOrCode = idOrCode;
-            this.context = context;
-            this.options = options;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            CacheKey cacheKey = (CacheKey) o;
-            return Objects.equals(lang, cacheKey.lang)
-                && Objects.equals(idOrCode, cacheKey.idOrCode)
-                && Objects.equals(context, cacheKey.context)
-                && Objects.equals(options, cacheKey.options);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(lang, idOrCode, context, options);
-        }
+    private record CacheKey(String lang, String idOrCode, String context, Map<String, String> options) {
     }
 
     static class TokenBucketState {

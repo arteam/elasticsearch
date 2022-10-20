@@ -37,7 +37,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -114,9 +113,9 @@ public class SSLTrustRestrictionsTests extends SecurityIntegTestCase {
         nodeSSL = Settings.builder()
             .put("xpack.security.transport.ssl.enabled", true)
             .put("xpack.security.transport.ssl.verification_mode", "certificate")
-            .putList("xpack.security.transport.ssl.certificate_authorities", ca.getCertPath().toString())
-            .put("xpack.security.transport.ssl.key", trustedCert.getKeyPath())
-            .put("xpack.security.transport.ssl.certificate", trustedCert.getCertPath())
+            .putList("xpack.security.transport.ssl.certificate_authorities", ca.certPath().toString())
+            .put("xpack.security.transport.ssl.key", trustedCert.keyPath())
+            .put("xpack.security.transport.ssl.certificate", trustedCert.certPath())
             .build();
     }
 
@@ -235,9 +234,9 @@ public class SSLTrustRestrictionsTests extends SecurityIntegTestCase {
         Settings settings = Settings.builder()
             .put("path.home", createTempDir())
             .put("xpack.security.transport.ssl.enabled", true)
-            .put("xpack.security.transport.ssl.key", certificate.getKeyPath())
-            .put("xpack.security.transport.ssl.certificate", certificate.getCertPath())
-            .putList("xpack.security.transport.ssl.certificate_authorities", ca.getCertPath().toString())
+            .put("xpack.security.transport.ssl.key", certificate.keyPath())
+            .put("xpack.security.transport.ssl.certificate", certificate.certPath())
+            .putList("xpack.security.transport.ssl.certificate_authorities", ca.certPath().toString())
             .put("xpack.security.transport.ssl.verification_mode", "certificate")
             .build();
 
@@ -263,33 +262,5 @@ public class SSLTrustRestrictionsTests extends SecurityIntegTestCase {
         }
     }
 
-    private static class CertificateInfo {
-        private final PrivateKey key;
-        private final Path keyPath;
-        private final X509Certificate certificate;
-        private final Path certPath;
-
-        private CertificateInfo(PrivateKey key, Path keyPath, X509Certificate certificate, Path certPath) {
-            this.key = key;
-            this.keyPath = keyPath;
-            this.certificate = certificate;
-            this.certPath = certPath;
-        }
-
-        private PrivateKey getKey() {
-            return key;
-        }
-
-        private Path getKeyPath() {
-            return keyPath;
-        }
-
-        private X509Certificate getCertificate() {
-            return certificate;
-        }
-
-        private Path getCertPath() {
-            return certPath;
-        }
-    }
+    private record CertificateInfo(PrivateKey key, Path keyPath, X509Certificate certificate, Path certPath) {}
 }

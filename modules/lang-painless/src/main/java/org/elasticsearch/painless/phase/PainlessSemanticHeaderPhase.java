@@ -39,7 +39,7 @@ public class PainlessSemanticHeaderPhase extends DefaultSemanticHeaderPhase {
             List<Class<?>> typeParameters = new ArrayList<>();
 
             for (MethodArgument methodArgument : scriptClassInfo.getExecuteArguments()) {
-                typeParameters.add(methodArgument.getClazz());
+                typeParameters.add(methodArgument.clazz());
             }
 
             functionTable.addFunction(functionName, returnType, typeParameters, true, false);

@@ -423,8 +423,8 @@ public class CheckShrinkReadyStepTests extends AbstractStepTestCase<CheckShrinkR
         CheckShrinkReadyStep step = createRandomInstance();
 
         ClusterStateWaitStep.Result actualResult = step.isConditionMet(index, clusterState);
-        assertFalse(actualResult.isComplete());
-        assertNull(actualResult.getInfomationContext());
+        assertFalse(actualResult.complete());
+        assertNull(actualResult.infomationContext());
     }
 
     public void testStepCompletableIfAllShardsActive() {
@@ -500,7 +500,7 @@ public class CheckShrinkReadyStepTests extends AbstractStepTestCase<CheckShrinkR
             .build();
         assertTrue(step.isCompletable());
         ClusterStateWaitStep.Result actualResult = step.isConditionMet(index, clusterState);
-        assertTrue(actualResult.isComplete());
+        assertTrue(actualResult.complete());
         assertTrue(step.isCompletable());
     }
 
@@ -577,9 +577,9 @@ public class CheckShrinkReadyStepTests extends AbstractStepTestCase<CheckShrinkR
             .build();
         assertTrue(step.isCompletable());
         ClusterStateWaitStep.Result actualResult = step.isConditionMet(index, clusterState);
-        assertFalse(actualResult.isComplete());
+        assertFalse(actualResult.complete());
         assertThat(
-            Strings.toString(actualResult.getInfomationContext()),
+            Strings.toString(actualResult.infomationContext()),
             containsString("node with id [node1] is currently marked as shutting down")
         );
         assertFalse(step.isCompletable());
@@ -625,8 +625,8 @@ public class CheckShrinkReadyStepTests extends AbstractStepTestCase<CheckShrinkR
             .routingTable(RoutingTable.builder().add(indexRoutingTable).build())
             .build();
         ClusterStateWaitStep.Result actualResult = step.isConditionMet(index, clusterState);
-        assertEquals(expectedResult.isComplete(), actualResult.isComplete());
-        assertEquals(expectedResult.getInfomationContext(), actualResult.getInfomationContext());
+        assertEquals(expectedResult.complete(), actualResult.complete());
+        assertEquals(expectedResult.infomationContext(), actualResult.infomationContext());
     }
 
     public static UnassignedInfo randomUnassignedInfo(String message) {

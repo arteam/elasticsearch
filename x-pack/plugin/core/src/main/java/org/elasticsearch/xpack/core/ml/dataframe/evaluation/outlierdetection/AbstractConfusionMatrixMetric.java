@@ -86,8 +86,8 @@ abstract class AbstractConfusionMatrixMetric implements EvaluationMetric {
         if (result != null) {
             return Tuple.tuple(List.of(), List.of());
         }
-        String actualField = fields.getActualField();
-        String predictedProbabilityField = fields.getPredictedProbabilityField();
+        String actualField = fields.actualField();
+        String predictedProbabilityField = fields.predictedProbabilityField();
         return Tuple.tuple(aggsAt(actualField, predictedProbabilityField), List.of());
     }
 

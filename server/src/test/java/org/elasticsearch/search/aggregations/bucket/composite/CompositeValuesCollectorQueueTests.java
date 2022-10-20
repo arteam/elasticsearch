@@ -53,15 +53,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
 public class CompositeValuesCollectorQueueTests extends AggregatorTestCase {
-    static class ClassAndName {
-        final MappedFieldType fieldType;
-        final Class<? extends Comparable<?>> clazz;
-
-        ClassAndName(MappedFieldType fieldType, Class<? extends Comparable<?>> clazz) {
-            this.fieldType = fieldType;
-            this.clazz = clazz;
-        }
-    }
+    record ClassAndName(MappedFieldType fieldType, Class<? extends Comparable<?>> clazz) {}
 
     public void testRandomLong() throws IOException {
         testRandomCase(new ClassAndName(createNumber("long", LONG), Long.class));

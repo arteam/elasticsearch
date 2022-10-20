@@ -20,13 +20,16 @@ import org.elasticsearch.xcontent.XContentParser;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A utility class to parse the Nodes Header returned by
  * {@link RestActions#buildNodesHeader(XContentBuilder, ToXContent.Params, BaseNodesResponse)}.
+ * @param total the total number of nodes that the operation was carried on
+ * @param successful the number of nodes that the operation was successful on
+ * @param failed the number of nodes that the operation has failed on
+ * @param failures failed node exceptions
  */
-public final class NodesResponseHeader {
+public record NodesResponseHeader(int total, int successful, int failed, List<ElasticsearchException> failures) {
 
     public static final ParseField TOTAL = new ParseField("total");
     public static final ParseField SUCCESSFUL = new ParseField("successful");
@@ -58,11 +61,6 @@ public final class NodesResponseHeader {
         );
     }
 
-    private final int total;
-    private final int successful;
-    private final int failed;
-    private final List<ElasticsearchException> failures;
-
     public NodesResponseHeader(int total, int successful, int failed, @Nullable List<ElasticsearchException> failures) {
         this.total = total;
         this.successful = successful;
@@ -74,30 +72,6 @@ public final class NodesResponseHeader {
         return PARSER.parse(parser, context);
     }
 
-    /** the total number of nodes that the operation was carried on */
-    public int getTotal() {
-        return total;
-    }
-
-    /** the number of nodes that the operation has failed on */
-    public int getFailed() {
-        return failed;
-    }
-
-    /** the number of nodes that the operation was successful on */
-    public int getSuccessful() {
-        return successful;
-    }
-
-    /**
-     * Get the failed node exceptions.
-     *
-     * @return Never {@code null}. Can be empty.
-     */
-    public List<ElasticsearchException> getFailures() {
-        return failures;
-    }
-
     /**
      * Determine if there are any node failures in {@link #failures}.
      *
@@ -105,23 +79,6 @@ public final class NodesResponseHeader {
      */
     public boolean hasFailures() {
         return failures.isEmpty() == false;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        NodesResponseHeader that = (NodesResponseHeader) o;
-        return total == that.total && successful == that.successful && failed == that.failed && Objects.equals(failures, that.failures);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(total, successful, failed, failures);
     }
 
 }

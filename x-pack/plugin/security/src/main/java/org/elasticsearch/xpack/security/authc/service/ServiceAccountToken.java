@@ -67,11 +67,11 @@ public class ServiceAccountToken implements AuthenticationToken, Closeable {
     }
 
     public ServiceAccountId getAccountId() {
-        return tokenId.getAccountId();
+        return tokenId.accountId();
     }
 
     public String getTokenName() {
-        return tokenId.getTokenName();
+        return tokenId.tokenName();
     }
 
     public String getQualifiedName() {
@@ -156,7 +156,7 @@ public class ServiceAccountToken implements AuthenticationToken, Closeable {
 
     @Override
     public String principal() {
-        return tokenId.getAccountId().asPrincipal();
+        return tokenId.accountId().asPrincipal();
     }
 
     @Override
@@ -169,24 +169,13 @@ public class ServiceAccountToken implements AuthenticationToken, Closeable {
         close();
     }
 
-    public static class ServiceAccountTokenId {
-        private final ServiceAccountId accountId;
-        private final String tokenName;
-
+    public record ServiceAccountTokenId(ServiceAccountId accountId, String tokenName) {
         public ServiceAccountTokenId(ServiceAccountId accountId, String tokenName) {
             this.accountId = Objects.requireNonNull(accountId, "service account ID cannot be null");
             if (false == Validation.isValidServiceAccountTokenName(tokenName)) {
                 throw new IllegalArgumentException(Validation.formatInvalidServiceTokenNameErrorMessage(tokenName));
             }
             this.tokenName = Objects.requireNonNull(tokenName, "service account token name cannot be null");
-        }
-
-        public ServiceAccountId getAccountId() {
-            return accountId;
-        }
-
-        public String getTokenName() {
-            return tokenName;
         }
 
         public String getQualifiedName() {
@@ -198,17 +187,5 @@ public class ServiceAccountToken implements AuthenticationToken, Closeable {
             return getQualifiedName();
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ServiceAccountTokenId that = (ServiceAccountTokenId) o;
-            return accountId.equals(that.accountId) && tokenName.equals(that.tokenName);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(accountId, tokenName);
-        }
     }
 }

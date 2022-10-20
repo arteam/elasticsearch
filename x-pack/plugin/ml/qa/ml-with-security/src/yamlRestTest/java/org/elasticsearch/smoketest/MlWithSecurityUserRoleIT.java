@@ -44,7 +44,7 @@ public class MlWithSecurityUserRoleIT extends MlWithSecurityIT {
             super.test();
 
             // We should have got here if and only if the only ML endpoints in the test were in the allowed list
-            for (ExecutableSection section : testCandidate.getTestSection().getExecutableSections()) {
+            for (ExecutableSection section : testCandidate.getTestSection().executableSections()) {
                 if (section instanceof DoSection doSection) {
                     String apiName = doSection.getApiCallSection().getApi();
 

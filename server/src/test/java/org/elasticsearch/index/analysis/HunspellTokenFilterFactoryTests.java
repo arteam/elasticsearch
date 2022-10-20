@@ -25,7 +25,7 @@ public class HunspellTokenFilterFactoryTests extends ESTestCase {
             .build();
 
         TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, getDataPath("/indices/analyze/conf_dir"));
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("en_US");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("en_US");
         assertThat(tokenFilter, instanceOf(HunspellTokenFilterFactory.class));
         HunspellTokenFilterFactory hunspellTokenFilter = (HunspellTokenFilterFactory) tokenFilter;
         assertThat(hunspellTokenFilter.dedup(), is(true));
@@ -38,7 +38,7 @@ public class HunspellTokenFilterFactoryTests extends ESTestCase {
             .build();
 
         analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, getDataPath("/indices/analyze/conf_dir"));
-        tokenFilter = analysis.tokenFilter.get("en_US");
+        tokenFilter = analysis.tokenFilter().get("en_US");
         assertThat(tokenFilter, instanceOf(HunspellTokenFilterFactory.class));
         hunspellTokenFilter = (HunspellTokenFilterFactory) tokenFilter;
         assertThat(hunspellTokenFilter.dedup(), is(false));

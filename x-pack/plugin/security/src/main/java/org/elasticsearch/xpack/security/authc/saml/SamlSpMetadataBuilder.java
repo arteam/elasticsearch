@@ -371,12 +371,8 @@ public class SamlSpMetadataBuilder {
         return person;
     }
 
-    public static class OrganizationInfo {
-        public final String organizationName;
-        public final String displayName;
-        public final String url;
-
-        public OrganizationInfo(String organizationName, String displayName, String url) {
+    public record OrganizationInfo(String organizationName, String displayName, String url) {
+        public OrganizationInfo {
             if (Strings.isNullOrEmpty(organizationName)) {
                 throw new IllegalArgumentException("Organization Name is required");
             }
@@ -386,13 +382,11 @@ public class SamlSpMetadataBuilder {
             if (Strings.isNullOrEmpty(url)) {
                 throw new IllegalArgumentException("Organization URL is required");
             }
-            this.organizationName = organizationName;
-            this.displayName = displayName;
-            this.url = url;
         }
     }
 
-    public static class ContactInfo {
+    public record ContactInfo(ContactPersonTypeEnumeration type, String givenName, String surName, String email) {
+
         static final Map<String, ContactPersonTypeEnumeration> TYPES = MapBuilder.<String, ContactPersonTypeEnumeration>newMapBuilder(
             new LinkedHashMap<>()
         )
@@ -403,16 +397,8 @@ public class SamlSpMetadataBuilder {
             .put(ContactPersonTypeEnumeration.OTHER.toString(), ContactPersonTypeEnumeration.OTHER)
             .map();
 
-        public final ContactPersonTypeEnumeration type;
-        public final String givenName;
-        public final String surName;
-        public final String email;
-
-        public ContactInfo(ContactPersonTypeEnumeration type, String givenName, String surName, String email) {
-            this.type = Objects.requireNonNull(type, "Contact Person Type is required");
-            this.givenName = givenName;
-            this.surName = surName;
-            this.email = email;
+        public ContactInfo {
+            Objects.requireNonNull(type, "Contact Person Type is required");
         }
 
         private static ContactPersonTypeEnumeration getType(String name) {

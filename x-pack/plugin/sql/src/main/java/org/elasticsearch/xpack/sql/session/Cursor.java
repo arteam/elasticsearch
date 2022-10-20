@@ -15,22 +15,7 @@ import org.elasticsearch.common.io.stream.NamedWriteable;
  */
 public interface Cursor extends NamedWriteable {
 
-    class Page {
-        private final RowSet rowSet;
-        private final Cursor next;
-
-        public Page(RowSet rowSet, Cursor next) {
-            this.rowSet = rowSet;
-            this.next = next;
-        }
-
-        public RowSet rowSet() {
-            return rowSet;
-        }
-
-        public Cursor next() {
-            return next;
-        }
+    record Page(RowSet rowSet, Cursor next) {
 
         public static Page last(RowSet rowSet) {
             return new Page(rowSet, EMPTY);

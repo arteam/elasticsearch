@@ -99,13 +99,13 @@ public class PyTorchStateStreamer {
         }
 
         if (modelSize == -1) {
-            modelSize = writeModelSize(doc.getModelId(), doc.getTotalDefinitionLength(), outputStream);
+            modelSize = writeModelSize(doc.modelId(), doc.totalDefinitionLength(), outputStream);
         }
 
         // The array backing the BytesReference may be bigger than what is
         // referred to so write only what is after the offset
-        outputStream.write(doc.getBinaryData().array(), doc.getBinaryData().arrayOffset(), doc.getBinaryData().length());
-        modelBytesWritten.addAndGet(doc.getBinaryData().length());
+        outputStream.write(doc.binaryData().array(), doc.binaryData().arrayOffset(), doc.binaryData().length());
+        modelBytesWritten.addAndGet(doc.binaryData().length());
         return true;
     }
 

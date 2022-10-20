@@ -161,7 +161,7 @@ public class ExportersTests extends ESTestCase {
 
     public void testInitExportersDefault() throws Exception {
         factories.put("_type", TestExporter::new);
-        Map<String, Exporter> internalExporters = exporters.initExporters(Settings.builder().build()).enabledExporters;
+        Map<String, Exporter> internalExporters = exporters.initExporters(Settings.builder().build()).enabledExporters();
 
         assertThat(internalExporters, notNullValue());
         assertThat(internalExporters.size(), is(1));
@@ -172,8 +172,8 @@ public class ExportersTests extends ESTestCase {
     public void testInitExportersSingle() throws Exception {
         factories.put("local", TestExporter::new);
         Map<String, Exporter> internalExporters = exporters.initExporters(
-            Settings.builder().put("xpack.monitoring.exporters._name.type", "local").build()
-        ).enabledExporters;
+                Settings.builder().put("xpack.monitoring.exporters._name.type", "local").build()
+        ).enabledExporters();
 
         assertThat(internalExporters, notNullValue());
         assertThat(internalExporters.size(), is(1));
@@ -185,11 +185,11 @@ public class ExportersTests extends ESTestCase {
     public void testInitExportersSingleDisabled() throws Exception {
         factories.put("local", TestExporter::new);
         Map<String, Exporter> internalExporters = exporters.initExporters(
-            Settings.builder()
-                .put("xpack.monitoring.exporters._name.type", "local")
-                .put("xpack.monitoring.exporters._name.enabled", false)
-                .build()
-        ).enabledExporters;
+                Settings.builder()
+                        .put("xpack.monitoring.exporters._name.type", "local")
+                        .put("xpack.monitoring.exporters._name.enabled", false)
+                        .build()
+        ).enabledExporters();
 
         assertThat(internalExporters, notNullValue());
 
@@ -221,11 +221,11 @@ public class ExportersTests extends ESTestCase {
     public void testInitExportersMultipleSameType() throws Exception {
         factories.put("_type", TestExporter::new);
         Map<String, Exporter> internalExporters = exporters.initExporters(
-            Settings.builder()
-                .put("xpack.monitoring.exporters._name0.type", "_type")
-                .put("xpack.monitoring.exporters._name1.type", "_type")
-                .build()
-        ).enabledExporters;
+                Settings.builder()
+                        .put("xpack.monitoring.exporters._name0.type", "_type")
+                        .put("xpack.monitoring.exporters._name1.type", "_type")
+                        .build()
+        ).enabledExporters();
 
         assertThat(internalExporters, notNullValue());
         assertThat(internalExporters.size(), is(2));

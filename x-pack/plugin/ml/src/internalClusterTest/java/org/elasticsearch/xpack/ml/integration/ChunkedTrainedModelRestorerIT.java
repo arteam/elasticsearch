@@ -206,7 +206,7 @@ public class ChunkedTrainedModelRestorerIT extends MlSingleNodeTestCase {
             try (XContentBuilder xContentBuilder = doc.toXContent(XContentFactory.jsonBuilder(), ToXContent.EMPTY_PARAMS)) {
                 IndexRequestBuilder indexRequestBuilder = client().prepareIndex(index)
                     .setSource(xContentBuilder)
-                    .setId(TrainedModelDefinitionDoc.docId(doc.getModelId(), startingDocNum++));
+                    .setId(TrainedModelDefinitionDoc.docId(doc.modelId(), startingDocNum++));
 
                 bulkRequestBuilder.add(indexRequestBuilder);
             }

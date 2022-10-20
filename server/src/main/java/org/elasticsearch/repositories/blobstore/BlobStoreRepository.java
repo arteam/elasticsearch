@@ -2873,12 +2873,12 @@ public abstract class BlobStoreRepository extends AbstractLifecycleComponent imp
                 logger.trace("[{}] [{}] writing shard snapshot file", shardId, snapshotId);
                 final BlobStoreIndexShardSnapshot blobStoreIndexShardSnapshot = new BlobStoreIndexShardSnapshot(
                     snapshotId.getName(),
-                    lastSnapshotStatus.getIndexVersion(),
+                    lastSnapshotStatus.indexVersion(),
                     indexCommitPointFiles,
-                    lastSnapshotStatus.getStartTime(),
-                    threadPool.absoluteTimeInMillis() - lastSnapshotStatus.getStartTime(),
-                    lastSnapshotStatus.getIncrementalFileCount(),
-                    lastSnapshotStatus.getIncrementalSize()
+                    lastSnapshotStatus.startTime(),
+                    threadPool.absoluteTimeInMillis() - lastSnapshotStatus.startTime(),
+                    lastSnapshotStatus.incrementalFileCount(),
+                    lastSnapshotStatus.incrementalSize()
                 );
                 try {
                     final String snapshotUUID = snapshotId.getUUID();

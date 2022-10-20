@@ -26,8 +26,8 @@ public class TrimTokenFilterTests extends ESTokenStreamTestCase {
             .put(Environment.PATH_HOME_SETTING.getKey(), createTempDir().toString())
             .build();
         ESTestCase.TestAnalysis analysis = AnalysisTestsHelper.createTestAnalysisFromSettings(settings, new CommonAnalysisPlugin());
-        assertNull(analysis.indexAnalyzers.get("my_normalizer"));
-        NamedAnalyzer normalizer = analysis.indexAnalyzers.getNormalizer("my_normalizer");
+        assertNull(analysis.indexAnalyzers().get("my_normalizer"));
+        NamedAnalyzer normalizer = analysis.indexAnalyzers().getNormalizer("my_normalizer");
         assertNotNull(normalizer);
         assertEquals("my_normalizer", normalizer.name());
         assertTokenStreamContents(normalizer.tokenStream("foo", "  bar  "), new String[] { "bar" });

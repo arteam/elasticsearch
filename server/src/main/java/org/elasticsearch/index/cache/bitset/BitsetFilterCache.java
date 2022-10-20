@@ -183,11 +183,11 @@ public final class BitsetFilterCache
 
     @Override
     public void onRemoval(RemovalNotification<IndexReader.CacheKey, Cache<Query, Value>> notification) {
-        if (notification.getKey() == null) {
+        if (notification.key() == null) {
             return;
         }
 
-        Cache<Query, Value> valueCache = notification.getValue();
+        Cache<Query, Value> valueCache = notification.value();
         if (valueCache == null) {
             return;
         }

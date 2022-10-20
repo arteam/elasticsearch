@@ -59,7 +59,7 @@ public class RoleReferenceIntersectionTests extends ESTestCase {
 
         final RoleReferenceIntersection roleReferenceIntersection = new RoleReferenceIntersection(roleReferences);
         final BiConsumer<RoleReference, ActionListener<Role>> singleRoleBuilder = (rf, l) -> {
-            l.onResponse(roles.get(Integer.parseInt(rf.id().getSource())));
+            l.onResponse(roles.get(Integer.parseInt(rf.id().source())));
         };
 
         final PlainActionFuture<Role> future = new PlainActionFuture<>();

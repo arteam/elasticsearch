@@ -116,20 +116,20 @@ public class TriggerService {
             }
 
             for (TriggerWatchStats.ActionStats action : stats.actions) {
-                counters.inc("watch.action." + action.actionType + ".active");
-                counters.inc("watch.action." + action.actionType + ".total");
+                counters.inc("watch.action." + action.actionType() + ".active");
+                counters.inc("watch.action." + action.actionType() + ".total");
                 counters.inc("watch.action._all.active");
                 counters.inc("watch.action._all.total");
 
-                if (Strings.isNullOrEmpty(action.conditionType) == false) {
-                    counters.inc("watch.action.condition." + action.conditionType + ".active");
-                    counters.inc("watch.action.condition." + action.conditionType + ".total");
+                if (Strings.isNullOrEmpty(action.conditionType()) == false) {
+                    counters.inc("watch.action.condition." + action.conditionType() + ".active");
+                    counters.inc("watch.action.condition." + action.conditionType() + ".total");
                     counters.inc("watch.action.condition._all.active");
                     counters.inc("watch.action.condition._all.total");
                 }
-                if (Strings.isNullOrEmpty(action.transformType) == false) {
-                    counters.inc("watch.action.transform." + action.transformType + ".active");
-                    counters.inc("watch.action.transform." + action.transformType + ".total");
+                if (Strings.isNullOrEmpty(action.transformType()) == false) {
+                    counters.inc("watch.action.transform." + action.transformType() + ".active");
+                    counters.inc("watch.action.transform." + action.transformType() + ".total");
                     counters.inc("watch.action.transform._all.active");
                     counters.inc("watch.action.transform._all.total");
                 }

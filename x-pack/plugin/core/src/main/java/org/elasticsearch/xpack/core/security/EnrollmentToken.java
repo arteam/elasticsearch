@@ -23,27 +23,7 @@ import java.util.Objects;
 
 import static org.elasticsearch.xcontent.ConstructingObjectParser.constructorArg;
 
-public class EnrollmentToken {
-    private final String apiKey;
-    private final String fingerprint;
-    private final String version;
-    private final List<String> boundAddress;
-
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    public String getFingerprint() {
-        return fingerprint;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public List<String> getBoundAddress() {
-        return boundAddress;
-    }
+public record EnrollmentToken(String apiKey, String fingerprint, String version, List<String> boundAddress) {
 
     private static final ParseField API_KEY = new ParseField("key");
     private static final ParseField FINGERPRINT = new ParseField("fgr");
@@ -67,10 +47,10 @@ public class EnrollmentToken {
     /**
      * Create an EnrollmentToken
      *
-     * @param apiKey         API Key credential in the form apiKeyId:ApiKeySecret to be used for enroll calls
-     * @param fingerprint    hex encoded SHA256 fingerprint of the HTTP CA cert
-     * @param version        node version number
-     * @param boundAddress   IP Addresses and port numbers for the interfaces where the Elasticsearch node is listening on
+     * @param apiKey       API Key credential in the form apiKeyId:ApiKeySecret to be used for enroll calls
+     * @param fingerprint  hex encoded SHA256 fingerprint of the HTTP CA cert
+     * @param version      node version number
+     * @param boundAddress IP Addresses and port numbers for the interfaces where the Elasticsearch node is listening on
      */
     public EnrollmentToken(String apiKey, String fingerprint, String version, List<String> boundAddress) {
         this.apiKey = Objects.requireNonNull(apiKey);
@@ -101,6 +81,7 @@ public class EnrollmentToken {
 
     /**
      * Decodes and parses an enrollment token from its serialized form (created with {@link EnrollmentToken#getEncoded()}
+     *
      * @param encoded The Base64 encoded JSON representation of the enrollment token
      * @return the parsed EnrollmentToken
      * @throws IOException when failing to decode the serialized token
@@ -116,19 +97,4 @@ public class EnrollmentToken {
         return EnrollmentToken.PARSER.parse(jsonParser, null);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EnrollmentToken that = (EnrollmentToken) o;
-        return apiKey.equals(that.apiKey)
-            && fingerprint.equals(that.fingerprint)
-            && version.equals(that.version)
-            && boundAddress.equals(that.boundAddress);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(apiKey, fingerprint, version, boundAddress);
-    }
 }

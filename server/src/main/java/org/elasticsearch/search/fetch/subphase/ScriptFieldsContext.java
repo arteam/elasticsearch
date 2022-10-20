@@ -15,29 +15,7 @@ import java.util.List;
 
 public class ScriptFieldsContext {
 
-    public static class ScriptField {
-        private final String name;
-        private final FieldScript.LeafFactory script;
-        private final boolean ignoreException;
-
-        public ScriptField(String name, FieldScript.LeafFactory script, boolean ignoreException) {
-            this.name = name;
-            this.script = script;
-            this.ignoreException = ignoreException;
-        }
-
-        public String name() {
-            return name;
-        }
-
-        public FieldScript.LeafFactory script() {
-            return this.script;
-        }
-
-        public boolean ignoreException() {
-            return ignoreException;
-        }
-    }
+    public record ScriptField(String name, FieldScript.LeafFactory script, boolean ignoreException) {}
 
     private List<ScriptField> fields = new ArrayList<>();
 

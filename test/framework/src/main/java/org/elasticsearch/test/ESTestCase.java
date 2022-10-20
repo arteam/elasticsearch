@@ -1669,25 +1669,12 @@ public abstract class ESTestCase extends LuceneTestCase {
      * to build IndexAnalyzers. This is only for testing since in production we only need the
      * result and we don't even expose it there.
      */
-    public static final class TestAnalysis {
-
-        public final IndexAnalyzers indexAnalyzers;
-        public final Map<String, TokenFilterFactory> tokenFilter;
-        public final Map<String, TokenizerFactory> tokenizer;
-        public final Map<String, CharFilterFactory> charFilter;
-
-        public TestAnalysis(
-            IndexAnalyzers indexAnalyzers,
-            Map<String, TokenFilterFactory> tokenFilter,
-            Map<String, TokenizerFactory> tokenizer,
-            Map<String, CharFilterFactory> charFilter
-        ) {
-            this.indexAnalyzers = indexAnalyzers;
-            this.tokenFilter = tokenFilter;
-            this.tokenizer = tokenizer;
-            this.charFilter = charFilter;
-        }
-    }
+    public record TestAnalysis(
+        IndexAnalyzers indexAnalyzers,
+        Map<String, TokenFilterFactory> tokenFilter,
+        Map<String, TokenizerFactory> tokenizer,
+        Map<String, CharFilterFactory> charFilter
+    ) {}
 
     private static boolean isUnusableLocale() {
         return inFipsJvm()

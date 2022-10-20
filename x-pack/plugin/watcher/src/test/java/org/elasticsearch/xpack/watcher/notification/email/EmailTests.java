@@ -51,17 +51,17 @@ public class EmailTests extends ESTestCase {
 
         Email parsedEmail = Email.parse(parser);
 
-        assertThat(email.id, equalTo(parsedEmail.id));
-        assertThat(email.from, equalTo(parsedEmail.from));
-        assertThat(email.replyTo, equalTo(parsedEmail.replyTo));
-        assertThat(email.priority, equalTo(parsedEmail.priority));
-        assertThat(email.sentDate, equalTo(parsedEmail.sentDate));
-        assertThat(email.to, equalTo(parsedEmail.to));
-        assertThat(email.cc, equalTo(parsedEmail.cc));
-        assertThat(email.bcc, equalTo(parsedEmail.bcc));
-        assertThat(email.subject, equalTo(parsedEmail.subject));
-        assertThat(email.textBody, equalTo(parsedEmail.textBody));
-        assertThat(email.htmlBody, equalTo(parsedEmail.htmlBody));
+        assertThat(email.id(), equalTo(parsedEmail.id()));
+        assertThat(email.from(), equalTo(parsedEmail.from()));
+        assertThat(email.replyTo(), equalTo(parsedEmail.replyTo()));
+        assertThat(email.priority(), equalTo(parsedEmail.priority()));
+        assertThat(email.sentDate(), equalTo(parsedEmail.sentDate()));
+        assertThat(email.to(), equalTo(parsedEmail.to()));
+        assertThat(email.cc(), equalTo(parsedEmail.cc()));
+        assertThat(email.bcc(), equalTo(parsedEmail.bcc()));
+        assertThat(email.subject(), equalTo(parsedEmail.subject()));
+        assertThat(email.textBody(), equalTo(parsedEmail.textBody()));
+        assertThat(email.htmlBody(), equalTo(parsedEmail.htmlBody()));
     }
 
 }

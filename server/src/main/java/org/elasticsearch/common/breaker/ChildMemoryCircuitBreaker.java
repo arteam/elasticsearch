@@ -241,14 +241,7 @@ public class ChildMemoryCircuitBreaker implements CircuitBreaker {
         this.limitAndOverhead = new LimitAndOverhead(limit, overhead);
     }
 
-    private static class LimitAndOverhead {
+    private record LimitAndOverhead(long limit, double overhead) {
 
-        private final long limit;
-        private final double overhead;
-
-        LimitAndOverhead(long limit, double overhead) {
-            this.limit = limit;
-            this.overhead = overhead;
-        }
     }
 }

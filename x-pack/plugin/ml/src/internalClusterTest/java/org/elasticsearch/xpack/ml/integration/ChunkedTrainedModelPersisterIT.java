@@ -133,7 +133,7 @@ public class ChunkedTrainedModelPersisterIT extends MlSingleNodeTestCase {
 
         TrainedModelMetadata storedMetadata = getTrainedMetadataFuture.actionGet().get(inferenceModelId);
         assertThat(storedMetadata.getModelId(), startsWith(modelId));
-        assertThat(storedMetadata.getTotalFeatureImportances(), equalTo(modelMetadata.getFeatureImportances()));
+        assertThat(storedMetadata.getTotalFeatureImportances(), equalTo(modelMetadata.featureImportances()));
     }
 
     private static TrainedModelConfig.Builder buildTrainedModelConfigBuilder(String modelId) {

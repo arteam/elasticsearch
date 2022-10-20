@@ -197,14 +197,7 @@ class MlUpgradeModeActionFilter extends ActionFilter.Simple {
      * Class to allow both upgrade and reset flags to be recorded atomically so that code that checks both
      * one after the other doesn't see inconsistent values.
      */
-    private static class UpgradeResetFlags {
+    private record UpgradeResetFlags(boolean isUpgradeMode, boolean isResetMode) {
 
-        final boolean isUpgradeMode;
-        final boolean isResetMode;
-
-        UpgradeResetFlags(boolean isUpgradeMode, boolean isResetMode) {
-            this.isUpgradeMode = isUpgradeMode;
-            this.isResetMode = isResetMode;
-        }
     }
 }

@@ -9,16 +9,10 @@ package org.elasticsearch.xpack.watcher;
 import java.time.Clock;
 
 /**
- * A wrapper around {@link java.time.Clock} to provide a concrete type for Guice injection.
- *
- * This class is temporary until {@link java.time.Clock} can be passed to action constructors
+ * A wrapper around {@link Clock} to provide a concrete type for Guice injection.
+ * <p>
+ * This class is temporary until {@link Clock} can be passed to action constructors
  * directly, or the actions can be rewritten to be unit tested with the clock overriden
  * just for unit tests instead of via Node construction.
  */
-public final class ClockHolder {
-    public final Clock clock;
-
-    public ClockHolder(Clock clock) {
-        this.clock = clock;
-    }
-}
+public record ClockHolder(Clock clock) {}

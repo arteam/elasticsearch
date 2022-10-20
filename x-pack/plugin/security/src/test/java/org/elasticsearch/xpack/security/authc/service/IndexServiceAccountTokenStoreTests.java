@@ -168,24 +168,24 @@ public class IndexServiceAccountTokenStoreTests extends ESTestCase {
         store.doAuthenticate(serviceAccountToken, future1);
         final GetRequest getRequest = (GetRequest) requestHolder.get();
         assertThat(getRequest.id(), equalTo("service_account_token-" + serviceAccountToken.getQualifiedName()));
-        assertThat(future1.get().isSuccess(), is(true));
-        assertThat(future1.get().getTokenSource(), is(TokenSource.INDEX));
+        assertThat(future1.get().success(), is(true));
+        assertThat(future1.get().tokenSource(), is(TokenSource.INDEX));
 
         // token mismatch
         final GetResponse getResponse2 = createGetResponse(ServiceAccountToken.newToken(accountId, randomAlphaOfLengthBetween(3, 8)), true);
         responseProviderHolder.set((r, l) -> l.onResponse(getResponse2));
         final PlainActionFuture<StoreAuthenticationResult> future2 = new PlainActionFuture<>();
         store.doAuthenticate(serviceAccountToken, future2);
-        assertThat(future2.get().isSuccess(), is(false));
-        assertThat(future2.get().getTokenSource(), is(TokenSource.INDEX));
+        assertThat(future2.get().success(), is(false));
+        assertThat(future2.get().tokenSource(), is(TokenSource.INDEX));
 
         // token document not found
         final GetResponse getResponse3 = createGetResponse(serviceAccountToken, false);
         responseProviderHolder.set((r, l) -> l.onResponse(getResponse3));
         final PlainActionFuture<StoreAuthenticationResult> future3 = new PlainActionFuture<>();
         store.doAuthenticate(serviceAccountToken, future3);
-        assertThat(future3.get().isSuccess(), is(false));
-        assertThat(future3.get().getTokenSource(), is(TokenSource.INDEX));
+        assertThat(future3.get().success(), is(false));
+        assertThat(future3.get().tokenSource(), is(TokenSource.INDEX));
     }
 
     public void testCreateToken() throws ExecutionException, InterruptedException {

@@ -95,7 +95,7 @@ public class TransportGetJobModelSnapshotsUpgradeStatsAction extends TransportMa
                         statsBuilder.setNode(state.getNodes().get(t.getExecutorNode()));
                     }
                     return statsBuilder.setUpgradeState(MlTasks.getSnapshotUpgradeState(t))
-                        .setAssignmentExplanation(t.getAssignment().getExplanation())
+                        .setAssignmentExplanation(t.getAssignment().explanation())
                         .build();
                 })
                 .sorted(

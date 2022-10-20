@@ -92,8 +92,8 @@ public class DataTierMigrationRoutedStepTests extends AbstractStepTestCase<DataT
         Result expectedResult = new Result(false, waitingForActiveShardsAllocationInfo(1));
 
         Result actualResult = step.isConditionMet(index, clusterState);
-        assertThat(actualResult.isComplete(), is(false));
-        assertThat(actualResult.getInfomationContext(), is(expectedResult.getInfomationContext()));
+        assertThat(actualResult.complete(), is(false));
+        assertThat(actualResult.infomationContext(), is(expectedResult.infomationContext()));
     }
 
     public void testExecuteWithPendingShards() {
@@ -132,8 +132,8 @@ public class DataTierMigrationRoutedStepTests extends AbstractStepTestCase<DataT
         );
 
         Result actualResult = step.isConditionMet(index, clusterState);
-        assertThat(actualResult.isComplete(), is(false));
-        assertThat(actualResult.getInfomationContext(), is(expectedResult.getInfomationContext()));
+        assertThat(actualResult.complete(), is(false));
+        assertThat(actualResult.infomationContext(), is(expectedResult.infomationContext()));
     }
 
     public void testExecuteWithPendingShardsAndTargetRoleNotPresentInCluster() {
@@ -166,8 +166,8 @@ public class DataTierMigrationRoutedStepTests extends AbstractStepTestCase<DataT
         );
 
         Result actualResult = step.isConditionMet(index, clusterState);
-        assertThat(actualResult.isComplete(), is(false));
-        assertThat(actualResult.getInfomationContext(), is(expectedResult.getInfomationContext()));
+        assertThat(actualResult.complete(), is(false));
+        assertThat(actualResult.infomationContext(), is(expectedResult.infomationContext()));
     }
 
     public void testExecuteIndexMissing() {
@@ -177,8 +177,8 @@ public class DataTierMigrationRoutedStepTests extends AbstractStepTestCase<DataT
         DataTierMigrationRoutedStep step = createRandomInstance();
 
         Result actualResult = step.isConditionMet(index, clusterState);
-        assertThat(actualResult.isComplete(), is(false));
-        assertThat(actualResult.getInfomationContext(), is(nullValue()));
+        assertThat(actualResult.complete(), is(false));
+        assertThat(actualResult.infomationContext(), is(nullValue()));
     }
 
     public void testExecuteIsComplete() {
@@ -202,8 +202,8 @@ public class DataTierMigrationRoutedStepTests extends AbstractStepTestCase<DataT
             .build();
         DataTierMigrationRoutedStep step = createRandomInstance();
         Result result = step.isConditionMet(index, clusterState);
-        assertThat(result.isComplete(), is(true));
-        assertThat(result.getInfomationContext(), is(nullValue()));
+        assertThat(result.complete(), is(true));
+        assertThat(result.infomationContext(), is(nullValue()));
     }
 
     public void testExecuteWithGenericDataNodes() {
@@ -223,8 +223,8 @@ public class DataTierMigrationRoutedStepTests extends AbstractStepTestCase<DataT
             .build();
         DataTierMigrationRoutedStep step = createRandomInstance();
         Result result = step.isConditionMet(index, clusterState);
-        assertThat(result.isComplete(), is(true));
-        assertThat(result.getInfomationContext(), is(nullValue()));
+        assertThat(result.complete(), is(true));
+        assertThat(result.infomationContext(), is(nullValue()));
     }
 
     public void testExecuteForIndexWithoutTierRoutingInformationWaitsForReplicasToBeActive() {
@@ -248,8 +248,8 @@ public class DataTierMigrationRoutedStepTests extends AbstractStepTestCase<DataT
             Result expectedResult = new Result(false, waitingForActiveShardsAllocationInfo(1));
 
             Result result = step.isConditionMet(index, clusterState);
-            assertThat(result.isComplete(), is(false));
-            assertThat(result.getInfomationContext(), is(expectedResult.getInfomationContext()));
+            assertThat(result.complete(), is(false));
+            assertThat(result.infomationContext(), is(expectedResult.infomationContext()));
         }
 
         {
@@ -269,8 +269,8 @@ public class DataTierMigrationRoutedStepTests extends AbstractStepTestCase<DataT
             DataTierMigrationRoutedStep step = createRandomInstance();
 
             Result result = step.isConditionMet(index, clusterState);
-            assertThat(result.isComplete(), is(true));
-            assertThat(result.getInfomationContext(), is(nullValue()));
+            assertThat(result.complete(), is(true));
+            assertThat(result.infomationContext(), is(nullValue()));
         }
     }
 

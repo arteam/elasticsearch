@@ -154,8 +154,8 @@ public class TransportRollupAction extends AcknowledgedTransportMasterNodeAction
         if (indicesAccessControl != null) {
             final IndicesAccessControl.IndexAccessControl indexPermissions = indicesAccessControl.getIndexPermissions(sourceIndexName);
             if (indexPermissions != null) {
-                boolean hasDocumentLevelPermissions = indexPermissions.getDocumentPermissions().hasDocumentLevelPermissions();
-                boolean hasFieldLevelSecurity = indexPermissions.getFieldPermissions().hasFieldLevelSecurity();
+                boolean hasDocumentLevelPermissions = indexPermissions.documentPermissions().hasDocumentLevelPermissions();
+                boolean hasFieldLevelSecurity = indexPermissions.fieldPermissions().hasFieldLevelSecurity();
                 if (hasDocumentLevelPermissions || hasFieldLevelSecurity) {
                     listener.onFailure(
                         new ElasticsearchException(

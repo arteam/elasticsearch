@@ -23,22 +23,22 @@ public class SimpleIcuAnalysisTests extends ESTestCase {
     public void testDefaultsIcuAnalysis() throws IOException {
         TestAnalysis analysis = createTestAnalysis(new Index("test", "_na_"), Settings.EMPTY, new AnalysisICUPlugin());
 
-        TokenizerFactory tokenizerFactory = analysis.tokenizer.get("icu_tokenizer");
+        TokenizerFactory tokenizerFactory = analysis.tokenizer().get("icu_tokenizer");
         assertThat(tokenizerFactory, instanceOf(IcuTokenizerFactory.class));
 
-        TokenFilterFactory filterFactory = analysis.tokenFilter.get("icu_normalizer");
+        TokenFilterFactory filterFactory = analysis.tokenFilter().get("icu_normalizer");
         assertThat(filterFactory, instanceOf(IcuNormalizerTokenFilterFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("icu_folding");
+        filterFactory = analysis.tokenFilter().get("icu_folding");
         assertThat(filterFactory, instanceOf(IcuFoldingTokenFilterFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("icu_collation");
+        filterFactory = analysis.tokenFilter().get("icu_collation");
         assertThat(filterFactory, instanceOf(IcuCollationTokenFilterFactory.class));
 
-        filterFactory = analysis.tokenFilter.get("icu_transform");
+        filterFactory = analysis.tokenFilter().get("icu_transform");
         assertThat(filterFactory, instanceOf(IcuTransformTokenFilterFactory.class));
 
-        CharFilterFactory charFilterFactory = analysis.charFilter.get("icu_normalizer");
+        CharFilterFactory charFilterFactory = analysis.charFilter().get("icu_normalizer");
         assertThat(charFilterFactory, instanceOf(IcuNormalizerCharFilterFactory.class));
     }
 }

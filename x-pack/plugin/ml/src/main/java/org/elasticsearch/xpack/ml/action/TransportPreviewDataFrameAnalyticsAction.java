@@ -76,9 +76,9 @@ public class TransportPreviewDataFrameAnalyticsAction extends HandledTransportAc
     }
 
     private static Map<String, Object> mergeRow(DataFrameDataExtractor.Row row, List<String> fieldNames) {
-        return row.getValues() == null
+        return row.values() == null
             ? Collections.emptyMap()
-            : IntStream.range(0, row.getValues().length).boxed().collect(Collectors.toMap(fieldNames::get, i -> row.getValues()[i]));
+            : IntStream.range(0, row.values().length).boxed().collect(Collectors.toMap(fieldNames::get, i -> row.values()[i]));
     }
 
     @Override

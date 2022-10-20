@@ -575,13 +575,6 @@ public final class ConstructingObjectParser<Value, Context> extends AbstractObje
         }
     }
 
-    private static class ConstructorArgInfo {
-        final ParseField field;
-        final boolean required;
-
-        ConstructorArgInfo(ParseField field, boolean required) {
-            this.field = field;
-            this.required = required;
-        }
+    private record ConstructorArgInfo(ParseField field, boolean required) {
     }
 }

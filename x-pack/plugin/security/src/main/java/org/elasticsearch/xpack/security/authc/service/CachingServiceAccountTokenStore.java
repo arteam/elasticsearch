@@ -108,13 +108,13 @@ public abstract class CachingServiceAccountTokenStore implements ServiceAccountT
                 }, listener::onFailure), threadPool.generic(), threadPool.getThreadContext());
             } else {
                 doAuthenticate(token, ActionListener.wrap(storeAuthenticationResult -> {
-                    if (false == storeAuthenticationResult.isSuccess()) {
+                    if (false == storeAuthenticationResult.success()) {
                         // Do not cache failed attempt
                         cache.invalidate(token.getQualifiedName(), listenableCacheEntry);
                     } else {
                         logger.trace("cache service token [{}] authentication result", token.getQualifiedName());
                     }
-                    listenableCacheEntry.onResponse(new CachedResult(hasher, storeAuthenticationResult.isSuccess(), token));
+                    listenableCacheEntry.onResponse(new CachedResult(hasher, storeAuthenticationResult.success(), token));
                     listener.onResponse(storeAuthenticationResult);
                 }, e -> {
                     // In case of failure, evict the cache entry and notify all listeners

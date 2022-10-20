@@ -44,22 +44,7 @@ import java.util.stream.Collectors;
  */
 public class CustomWordEmbedding implements LenientlyParsedPreProcessor, StrictlyParsedPreProcessor {
 
-    public static class StringLengthAndEmbedding {
-        final int utf8StringLen;
-        final double[] embedding;
-
-        public StringLengthAndEmbedding(int utf8StringLen, double[] embedding) {
-            this.utf8StringLen = utf8StringLen;
-            this.embedding = embedding;
-        }
-
-        public int getUtf8StringLen() {
-            return utf8StringLen;
-        }
-
-        public double[] getEmbedding() {
-            return embedding;
-        }
+    public record StringLengthAndEmbedding(int utf8StringLen, double[] embedding) {
     }
 
     private static final long SHALLOW_SIZE = RamUsageEstimator.shallowSizeOfInstance(CustomWordEmbedding.class);

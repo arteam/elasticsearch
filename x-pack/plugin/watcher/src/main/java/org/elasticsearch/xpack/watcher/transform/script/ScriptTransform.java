@@ -15,38 +15,13 @@ import org.elasticsearch.xpack.core.watcher.watch.Payload;
 
 import java.io.IOException;
 
-public class ScriptTransform implements Transform {
+public record ScriptTransform(Script script) implements Transform {
 
     public static final String TYPE = "script";
-
-    private final Script script;
-
-    public ScriptTransform(Script script) {
-        this.script = script;
-    }
 
     @Override
     public String type() {
         return TYPE;
-    }
-
-    public Script getScript() {
-        return script;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ScriptTransform that = (ScriptTransform) o;
-
-        return script.equals(that.script);
-    }
-
-    @Override
-    public int hashCode() {
-        return script.hashCode();
     }
 
     @Override

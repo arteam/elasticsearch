@@ -17,24 +17,10 @@ import org.elasticsearch.xpack.security.transport.filter.IPFilter;
  *
  * This class is temporary until actions can be constructed directly by plugins.
  */
-class SecurityUsageServices {
-    final Realms realms;
-    final CompositeRolesStore rolesStore;
-    final NativeRoleMappingStore roleMappingStore;
-    final IPFilter ipFilter;
-    final ProfileService profileService;
-
-    SecurityUsageServices(
-        Realms realms,
-        CompositeRolesStore rolesStore,
-        NativeRoleMappingStore roleMappingStore,
-        IPFilter ipFilter,
-        ProfileService profileService
-    ) {
-        this.realms = realms;
-        this.rolesStore = rolesStore;
-        this.roleMappingStore = roleMappingStore;
-        this.ipFilter = ipFilter;
-        this.profileService = profileService;
-    }
-}
+record SecurityUsageServices(
+    Realms realms,
+    CompositeRolesStore rolesStore,
+    NativeRoleMappingStore roleMappingStore,
+    IPFilter ipFilter,
+    ProfileService profileService
+) {}

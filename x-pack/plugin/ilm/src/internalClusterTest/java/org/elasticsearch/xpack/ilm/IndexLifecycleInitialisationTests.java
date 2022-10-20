@@ -519,7 +519,7 @@ public class IndexLifecycleInitialisationTests extends ESIntegTestCase {
             assertThat(indexLifecycleService.getScheduler().jobCount(), equalTo(1));
         });
         {
-            TimeValueSchedule schedule = (TimeValueSchedule) indexLifecycleService.getScheduledJob().getSchedule();
+            TimeValueSchedule schedule = (TimeValueSchedule) indexLifecycleService.getScheduledJob().schedule();
             assertThat(schedule.getInterval(), equalTo(pollInterval));
         }
 
@@ -530,7 +530,7 @@ public class IndexLifecycleInitialisationTests extends ESIntegTestCase {
             .build();
         assertAcked(client().admin().cluster().prepareUpdateSettings().setPersistentSettings(newIntervalSettings));
         {
-            TimeValueSchedule schedule = (TimeValueSchedule) indexLifecycleService.getScheduledJob().getSchedule();
+            TimeValueSchedule schedule = (TimeValueSchedule) indexLifecycleService.getScheduledJob().schedule();
             assertThat(schedule.getInterval(), equalTo(newPollInterval));
         }
     }

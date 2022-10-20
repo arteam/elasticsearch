@@ -100,7 +100,7 @@ public class TransportProfileHasPrivilegesAction extends HandledTransportAction<
                             request.privilegesToCheck(),
                             applicationPrivilegeDescriptors,
                             ActionListener.runAfter(ActionListener.wrap(privilegesCheckResult -> {
-                                assert privilegesCheckResult.getDetails() == null;
+                                assert privilegesCheckResult.details() == null;
                                 if (privilegesCheckResult.allChecksSuccess()) {
                                     hasPrivilegeProfiles.add(profileUid);
                                 }

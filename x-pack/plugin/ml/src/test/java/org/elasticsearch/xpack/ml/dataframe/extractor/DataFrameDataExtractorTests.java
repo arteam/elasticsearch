@@ -120,16 +120,16 @@ public class DataFrameDataExtractorTests extends ESTestCase {
         Optional<List<DataFrameDataExtractor.Row>> rows = dataExtractor.next();
         assertThat(rows.isPresent(), is(true));
         assertThat(rows.get().size(), equalTo(3));
-        assertThat(rows.get().get(0).getValues(), equalTo(new String[] { "11", "21" }));
-        assertThat(rows.get().get(1).getValues(), equalTo(new String[] { "12", "22" }));
-        assertThat(rows.get().get(2).getValues(), equalTo(new String[] { "13", "23" }));
+        assertThat(rows.get().get(0).values(), equalTo(new String[] { "11", "21" }));
+        assertThat(rows.get().get(1).values(), equalTo(new String[] { "12", "22" }));
+        assertThat(rows.get().get(2).values(), equalTo(new String[] { "13", "23" }));
         assertThat(dataExtractor.hasNext(), is(true));
 
         // Second batch
         rows = dataExtractor.next();
         assertThat(rows.isPresent(), is(true));
         assertThat(rows.get().size(), equalTo(1));
-        assertThat(rows.get().get(0).getValues(), equalTo(new String[] { "31", "41" }));
+        assertThat(rows.get().get(0).values(), equalTo(new String[] { "31", "41" }));
         assertThat(dataExtractor.hasNext(), is(true));
 
         // Third batch should return empty
@@ -210,15 +210,15 @@ public class DataFrameDataExtractorTests extends ESTestCase {
         Optional<List<DataFrameDataExtractor.Row>> rows = dataExtractor.next();
         assertThat(rows.isPresent(), is(true));
         assertThat(rows.get().size(), equalTo(2));
-        assertThat(rows.get().get(0).getValues(), equalTo(new String[] { "11", "21" }));
-        assertThat(rows.get().get(1).getValues(), equalTo(new String[] { "12", "22" }));
+        assertThat(rows.get().get(0).values(), equalTo(new String[] { "11", "21" }));
+        assertThat(rows.get().get(1).values(), equalTo(new String[] { "12", "22" }));
         assertThat(dataExtractor.hasNext(), is(true));
 
         // We get second batch as we retried after the error
         rows = dataExtractor.next();
         assertThat(rows.isPresent(), is(true));
         assertThat(rows.get().size(), equalTo(1));
-        assertThat(rows.get().get(0).getValues(), equalTo(new String[] { "13", "23" }));
+        assertThat(rows.get().get(0).values(), equalTo(new String[] { "13", "23" }));
         assertThat(dataExtractor.hasNext(), is(true));
 
         // Next batch should return empty
@@ -264,7 +264,7 @@ public class DataFrameDataExtractorTests extends ESTestCase {
         Optional<List<DataFrameDataExtractor.Row>> rows = dataExtractor.next();
         assertThat(rows.isPresent(), is(true));
         assertThat(rows.get().size(), equalTo(1));
-        assertThat(rows.get().get(0).getValues(), equalTo(new String[] { "11", "21" }));
+        assertThat(rows.get().get(0).values(), equalTo(new String[] { "11", "21" }));
         assertThat(dataExtractor.hasNext(), is(true));
 
         assertThat(dataExtractor.next().isEmpty(), is(true));
@@ -299,7 +299,7 @@ public class DataFrameDataExtractorTests extends ESTestCase {
         Optional<List<DataFrameDataExtractor.Row>> rows = dataExtractor.next();
         assertThat(rows.isPresent(), is(true));
         assertThat(rows.get().size(), equalTo(1));
-        assertThat(rows.get().get(0).getValues(), equalTo(new String[] { "11", "21" }));
+        assertThat(rows.get().get(0).values(), equalTo(new String[] { "11", "21" }));
         assertThat(dataExtractor.hasNext(), is(true));
 
         assertThat(dataExtractor.next().isEmpty(), is(true));
@@ -322,8 +322,8 @@ public class DataFrameDataExtractorTests extends ESTestCase {
 
         DataFrameDataExtractor.DataSummary dataSummary = dataExtractor.collectDataSummary();
 
-        assertThat(dataSummary.rows, equalTo(2L));
-        assertThat(dataSummary.cols, equalTo(2));
+        assertThat(dataSummary.rows(), equalTo(2L));
+        assertThat(dataSummary.cols(), equalTo(2));
 
         assertThat(dataExtractor.capturedSearchRequests.size(), equalTo(1));
         String searchRequest = dataExtractor.capturedSearchRequests.get(0).request().toString().replaceAll("\\s", "");
@@ -339,8 +339,8 @@ public class DataFrameDataExtractorTests extends ESTestCase {
 
         DataFrameDataExtractor.DataSummary dataSummary = dataExtractor.collectDataSummary();
 
-        assertThat(dataSummary.rows, equalTo(2L));
-        assertThat(dataSummary.cols, equalTo(2));
+        assertThat(dataSummary.rows(), equalTo(2L));
+        assertThat(dataSummary.cols(), equalTo(2));
 
         assertThat(dataExtractor.capturedSearchRequests.size(), equalTo(1));
         String searchRequest = dataExtractor.capturedSearchRequests.get(0).request().toString().replaceAll("\\s", "");
@@ -367,10 +367,10 @@ public class DataFrameDataExtractorTests extends ESTestCase {
         assertThat(rows.isPresent(), is(true));
         assertThat(rows.get().size(), equalTo(3));
 
-        assertThat(rows.get().get(0).getValues(), equalTo(new String[] { "11", "21" }));
-        assertThat(rows.get().get(1).getValues()[0], equalTo(DataFrameDataExtractor.NULL_VALUE));
-        assertThat(rows.get().get(1).getValues()[1], equalTo("22"));
-        assertThat(rows.get().get(2).getValues(), equalTo(new String[] { "13", "23" }));
+        assertThat(rows.get().get(0).values(), equalTo(new String[] { "11", "21" }));
+        assertThat(rows.get().get(1).values()[0], equalTo(DataFrameDataExtractor.NULL_VALUE));
+        assertThat(rows.get().get(1).values()[1], equalTo("22"));
+        assertThat(rows.get().get(2).values(), equalTo(new String[] { "13", "23" }));
 
         assertThat(rows.get().get(0).shouldSkip(), is(false));
         assertThat(rows.get().get(1).shouldSkip(), is(false));
@@ -402,9 +402,9 @@ public class DataFrameDataExtractorTests extends ESTestCase {
         assertThat(rows.isPresent(), is(true));
         assertThat(rows.get().size(), equalTo(3));
 
-        assertThat(rows.get().get(0).getValues(), equalTo(new String[] { "11", "21" }));
-        assertThat(rows.get().get(1).getValues(), is(nullValue()));
-        assertThat(rows.get().get(2).getValues(), equalTo(new String[] { "13", "23" }));
+        assertThat(rows.get().get(0).values(), equalTo(new String[] { "11", "21" }));
+        assertThat(rows.get().get(1).values(), is(nullValue()));
+        assertThat(rows.get().get(2).values(), equalTo(new String[] { "13", "23" }));
 
         assertThat(rows.get().get(0).shouldSkip(), is(false));
         assertThat(rows.get().get(1).shouldSkip(), is(true));
@@ -541,12 +541,12 @@ public class DataFrameDataExtractorTests extends ESTestCase {
         assertThat(rows.isPresent(), is(true));
         assertThat(rows.get().size(), equalTo(3));
 
-        assertThat(rows.get().get(0).getValues(), equalTo(new String[] { "21", "dog", "1", "0" }));
+        assertThat(rows.get().get(0).values(), equalTo(new String[] { "21", "dog", "1", "0" }));
         assertThat(
-            rows.get().get(1).getValues(),
+            rows.get().get(1).values(),
             equalTo(new String[] { "22", "dog", DataFrameDataExtractor.NULL_VALUE, DataFrameDataExtractor.NULL_VALUE })
         );
-        assertThat(rows.get().get(2).getValues(), equalTo(new String[] { "23", "dog", "0", "0" }));
+        assertThat(rows.get().get(2).values(), equalTo(new String[] { "23", "dog", "0", "0" }));
 
         assertThat(rows.get().get(0).shouldSkip(), is(false));
         assertThat(rows.get().get(1).shouldSkip(), is(false));
@@ -580,9 +580,9 @@ public class DataFrameDataExtractorTests extends ESTestCase {
         assertThat(rows.isPresent(), is(true));
         assertThat(rows.get().size(), equalTo(3));
 
-        assertThat(rows.get().get(0).getValues(), equalTo(new String[] { "1", "21", }));
-        assertThat(rows.get().get(1).getValues(), equalTo(new String[] { "true", "22" }));
-        assertThat(rows.get().get(2).getValues(), equalTo(new String[] { "false", "23" }));
+        assertThat(rows.get().get(0).values(), equalTo(new String[] { "1", "21", }));
+        assertThat(rows.get().get(1).values(), equalTo(new String[] { "true", "22" }));
+        assertThat(rows.get().get(2).values(), equalTo(new String[] { "false", "23" }));
 
         assertThat(rows.get().get(0).shouldSkip(), is(false));
         assertThat(rows.get().get(1).shouldSkip(), is(false));

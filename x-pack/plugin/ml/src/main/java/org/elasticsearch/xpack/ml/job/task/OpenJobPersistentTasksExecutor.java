@@ -224,8 +224,8 @@ public class OpenJobPersistentTasksExecutor extends AbstractJobPersistentTasksEx
             throw makeCurrentlyBeingUpgradedException(logger, params.getJobId());
         }
 
-        if (assignment.getExecutorNode() == null && assignment.equals(AWAITING_LAZY_ASSIGNMENT) == false) {
-            throw makeNoSuitableNodesException(logger, params.getJobId(), assignment.getExplanation());
+        if (assignment.executorNode() == null && assignment.equals(AWAITING_LAZY_ASSIGNMENT) == false) {
+            throw makeNoSuitableNodesException(logger, params.getJobId(), assignment.explanation());
         }
     }
 
@@ -618,10 +618,10 @@ public class OpenJobPersistentTasksExecutor extends AbstractJobPersistentTasksEx
             // Assignment has failed on the master node despite passing our "fast fail" validation
             if (assignment.equals(AWAITING_UPGRADE)) {
                 return Optional.of(makeCurrentlyBeingUpgradedException(logger, jobId));
-            } else if (assignment.getExplanation().contains("[" + EnableAssignmentDecider.ALLOCATION_NONE_EXPLANATION + "]")) {
+            } else if (assignment.explanation().contains("[" + EnableAssignmentDecider.ALLOCATION_NONE_EXPLANATION + "]")) {
                 return Optional.of(makeAssignmentsNotAllowedException(logger, jobId));
             } else {
-                return Optional.of(makeNoSuitableNodesException(logger, jobId, assignment.getExplanation()));
+                return Optional.of(makeNoSuitableNodesException(logger, jobId, assignment.explanation()));
             }
         }
         return Optional.empty();

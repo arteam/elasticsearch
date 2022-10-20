@@ -208,9 +208,9 @@ public class TransportMonitoringMigrateAlertsAction extends TransportMasterNodeA
                     List<ExporterMigrationResult> collectedResults = results.stream()
                         .map(
                             status -> new ExporterMigrationResult(
-                                status.getExporterName(),
-                                status.getExporterType(),
-                                status.isComplete(),
+                                status.exporterName(),
+                                status.exporterType(),
+                                status.complete(),
                                 compileReason(status)
                             )
                         )
@@ -227,7 +227,7 @@ public class TransportMonitoringMigrateAlertsAction extends TransportMasterNodeA
             private Exception compileReason(ExporterResourceStatus status) {
                 // The reason for unsuccessful setup could be multiple exceptions: one or more watches
                 // may fail to be removed for any reason.
-                List<Exception> exceptions = status.getExceptions();
+                List<Exception> exceptions = status.exceptions();
                 if (exceptions == null || exceptions.size() == 0) {
                     return null;
                 } else if (exceptions.size() == 1) {
@@ -251,7 +251,7 @@ public class TransportMonitoringMigrateAlertsAction extends TransportMasterNodeA
         assert exporter.isOpen();
         try {
             exporter.removeAlerts(status -> {
-                logger.debug("exporter [{}]: completed setup with status [{}]", exporter.config().name(), status.isComplete());
+                logger.debug("exporter [{}]: completed setup with status [{}]", exporter.config().name(), status.complete());
                 // Exporter completed its setup (teardown) successfully or unsuccessfully.
                 listener.onResponse(status);
             });

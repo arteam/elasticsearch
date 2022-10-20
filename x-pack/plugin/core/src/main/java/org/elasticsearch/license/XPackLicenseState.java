@@ -289,24 +289,14 @@ public class XPackLicenseState {
         return mode == OperationMode.BASIC;
     }
 
-    /** A wrapper for the license mode, state, and expiration date, to allow atomically swapping. */
-    private static class Status {
-
-        /** The current "mode" of the license (ie license type). */
-        final OperationMode mode;
-
-        /** True if the license is active, or false if it is expired. */
-        final boolean active;
-
-        /** A warning to be emitted on license checks about the license expiring soon. */
-        final String expiryWarning;
-
-        Status(OperationMode mode, boolean active, String expiryWarning) {
-            this.mode = mode;
-            this.active = active;
-            this.expiryWarning = expiryWarning;
-        }
-    }
+    /**
+     * A wrapper for the license mode, state, and expiration date, to allow atomically swapping.
+     *
+     * @param mode          The current "mode" of the license (ie license type).
+     * @param active        True if the license is active, or false if it is expired.
+     * @param expiryWarning A warning to be emitted on license checks about the license expiring soon.
+     */
+    private record Status(OperationMode mode, boolean active, String expiryWarning) {}
 
     private final List<LicenseStateListener> listeners;
 

@@ -111,7 +111,7 @@ public final class MethodWriter extends GeneratorAdapter {
      * This is invoked for each statement boundary (leaf {@code S*} nodes).
      */
     public void writeStatementOffset(Location location) {
-        int offset = location.getOffset();
+        int offset = location.offset();
         // ensure we don't have duplicate stuff going in here. can catch bugs
         // (e.g. nodes get assigned wrong offsets by antlr walker)
         // TODO: introduce a way to ignore internal statements so this assert is not triggered
@@ -129,7 +129,7 @@ public final class MethodWriter extends GeneratorAdapter {
         // TODO: maybe track these in bitsets too? this is trickier...
         Label label = new Label();
         visitLabel(label);
-        visitLineNumber(location.getOffset() + 1, label);
+        visitLineNumber(location.offset() + 1, label);
     }
 
     public void writeLoopCounter(int slot, Location location) {

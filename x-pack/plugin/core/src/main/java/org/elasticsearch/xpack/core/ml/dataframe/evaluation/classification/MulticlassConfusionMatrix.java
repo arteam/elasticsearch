@@ -135,8 +135,8 @@ public class MulticlassConfusionMatrix implements EvaluationMetric {
         EvaluationParameters parameters,
         EvaluationFields fields
     ) {
-        String actualField = fields.getActualField();
-        String predictedField = fields.getPredictedField();
+        String actualField = fields.actualField();
+        String predictedField = fields.predictedField();
         if (topActualClassNames.get() == null && actualClassesCardinality.get() == null) {  // This is step 1
             return Tuple.tuple(
                 List.of(
@@ -158,7 +158,7 @@ public class MulticlassConfusionMatrix implements EvaluationMetric {
             // too_many_buckets_exception exception is not thrown.
             // The only exception is when "search.max_buckets" is set far too low to even have 1 actual class in the batch.
             // In such case, the exception will be thrown telling the user they should increase the value of "search.max_buckets".
-            int actualClassesPerBatch = Math.max(parameters.getMaxBuckets() / (topActualClassNames.get().size() + 2), 1);
+            int actualClassesPerBatch = Math.max(parameters.maxBuckets() / (topActualClassNames.get().size() + 2), 1);
             KeyedFilter[] keyedFiltersActual = topActualClassNames.get()
                 .stream()
                 .skip(actualClasses.size())

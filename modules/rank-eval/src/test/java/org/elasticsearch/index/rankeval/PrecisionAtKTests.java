@@ -42,8 +42,8 @@ public class PrecisionAtKTests extends ESTestCase {
         rated.add(createRatedDoc("test", "0", RELEVANT_RATING));
         EvalQueryQuality evaluated = (new PrecisionAtK()).evaluate("id", toSearchHits(rated, "test"), rated);
         assertEquals(1, evaluated.metricScore(), 0.00001);
-        assertEquals(1, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(1, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRetrieved());
+        assertEquals(1, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(1, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).retrieved());
     }
 
     public void testIgnoreOneResult() {
@@ -55,8 +55,8 @@ public class PrecisionAtKTests extends ESTestCase {
         rated.add(createRatedDoc("test", "4", IRRELEVANT_RATING));
         EvalQueryQuality evaluated = (new PrecisionAtK()).evaluate("id", toSearchHits(rated, "test"), rated);
         assertEquals((double) 4 / 5, evaluated.metricScore(), 0.00001);
-        assertEquals(4, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(5, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRetrieved());
+        assertEquals(4, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(5, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).retrieved());
     }
 
     /**
@@ -74,8 +74,8 @@ public class PrecisionAtKTests extends ESTestCase {
         PrecisionAtK precisionAtN = new PrecisionAtK(2, false, 5);
         EvalQueryQuality evaluated = precisionAtN.evaluate("id", toSearchHits(rated, "test"), rated);
         assertEquals((double) 3 / 5, evaluated.metricScore(), 0.00001);
-        assertEquals(3, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(5, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRetrieved());
+        assertEquals(3, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(5, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).retrieved());
     }
 
     public void testPrecisionAtFiveCorrectIndex() {
@@ -90,8 +90,8 @@ public class PrecisionAtKTests extends ESTestCase {
         PrecisionAtK precisionAtK = new PrecisionAtK(1, false, 5);
         EvalQueryQuality evaluated = (precisionAtK).evaluate("id", toSearchHits(ratedSubList, "test"), rated);
         assertEquals((double) 2 / 3, evaluated.metricScore(), 0.00001);
-        assertEquals(2, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(3, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRetrieved());
+        assertEquals(2, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(3, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).retrieved());
     }
 
     public void testIgnoreUnlabeled() {
@@ -105,15 +105,15 @@ public class PrecisionAtKTests extends ESTestCase {
 
         EvalQueryQuality evaluated = (new PrecisionAtK()).evaluate("id", searchHits, rated);
         assertEquals((double) 2 / 3, evaluated.metricScore(), 0.00001);
-        assertEquals(2, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(3, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRetrieved());
+        assertEquals(2, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(3, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).retrieved());
 
         // also try with setting `ignore_unlabeled`
         PrecisionAtK prec = new PrecisionAtK(true);
         evaluated = prec.evaluate("id", searchHits, rated);
         assertEquals((double) 2 / 2, evaluated.metricScore(), 0.00001);
-        assertEquals(2, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(2, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRetrieved());
+        assertEquals(2, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(2, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).retrieved());
     }
 
     public void testNoRatedDocs() throws Exception {
@@ -124,23 +124,23 @@ public class PrecisionAtKTests extends ESTestCase {
         }
         EvalQueryQuality evaluated = (new PrecisionAtK()).evaluate("id", hits, Collections.emptyList());
         assertEquals(0.0d, evaluated.metricScore(), 0.00001);
-        assertEquals(0, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(5, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRetrieved());
+        assertEquals(0, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(5, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).retrieved());
 
         // also try with setting `ignore_unlabeled`
         PrecisionAtK prec = new PrecisionAtK(true);
         evaluated = prec.evaluate("id", hits, Collections.emptyList());
         assertEquals(0.0d, evaluated.metricScore(), 0.00001);
-        assertEquals(0, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(0, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRetrieved());
+        assertEquals(0, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(0, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).retrieved());
     }
 
     public void testNoResults() throws Exception {
         SearchHit[] hits = new SearchHit[0];
         EvalQueryQuality evaluated = (new PrecisionAtK()).evaluate("id", hits, Collections.emptyList());
         assertEquals(0.0d, evaluated.metricScore(), 0.00001);
-        assertEquals(0, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRelevantRetrieved());
-        assertEquals(0, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).getRetrieved());
+        assertEquals(0, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).relevantRetrieved());
+        assertEquals(0, ((PrecisionAtK.Detail) evaluated.getMetricDetails()).retrieved());
     }
 
     public void testParseFromXContent() throws IOException {

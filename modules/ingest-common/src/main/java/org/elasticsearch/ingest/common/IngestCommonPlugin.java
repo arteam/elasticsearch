@@ -54,11 +54,11 @@ public class IngestCommonPlugin extends Plugin implements ActionPlugin, IngestPl
     @Override
     public Map<String, Processor.Factory> getProcessors(Processor.Parameters parameters) {
         return Map.ofEntries(
-            entry(DateProcessor.TYPE, new DateProcessor.Factory(parameters.scriptService)),
-            entry(SetProcessor.TYPE, new SetProcessor.Factory(parameters.scriptService)),
-            entry(AppendProcessor.TYPE, new AppendProcessor.Factory(parameters.scriptService)),
-            entry(RenameProcessor.TYPE, new RenameProcessor.Factory(parameters.scriptService)),
-            entry(RemoveProcessor.TYPE, new RemoveProcessor.Factory(parameters.scriptService)),
+            entry(DateProcessor.TYPE, new DateProcessor.Factory(parameters.scriptService())),
+            entry(SetProcessor.TYPE, new SetProcessor.Factory(parameters.scriptService())),
+            entry(AppendProcessor.TYPE, new AppendProcessor.Factory(parameters.scriptService())),
+            entry(RenameProcessor.TYPE, new RenameProcessor.Factory(parameters.scriptService())),
+            entry(RemoveProcessor.TYPE, new RemoveProcessor.Factory(parameters.scriptService())),
             entry(SplitProcessor.TYPE, new SplitProcessor.Factory()),
             entry(JoinProcessor.TYPE, new JoinProcessor.Factory()),
             entry(UppercaseProcessor.TYPE, new UppercaseProcessor.Factory()),
@@ -66,24 +66,24 @@ public class IngestCommonPlugin extends Plugin implements ActionPlugin, IngestPl
             entry(TrimProcessor.TYPE, new TrimProcessor.Factory()),
             entry(ConvertProcessor.TYPE, new ConvertProcessor.Factory()),
             entry(GsubProcessor.TYPE, new GsubProcessor.Factory()),
-            entry(FailProcessor.TYPE, new FailProcessor.Factory(parameters.scriptService)),
-            entry(ForEachProcessor.TYPE, new ForEachProcessor.Factory(parameters.scriptService)),
-            entry(DateIndexNameProcessor.TYPE, new DateIndexNameProcessor.Factory(parameters.scriptService)),
+            entry(FailProcessor.TYPE, new FailProcessor.Factory(parameters.scriptService())),
+            entry(ForEachProcessor.TYPE, new ForEachProcessor.Factory(parameters.scriptService())),
+            entry(DateIndexNameProcessor.TYPE, new DateIndexNameProcessor.Factory(parameters.scriptService())),
             entry(SortProcessor.TYPE, new SortProcessor.Factory()),
             entry(GrokProcessor.TYPE, new GrokProcessor.Factory(createGrokThreadWatchdog(parameters))),
-            entry(ScriptProcessor.TYPE, new ScriptProcessor.Factory(parameters.scriptService)),
+            entry(ScriptProcessor.TYPE, new ScriptProcessor.Factory(parameters.scriptService())),
             entry(DotExpanderProcessor.TYPE, new DotExpanderProcessor.Factory()),
             entry(JsonProcessor.TYPE, new JsonProcessor.Factory()),
-            entry(KeyValueProcessor.TYPE, new KeyValueProcessor.Factory(parameters.scriptService)),
+            entry(KeyValueProcessor.TYPE, new KeyValueProcessor.Factory(parameters.scriptService())),
             entry(URLDecodeProcessor.TYPE, new URLDecodeProcessor.Factory()),
             entry(BytesProcessor.TYPE, new BytesProcessor.Factory()),
-            entry(PipelineProcessor.TYPE, new PipelineProcessor.Factory(parameters.ingestService)),
+            entry(PipelineProcessor.TYPE, new PipelineProcessor.Factory(parameters.ingestService())),
             entry(DissectProcessor.TYPE, new DissectProcessor.Factory()),
             entry(DropProcessor.TYPE, new DropProcessor.Factory()),
             entry(HtmlStripProcessor.TYPE, new HtmlStripProcessor.Factory()),
             entry(CsvProcessor.TYPE, new CsvProcessor.Factory()),
             entry(UriPartsProcessor.TYPE, new UriPartsProcessor.Factory()),
-            entry(NetworkDirectionProcessor.TYPE, new NetworkDirectionProcessor.Factory(parameters.scriptService)),
+            entry(NetworkDirectionProcessor.TYPE, new NetworkDirectionProcessor.Factory(parameters.scriptService())),
             entry(CommunityIdProcessor.TYPE, new CommunityIdProcessor.Factory()),
             entry(FingerprintProcessor.TYPE, new FingerprintProcessor.Factory()),
             entry(RegisteredDomainProcessor.TYPE, new RegisteredDomainProcessor.Factory())
@@ -116,13 +116,13 @@ public class IngestCommonPlugin extends Plugin implements ActionPlugin, IngestPl
     }
 
     private static MatcherWatchdog createGrokThreadWatchdog(Processor.Parameters parameters) {
-        long intervalMillis = WATCHDOG_INTERVAL.get(parameters.env.settings()).getMillis();
-        long maxExecutionTimeMillis = WATCHDOG_MAX_EXECUTION_TIME.get(parameters.env.settings()).getMillis();
+        long intervalMillis = WATCHDOG_INTERVAL.get(parameters.env().settings()).getMillis();
+        long maxExecutionTimeMillis = WATCHDOG_MAX_EXECUTION_TIME.get(parameters.env().settings()).getMillis();
         return MatcherWatchdog.newInstance(
             intervalMillis,
             maxExecutionTimeMillis,
-            parameters.relativeTimeSupplier,
-            parameters.scheduler::apply
+                parameters.relativeTimeSupplier(),
+            parameters.scheduler()::apply
         );
     }
 

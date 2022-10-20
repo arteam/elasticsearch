@@ -711,25 +711,7 @@ public class ReplicationOperationTests extends ESTestCase {
         }
     }
 
-    static class ReplicaResponse implements ReplicationOperation.ReplicaResponse {
-        final long localCheckpoint;
-        final long globalCheckpoint;
-
-        ReplicaResponse(long localCheckpoint, long globalCheckpoint) {
-            this.localCheckpoint = localCheckpoint;
-            this.globalCheckpoint = globalCheckpoint;
-        }
-
-        @Override
-        public long localCheckpoint() {
-            return localCheckpoint;
-        }
-
-        @Override
-        public long globalCheckpoint() {
-            return globalCheckpoint;
-        }
-
+    record ReplicaResponse(long localCheckpoint, long globalCheckpoint) implements ReplicationOperation.ReplicaResponse {
     }
 
     static class TestReplicaProxy implements ReplicationOperation.Replicas<Request> {

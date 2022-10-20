@@ -380,11 +380,11 @@ public class LicenseService extends AbstractLifecycleComponent implements Cluste
         final LicensesMetadata licensesMetadata = getLicensesMetadata();
         if (licensesMetadata != null) {
             final License license = licensesMetadata.getLicense();
-            if (event.getJobName().equals(LICENSE_JOB)) {
+            if (event.jobName().equals(LICENSE_JOB)) {
                 updateLicenseState(license);
-            } else if (event.getJobName().startsWith(ExpirationCallback.EXPIRATION_JOB_PREFIX)) {
+            } else if (event.jobName().startsWith(ExpirationCallback.EXPIRATION_JOB_PREFIX)) {
                 expirationCallbacks.stream()
-                    .filter(expirationCallback -> expirationCallback.getId().equals(event.getJobName()))
+                    .filter(expirationCallback -> expirationCallback.getId().equals(event.jobName()))
                     .forEach(expirationCallback -> expirationCallback.on(license));
             }
         }

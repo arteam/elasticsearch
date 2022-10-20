@@ -97,14 +97,7 @@ abstract class FetchPhaseDocsIterator {
         return result;
     }
 
-    private static class DocIdToIndex implements Comparable<DocIdToIndex> {
-        final int docId;
-        final int index;
-
-        DocIdToIndex(int docId, int index) {
-            this.docId = docId;
-            this.index = index;
-        }
+    private record DocIdToIndex(int docId, int index) implements Comparable<DocIdToIndex> {
 
         @Override
         public int compareTo(DocIdToIndex o) {

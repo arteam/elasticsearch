@@ -74,8 +74,8 @@ public class ReloadableCustomAnalyzerTests extends ESTestCase {
         AnalyzerComponents components = createComponents(
             "my_analyzer",
             analyzerSettings,
-            testAnalysis.tokenizer,
-            testAnalysis.charFilter,
+                testAnalysis.tokenizer(),
+                testAnalysis.charFilter(),
             Collections.singletonMap("my_filter", NO_OP_SEARCH_TIME_FILTER)
         );
 
@@ -84,7 +84,7 @@ public class ReloadableCustomAnalyzerTests extends ESTestCase {
             assertEquals(offsetGap >= 0 ? offsetGap : 1, analyzer.getOffsetGap(randomAlphaOfLength(5)));
             assertEquals("standard", analyzer.getComponents().getTokenizerFactory().name());
             assertEquals(0, analyzer.getComponents().getCharFilters().length);
-            assertSame(testAnalysis.tokenizer.get("standard"), analyzer.getComponents().getTokenizerFactory());
+            assertSame(testAnalysis.tokenizer().get("standard"), analyzer.getComponents().getTokenizerFactory());
             assertEquals(1, analyzer.getComponents().getTokenFilters().length);
             assertSame(NO_OP_SEARCH_TIME_FILTER, analyzer.getComponents().getTokenFilters()[0]);
         }
@@ -94,9 +94,9 @@ public class ReloadableCustomAnalyzerTests extends ESTestCase {
         AnalyzerComponents indexAnalyzerComponents = createComponents(
             "my_analyzer",
             indexAnalyzerSettings,
-            testAnalysis.tokenizer,
-            testAnalysis.charFilter,
-            testAnalysis.tokenFilter
+                testAnalysis.tokenizer(),
+                testAnalysis.charFilter(),
+                testAnalysis.tokenFilter()
         );
         IllegalArgumentException ex = expectThrows(
             IllegalArgumentException.class,
@@ -117,8 +117,8 @@ public class ReloadableCustomAnalyzerTests extends ESTestCase {
         AnalyzerComponents components = createComponents(
             "my_analyzer",
             analyzerSettings,
-            testAnalysis.tokenizer,
-            testAnalysis.charFilter,
+                testAnalysis.tokenizer(),
+                testAnalysis.charFilter(),
             Collections.singletonMap("my_filter", NO_OP_SEARCH_TIME_FILTER)
         );
         int numThreads = randomIntBetween(5, 10);
@@ -154,8 +154,8 @@ public class ReloadableCustomAnalyzerTests extends ESTestCase {
             analyzer.reload(
                 "my_analyzer",
                 analyzerSettings,
-                testAnalysis.tokenizer,
-                testAnalysis.charFilter,
+                    testAnalysis.tokenizer(),
+                    testAnalysis.charFilter(),
                 Collections.singletonMap("my_filter", LOWERCASE_SEARCH_TIME_FILTER)
             );
 

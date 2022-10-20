@@ -54,8 +54,8 @@ public class BulkShardRequestInterceptor implements RequestInterceptor {
             IndicesAccessControl.IndexAccessControl indexAccessControl = indicesAccessControl.getIndexPermissions(bulkShardRequest.index());
             // TODO replace if condition with assertion
             if (indexAccessControl != null
-                && (indexAccessControl.getFieldPermissions().hasFieldLevelSecurity()
-                    || indexAccessControl.getDocumentPermissions().hasDocumentLevelPermissions())
+                && (indexAccessControl.fieldPermissions().hasFieldLevelSecurity()
+                    || indexAccessControl.documentPermissions().hasDocumentLevelPermissions())
                 && DOCUMENT_LEVEL_SECURITY_FEATURE.checkWithoutTracking(licenseState) // the feature usage checker is a "last-ditch"
                                                                                       // verification, it doesn't have practical importance
             ) {

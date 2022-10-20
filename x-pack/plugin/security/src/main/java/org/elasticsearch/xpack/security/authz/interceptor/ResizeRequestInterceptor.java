@@ -53,8 +53,8 @@ public final class ResizeRequestInterceptor implements RequestInterceptor {
             IndicesAccessControl indicesAccessControl = threadContext.getTransient(AuthorizationServiceField.INDICES_PERMISSIONS_KEY);
             IndicesAccessControl.IndexAccessControl indexAccessControl = indicesAccessControl.getIndexPermissions(request.getSourceIndex());
             if (indexAccessControl != null
-                && (indexAccessControl.getFieldPermissions().hasFieldLevelSecurity()
-                    || indexAccessControl.getDocumentPermissions().hasDocumentLevelPermissions())
+                && (indexAccessControl.fieldPermissions().hasFieldLevelSecurity()
+                    || indexAccessControl.documentPermissions().hasDocumentLevelPermissions())
                 && DOCUMENT_LEVEL_SECURITY_FEATURE.checkWithoutTracking(licenseState)) {
                 listener.onFailure(
                     new ElasticsearchSecurityException(

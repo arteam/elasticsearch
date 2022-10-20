@@ -36,7 +36,7 @@ public class WordDelimiterTokenFilterFactoryTests extends BaseWordDelimiterToken
                 .build(),
             new CommonAnalysisPlugin()
         );
-        TokenFilterFactory tokenFilter = analysis.tokenFilter.get("my_word_delimiter");
+        TokenFilterFactory tokenFilter = analysis.tokenFilter().get("my_word_delimiter");
         String source = "PowerShot";
         String[] expected = new String[] { "Power", "PowerShot", "Shot" };
         Tokenizer tokenizer = new WhitespaceTokenizer();

@@ -414,7 +414,7 @@ public class TransportTermsEnumAction extends HandledTransportAction<TermsEnumRe
             IndicesAccessControl.IndexAccessControl indexAccessControl = indicesAccessControl.getIndexPermissions(shardId.getIndexName());
 
             if (indexAccessControl != null
-                && indexAccessControl.getDocumentPermissions().hasDocumentLevelPermissions()
+                && indexAccessControl.documentPermissions().hasDocumentLevelPermissions()
                 && DOCUMENT_LEVEL_SECURITY_FEATURE.checkWithoutTracking(frozenLicenseState)) {
                 // Check to see if any of the roles defined for the current user rewrite to match_all
 
@@ -431,7 +431,7 @@ public class TransportTermsEnumAction extends HandledTransportAction<TermsEnumRe
 
                 // Current user has potentially many roles and therefore potentially many queries
                 // defining sets of docs accessible
-                Set<BytesReference> queries = indexAccessControl.getDocumentPermissions().getQueries();
+                Set<BytesReference> queries = indexAccessControl.documentPermissions().getQueries();
                 for (BytesReference querySource : queries) {
                     QueryBuilder queryBuilder = DLSRoleQueryValidator.evaluateAndVerifyRoleQuery(
                         querySource,
@@ -708,15 +708,7 @@ public class TransportTermsEnumAction extends HandledTransportAction<TermsEnumRe
         }
     }
 
-    private static class RemoteClusterTermsEnumResponse {
-        final String clusterAlias;
-        final TermsEnumResponse resp;
-
-        private RemoteClusterTermsEnumResponse(String clusterAlias, TermsEnumResponse resp) {
-            this.clusterAlias = clusterAlias;
-            this.resp = resp;
-        }
-    }
+    private record RemoteClusterTermsEnumResponse(String clusterAlias, TermsEnumResponse resp) {}
 
     private static class TermIterator implements Iterator<String>, Comparable<TermIterator> {
         private final Iterator<String> iterator;
