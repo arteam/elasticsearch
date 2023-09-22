@@ -171,8 +171,10 @@ setup:
 ---
 "Reject data stream lifecycle without data stream configuration":
   - skip:
-      version: " - 8.9.99"
-      reason: "Data stream lifecycle in index templates was updated after 8.9"
+      #version: " - 8.9.99"
+      #reason: "Data stream lifecycle in index templates was updated after 8.9"
+      version: "all"
+      reason: "AwaitsFix https://github.com/elastic/elasticsearch/issues/99793"
   - do:
       catch:  bad_request
       indices.put_index_template:
