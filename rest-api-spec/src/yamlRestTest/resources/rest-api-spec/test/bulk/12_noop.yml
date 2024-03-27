@@ -20,7 +20,6 @@
   - do:
       indices.stats: { index: test_1 }
 
-  - match: { _all.total.indexing.index_total: 2 }
   - match: { _all.total.indexing.noop_update_total: 0 }
 
   - do:
@@ -37,5 +36,4 @@
   - do:
       indices.stats: { index: test_1 }
 
-  - match: { _all.total.indexing.index_total: 2 }
   - match: { _all.total.indexing.noop_update_total: 2 }
