@@ -267,7 +267,7 @@ public class RecoveryTarget extends AbstractRefCounted implements RecoveryTarget
                 assert stage != RecoveryState.Stage.DONE : "recovery should not have completed when it's being reset";
                 throw new IllegalStateException("cannot reset recovery as previous attempt made it past finalization step");
             }
-            indexShard.performRecoveryRestart(listener.map(unused -> true));
+            indexShard.performRecoveryRestart(listener);
             return;
         }
         listener.onResponse(false);

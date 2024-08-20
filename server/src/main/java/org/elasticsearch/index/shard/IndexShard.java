@@ -176,7 +176,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -239,7 +238,7 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
     // ensure happens-before relation between addRefreshListener() and postRecovery()
     private volatile SubscribableListener<Void> postRecoveryComplete;
     private volatile long pendingPrimaryTerm; // see JavaDocs for getPendingPrimaryTerm
-    private final ReentrantLock engineMutex = new ReentrantLock(); // lock ordering: engineMutex -> mutex
+    private final AtomicReference<Object> engineMutex = new AtomicReference<>(); // lock ordering: engineMutex -> mutex
     private final AtomicReference<Engine> currentEngineReference = new AtomicReference<>();
     final EngineFactory engineFactory;
 
@@ -1576,19 +1575,18 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
         Engine.IndexCommitRef indexCommit = null;
         store.incRef();
         try {
-            engineMutex.lock();
-            try {
+            Object old;
+            do {
+                old = engineMutex.get();
                 // if the engine is not running, we can access the store directly, but we need to make sure no one starts
                 // the engine on us. If the engine is running, we can get a snapshot via the deletion policy of the engine.
                 final Engine engine = getEngineOrNull();
                 if (engine != null) {
                     indexCommit = engine.acquireLastIndexCommit(false);
                 }
-                if (indexCommit == null) {
-                    return store.getMetadata(null, true);
-                }
-            } finally {
-                engineMutex.unlock();
+            } while (engineMutex.compareAndSet(old, new Object()) == false);
+            if (indexCommit == null) {
+                return store.getMetadata(null, true);
             }
             return store.getMetadata(indexCommit.getIndexCommit());
         } finally {
@@ -1733,7 +1731,7 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
     }
 
     public void close(String reason, boolean flushEngine, Executor closeExecutor, ActionListener<Void> closeListener) throws IOException {
-        engineMutex.lock();
+        Object old = engineMutex.get();
         try {
             try {
                 synchronized (mutex) {
@@ -1749,11 +1747,13 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
                             // playing safe here and close the engine even if the above succeeds - close can be called multiple times
                             // Also closing refreshListeners to prevent us from accumulating any more listeners
                             IOUtils.close(() -> {
-                                engineMutex.lock();
-                                Engine.close(
-                                    engine,
-                                    ActionListener.wrap(unused -> engineMutex.unlock(), e -> logger.warn("Unable to close engine", e))
-                                );
+                                Object old = engineMutex.get();
+                                Engine.close(engine, ActionListener.wrap(unused -> {
+                                    if (engineMutex.compareAndSet(old, new Object()) == false) {
+                                        // TODO Should retry?
+                                        logger.warn("Didn't close the current engine");
+                                    }
+                                }, e -> logger.warn("Unable to close engine", e)));
                             }, globalCheckpointListeners, refreshListeners, pendingReplicationActions, indexShardOperationPermits);
                         });
                         if (engine != null && flushEngine) {
@@ -1775,7 +1775,9 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
                 });
             }
         } finally {
-            engineMutex.unlock();
+            if (engineMutex.compareAndSet(old, new Object()) == false) {
+                // TODO Retry?
+            }
         }
     }
 
@@ -1919,8 +1921,14 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
                 globalCheckpoint,
                 recoveryCompleteListener.delegateFailureAndWrap((l, unused) -> {
                     assert Thread.holdsLock(mutex) == false : "must not hold the mutex here";
-                    engineMutex.lock();
-                    Engine.close(currentEngineReference.getAndSet(null), ActionListener.runBefore(l, () -> engineMutex.unlock()));
+                    Object old = engineMutex.get();
+                    Engine oldEngine = currentEngineReference.get();
+                    Engine.close(oldEngine, ActionListener.runBefore(l, () -> {
+                        if (engineMutex.compareAndSet(old, new Object()) == false
+                            || currentEngineReference.compareAndSet(oldEngine, null) == false) {
+                            logger.warn("Didn't close the current engine");
+                        }
+                    }));
                 }).<Void>map(v -> {
                     logger.trace("shard locally recovered up to {}", getEngine().getSeqNoStats(globalCheckpoint));
                     return v;
@@ -2137,20 +2145,23 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
                 + recoveryState.getRecoverySource()
                 + "] but got "
                 + getRetentionLeases();
-        engineMutex.lock();
-        try {
+
+        Engine newEngine;
+        Object old;
+        do {
+            old = engineMutex.get();
+
             assert currentEngineReference.get() == null : "engine is running";
             verifyNotClosed();
             // we must create a new engine under mutex (see IndexShard#snapshotStoreMetadata).
-            final Engine newEngine = createEngine(config);
-            onNewEngine(newEngine);
-            currentEngineReference.set(newEngine);
-            // We set active because we are now writing operations to the engine; this way,
-            // we can flush if we go idle after some time and become inactive.
-            active.set(true);
-        } finally {
-            engineMutex.unlock();
-        }
+            newEngine = createEngine(config);
+        } while (engineMutex.compareAndSet(old, new Object()) == false);
+        onNewEngine(newEngine);
+        currentEngineReference.set(newEngine);
+        // We set active because we are now writing operations to the engine; this way,
+        // we can flush if we go idle after some time and become inactive.
+        active.set(true);
+
         // time elapses after the engine is created above (pulling the config settings) until we set the engine reference, during
         // which settings changes could possibly have happened, so here we forcefully push any config changes to the new engine.
         onSettingsChanged();
@@ -2204,7 +2215,7 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
     }
 
     private void onNewEngine(Engine newEngine) {
-        assert engineMutex.isHeldByCurrentThread();
+        // assert engineMutex.isHeldByCurrentThread();
         refreshListeners.setCurrentRefreshLocationSupplier(newEngine::getTranslogLastWriteLocation);
         refreshListeners.setCurrentProcessedCheckpointSupplier(newEngine::getProcessedLocalCheckpoint);
         refreshListeners.setMaxIssuedSeqNoSupplier(newEngine::getMaxSeqNo);
@@ -2213,15 +2224,18 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
     /**
      * called if recovery has to be restarted after network error / delay **
      */
-    public void performRecoveryRestart(ActionListener<Void> listener) throws IOException {
+    public void performRecoveryRestart(ActionListener<Boolean> listener) throws IOException {
         assert Thread.holdsLock(mutex) == false : "restart recovery under mutex";
-        engineMutex.lock();
+        Object old = engineMutex.get();
         assert refreshListeners.pendingCount() == 0 : "we can't restart with pending listeners";
-        Engine.close(currentEngineReference.getAndSet(null), ActionListener.runBefore(listener, () -> {
-            engineMutex.unlock();
-            resetRecoveryStage();
+        Engine.close(currentEngineReference.getAndSet(null), listener.map(unused -> {
+            if (engineMutex.compareAndSet(old, new Object())) {
+                resetRecoveryStage();
+                return true;
+            } else {
+                return false;
+            }
         }));
-
     }
 
     /**
@@ -4273,7 +4287,7 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
         SetOnce<Engine> newEngineReference = new SetOnce<>();
         final long globalCheckpoint = getLastKnownGlobalCheckpoint();
         assert globalCheckpoint == getLastSyncedGlobalCheckpoint();
-        engineMutex.lock();
+        Object old = engineMutex.get();
         verifyNotClosed();
         // we must create both new read-only engine and new read-write engine under engineMutex to ensure snapshotStoreMetadata,
         // acquireXXXCommit and close works.
@@ -4288,44 +4302,45 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
         ) {
             @Override
             public IndexCommitRef acquireLastIndexCommit(boolean flushFirst) {
-                engineMutex.lock();
-                try {
+                IndexCommitRef indexCommitRef;
+                Object old;
+                do {
+                    old = engineMutex.get();
                     if (newEngineReference.get() == null) {
                         throw new AlreadyClosedException("engine was closed");
                     }
                     // ignore flushFirst since we flushed above and we do not want to interfere with ongoing translog replay
-                    return newEngineReference.get().acquireLastIndexCommit(false);
-                } finally {
-                    engineMutex.unlock();
-                }
+                    indexCommitRef = newEngineReference.get().acquireLastIndexCommit(false);
+                } while (engineMutex.compareAndSet(old, new Object()) == false);
+                return indexCommitRef;
             }
 
             @Override
             public IndexCommitRef acquireSafeIndexCommit() {
-                engineMutex.lock();
-                try {
+                IndexCommitRef indexCommitRef;
+                Object old;
+                do {
+                    old = engineMutex.get();
                     if (newEngineReference.get() == null) {
                         throw new AlreadyClosedException("engine was closed");
                     }
-                    return newEngineReference.get().acquireSafeIndexCommit();
-                } finally {
-                    engineMutex.unlock();
-                }
+                    indexCommitRef = newEngineReference.get().acquireSafeIndexCommit();
+                } while (engineMutex.compareAndSet(old, new Object()) == false);
+                return indexCommitRef;
             }
 
             @Override
             public void close(ActionListener<Void> listener) throws IOException {
                 Engine newEngine;
-                engineMutex.lock();
-                try {
+                Object old;
+                do {
+                    old = engineMutex.get();
                     newEngine = newEngineReference.get();
                     if (newEngine == currentEngineReference.get()) {
                         // we successfully installed the new engine so do not close it.
                         newEngine = null;
                     }
-                } finally {
-                    engineMutex.unlock();
-                }
+                } while (engineMutex.compareAndSet(old, new Object()) == false);
                 try (var refs = new RefCountingListener(listener)) {
                     super.close(refs.acquire());
                     if (newEngine != null) {
@@ -4335,11 +4350,15 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
             }
         };
 
-        var oldEngine = currentEngineReference.getAndSet(readOnlyEngine);
+        var oldEngine = currentEngineReference.get();
         SubscribableListener.<Void>newForked(l -> Engine.close(oldEngine, l)).<Void>andThen(l -> {
+            if (engineMutex.compareAndSet(old, new Object()) == false
+                || currentEngineReference.compareAndSet(oldEngine, readOnlyEngine) == false) {
+                // TODO Retry?
+                return;
+            }
             newEngineReference.set(engineFactory.newReadWriteEngine(newEngineConfig(replicationTracker)));
             onNewEngine(newEngineReference.get());
-            engineMutex.unlock();
 
             final Engine.TranslogRecoveryRunner translogRunner = (engine, snapshot) -> runTranslogRecovery(
                 engine,
@@ -4351,17 +4370,22 @@ public class IndexShard extends AbstractIndexShardComponent implements IndicesCl
             );
             newEngineReference.get().recoverFromTranslog(translogRunner, globalCheckpoint);
             newEngineReference.get().refresh("reset_engine");
-            engineMutex.lock();
+            Object old1 = engineMutex.get();
+            Engine oldEngine1 = currentEngineReference.get();
             verifyNotClosed();
-            Engine.close(currentEngineReference.getAndSet(newEngineReference.get()), ActionListener.runBefore(l, () -> {
-                // We set active because we are now writing operations to the engine; this way,
-                // if we go idle after some time and become inactive, we still give sync'd flush a chance to run.
-                active.set(true);
-                engineMutex.unlock();
-                // time elapses after the engine is created above (pulling the config settings) until we set the engine
-                // reference, during which settings changes could possibly have happened, so here we forcefully push any config
-                // changes to the new engine.
-                onSettingsChanged();
+            Engine.close(currentEngineReference.get(), ActionListener.runBefore(l, () -> {
+                if (engineMutex.compareAndSet(old1, new Object())
+                    && currentEngineReference.compareAndSet(oldEngine1, newEngineReference.get())) {
+                    // We set active because we are now writing operations to the engine; this way,
+                    // if we go idle after some time and become inactive, we still give sync'd flush a chance to run.
+                    active.set(true);
+                    // time elapses after the engine is created above (pulling the config settings) until we set the engine
+                    // reference, during which settings changes could possibly have happened, so here we forcefully push any config
+                    // changes to the new engine.
+                    onSettingsChanged();
+                } else {
+                    // TODO Retry?
+                }
             }));
 
         }).addListener(listener);
